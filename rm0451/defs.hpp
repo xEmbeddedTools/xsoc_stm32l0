@@ -5,6 +5,7 @@
  *  Licensed under the Apache License, Version 2.0. See LICENSE file in the project root for details.
  */
 
+//TODO: move to config.hpp and unify related settings
 #if defined(STM32L010x4)
 #define STM32L010XX_CATEGORY 1
 #elif defined(STM32L010x6)
