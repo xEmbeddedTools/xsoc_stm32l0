@@ -15,6 +15,7 @@
 #include <rm0451/clocks/pclk.hpp>
 #include <rm0451/clocks/sources/hsi16.hpp>
 #include <rm0451/peripherals/GPIO/GPIO.hpp>
+#include <rm0451/peripherals/USART/usart_ll.hpp>
 #include <rm0451/rcc.hpp>
 #include <rm0451/system/mcu/mcu.hpp>
 #include <rm0451/utils/tick_counter.hpp>
