@@ -9,32 +9,107 @@
 #include <cstdint>
 
 // xmcu
+#include <rm0451/utils/tick_counter.hpp>
 #include <xmcu/Duration.hpp>
+#include <xmcu/bit.hpp>
 #include <xmcu/non_constructible.hpp>
 
 namespace xmcu::soc::st::arm::m0::l0::rm0451::utils {
 struct wait_until : private non_constructible
 {
-    static void all_bits_are_set(volatile const std::uint32_t& a_register, std::uint32_t a_mask);
-    static void any_bit_is_set(volatile const std::uint32_t& a_register, std::uint32_t a_mask);
-    static void
-    masked_bits_are_set(volatile const std::uint32_t& a_register, std::uint32_t a_mask, std::uint32_t a_value);
+    template<typename Register, typename Mask> static void all_bits_are_set(const Register& a_register, Mask a_mask)
+    {
+        while (false == bit::flag::is(a_register, a_mask)) continue;
+    }
 
-    static void all_bits_are_cleared(volatile const std::uint32_t& a_register, std::uint32_t a_mask);
-    static void any_bit_is_cleared(volatile const std::uint32_t& a_register, std::uint32_t a_mask);
+    template<typename Register, typename Mask> static void any_bit_is_set(const Register& a_register, Mask a_mask)
+    {
+        while (false == bit::is_any(a_register, a_mask)) continue;
+    }
 
-    static bool
-    all_bits_are_set(volatile const std::uint32_t& a_register, std::uint32_t a_mask, Milliseconds a_timeout);
-    static bool any_bit_is_set(volatile const std::uint32_t& a_register, std::uint32_t a_mask, Milliseconds a_timeout);
-    static bool masked_bits_are_set(volatile const std::uint32_t& a_register,
-                                    std::uint32_t a_mask,
-                                    std::uint32_t a_value,
-                                    Milliseconds a_timeout);
+    template<typename Register, typename Mask, typename Flag>
+    static void masked_bits_are_set(const Register& a_register, Mask a_mask, Flag a_value)
+    {
+        while (bit::flag::get(a_register, a_mask) != a_value) continue;
+    }
 
-    static bool
-    all_bits_are_cleared(volatile const std::uint32_t& a_register, std::uint32_t a_mask, Milliseconds a_timeout);
-    static bool
-    any_bit_is_cleared(volatile const std::uint32_t& a_register, std::uint32_t a_mask, Milliseconds a_timeout);
+    template<typename Register, typename Mask> static void all_bits_are_cleared(const Register& a_register, Mask a_mask)
+    {
+        while (false == bit::flag::is(~a_register, a_mask)) continue;
+    }
+
+    template<typename Register, typename Mask> static void any_bit_is_cleared(const Register& a_register, Mask a_mask)
+    {
+        while (false == bit::is_any(~a_register, a_mask)) continue;
+    }
+
+    template<typename Register, typename Mask>
+    static bool all_bits_are_set(const Register& a_register, Mask a_mask, Milliseconds a_timeout)
+    {
+        const std::uint64_t timeout_end = tick_counter<Milliseconds>::get() + a_timeout.get();
+        bool status = false;
+
+        while (tick_counter<Milliseconds>::get() < timeout_end && false == status)
+        {
+            status = bit::flag::is(a_register, a_mask);
+        }
+
+        return status;
+    }
+
+    template<typename Register, typename Mask>
+    static bool any_bit_is_set(const Register& a_register, Mask a_mask, Milliseconds a_timeout)
+    {
+        const std::uint64_t timeout_end = tick_counter<Milliseconds>::get() + a_timeout.get();
+        bool status = false;
+
+        while (tick_counter<Milliseconds>::get() < timeout_end && false == status)
+        {
+            status = bit::is_any(a_register, a_mask);
+        }
+
+        return status;
+    }
+    template<typename Register, typename Mask, typename Flag>
+    static bool masked_bits_are_set(Register& a_register, Mask a_mask, Flag a_value, Milliseconds a_timeout)
+    {
+        const std::uint64_t timeout_end = tick_counter<Milliseconds>::get() + a_timeout.get();
+        bool status = false;
+
+        while (tick_counter<Milliseconds>::get() < timeout_end && false == status)
+        {
+            status = (bit::flag::get(a_register, a_mask) == a_value);
+        }
+
+        return status;
+    }
+
+    template<typename Register, typename Mask>
+    static bool all_bits_are_cleared(const Register& a_register, Mask a_mask, Milliseconds a_timeout)
+    {
+        const std::uint64_t timeout_end = tick_counter<Milliseconds>::get() + a_timeout.get();
+        bool status = false;
+
+        while (tick_counter<Milliseconds>::get() < timeout_end && false == status)
+        {
+            status = bit::flag::is(~a_register, a_mask);
+        }
+
+        return status;
+    }
+    template<typename Register, typename Mask>
+    static bool any_bit_is_cleared(const Register& a_register, Mask a_mask, Milliseconds a_timeout)
+    {
+        const std::uint64_t timeout_end = tick_counter<Milliseconds>::get() + a_timeout.get();
+        bool status = false;
+
+        while (tick_counter<Milliseconds>::get() < timeout_end && status == false)
+        {
+            status = bit::is_any(~a_register, a_mask);
+        }
+
+        return status;
+    }
 };
 
 } // namespace xmcu::soc::st::arm::m0::l0::rm0451::utils
