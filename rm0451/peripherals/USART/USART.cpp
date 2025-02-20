@@ -680,29 +680,13 @@ void USART::enable(const Clock_config& a_clock_config,
 
     ::enable(this->p_registers, a_clock_config, a_transceiving_config, a_frame_format, a_low_power_wakeup);
 
-    volatile auto bbbxx = bit::flag::is(this->p_registers->cr1, ll::usart::CR1::re);
-    bbbxx = bbbxx;
+    const ll::usart::ISR flags_to_wait =
+        (true == bit::flag::is(this->p_registers->cr1, ll::usart::CR1::re) ? ll::usart::ISR::reack :
+                                                                             ll::usart::ISR::none) |
+        (true == bit::flag::is(this->p_registers->cr1, ll::usart::CR1::te) ? ll::usart::ISR::teack :
+                                                                             ll::usart::ISR::none);
 
-    wait_until::all_bits_are_set(this->p_registers->isr, ll::usart::ISR::busy);
-
-    wait_until::all_bits_are_set(
-        this->p_registers->isr,
-        (true == bit::flag::is(this->p_registers->cr1, ll::usart::CR1::re) ?
-             (ll::usart::ISR::reack | ll::usart::ISR::idle) :
-             ll::usart::ISR::none) |
-            (true == bit::flag::is(this->p_registers->cr1, ll::usart::CR1::te) ? ll::usart::ISR::teack :
-                                                                                 ll::usart::ISR::none) |
-            (a_transceiving_config.mute_method == Transceiving_config::Mute_method::idle_line ||
-                     true == bit::flag::is(
-                                 static_cast<std::uint32_t>(a_transceiving_config.mute_method),
-                                 static_cast<std::uint32_t>(Transceiving_config::Mute_method::character_matched)) ?
-                 ll::usart::ISR::rwu :
-                 ll::usart::ISR::none));
-
-    if (true == bit::flag::is(this->p_registers->isr, ll::usart::ISR::idle))
-    {
-        bit::flag::set(&(this->p_registers->icr), ll::usart::ICR::idlecf);
-    }
+    wait_until::all_bits_are_set(this->p_registers->isr, flags_to_wait);
 }
 bool USART::enable(const Clock_config& a_clock_config,
                    const Transceiving_config& a_transceiving_config,
@@ -735,27 +719,14 @@ bool USART::enable(const Clock_config& a_clock_config,
 
     ::enable(this->p_registers, a_clock_config, a_transceiving_config, a_frame_format, a_low_power_wakeup);
 
-    bool ret = wait_until::all_bits_are_set(
-        this->p_registers->isr,
-        (true == bit::flag::is(this->p_registers->cr1, ll::usart::CR1::re) ?
-             (ll::usart::ISR::reack | ll::usart::ISR::idle) :
-             ll::usart::ISR::none) |
-            (true == bit::flag::is(this->p_registers->cr1, ll::usart::CR1::te) ? ll::usart::ISR::teack :
-                                                                                 ll::usart::ISR::none) |
-            (a_transceiving_config.mute_method == Transceiving_config::Mute_method::idle_line ||
-                     true == bit::flag::is(
-                                 static_cast<std::uint32_t>(a_transceiving_config.mute_method),
-                                 static_cast<std::uint32_t>(Transceiving_config::Mute_method::character_matched)) ?
-                 ll::usart::ISR::rwu :
-                 ll::usart::ISR::none),
-        a_timeout.get() - (tick_counter<Milliseconds>::get() - start));
+    const ll::usart::ISR flags_to_wait =
+        (true == bit::flag::is(this->p_registers->cr1, ll::usart::CR1::re) ? ll::usart::ISR::reack :
+                                                                             ll::usart::ISR::none) |
+        (true == bit::flag::is(this->p_registers->cr1, ll::usart::CR1::te) ? ll::usart::ISR::teack :
+                                                                             ll::usart::ISR::none);
 
-    if (true == bit::flag::is(this->p_registers->isr, ll::usart::ISR::idle))
-    {
-        bit::flag::set(&(this->p_registers->icr), ll::usart::ICR::idlecf);
-    }
-
-    return ret;
+    return wait_until::all_bits_are_set(
+        this->p_registers->isr, flags_to_wait, a_timeout.get() - (tick_counter<Milliseconds>::get() - start));
 }
 
 void USART::disable()
