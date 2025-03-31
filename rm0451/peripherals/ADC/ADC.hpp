@@ -19,7 +19,7 @@
 #include <rm0451/clocks/sysclk.hpp>
 #include <rm0451/rcc.hpp>
 #include <rm0451/system/mcu/mcu.hpp>
-#include <soc/ST/arm/IRQ_config.hpp>
+#include <soc/st/arm/IRQ_config.hpp>
 #include <soc/peripheral.hpp>
 #include <xmcu/Duration.hpp>
 #include <xmcu/Non_copyable.hpp>

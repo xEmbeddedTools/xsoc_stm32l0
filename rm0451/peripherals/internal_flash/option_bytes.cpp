@@ -13,7 +13,7 @@
 #include <rm0451/peripherals/internal_flash/internal_flash.hpp>
 #include <rm0451/utils/tick_counter.hpp>
 #include <rm0451/utils/wait_until.hpp>
-#include <soc/ST/arm/m0/nvic.hpp>
+#include <soc/st/arm/m0/nvic.hpp>
 #include <soc/Scoped_guard.hpp>
 #include <xmcu/bit.hpp>
 
