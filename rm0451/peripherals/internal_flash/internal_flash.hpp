@@ -13,7 +13,7 @@
 
 // xmcu
 #include <rm0451/defs.hpp>
-#include <soc/ST/arm/m0/nvic.hpp>
+#include <soc/st/arm/m0/nvic.hpp>
 #include <soc/Scoped_guard.hpp>
 #include <xmcu/Duration.hpp>
 #include <xmcu/Limited.hpp>

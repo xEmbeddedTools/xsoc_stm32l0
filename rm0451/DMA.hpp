@@ -12,8 +12,8 @@
 #include <stm32l0xx.h>
 
 // xmcu
-#include <soc/ST/arm/m0/l0/rm0451/defs.hpp>
-#include <soc/ST/arm/m0/l0/rm0451/rcc.hpp>
+#include <soc/st/arm/m0/l0/rm0451/defs.hpp>
+#include <soc/st/arm/m0/l0/rm0451/rcc.hpp>
 #include <xmcu/Non_copyable.hpp>
 #include <xmcu/bit.hpp>
 #include <xmcu/non_constructible.hpp>
