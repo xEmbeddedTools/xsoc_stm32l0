@@ -28,7 +28,7 @@ private:
         enum class Flag : std::uint32_t
         {
             none = 0x0u,
-            m1 = USART_CR1_M0,
+            m1 = USART_CR1_M1,
             eobie = USART_CR1_EOBIE,
             rtoie = USART_CR1_RTOIE,
             over8 = USART_CR1_OVER8,
@@ -85,7 +85,7 @@ private:
 
         enum class Shift_8 : std::uint32_t
         {
-            add = USART_CR2_ADD
+            add = USART_CR2_ADD_Pos
         };
 
         enum class add : std::uint32_t;

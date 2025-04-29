@@ -339,10 +339,9 @@ void enable(ll::usart::Registers* a_p_registers,
         static_cast<USART::Transceiving_config::Mute_method>(
             static_cast<std::uint32_t>(a_transceiving_config.mute_method) & 0x200u))
     {
-        bit::flag::set(&(a_p_registers->cr2),
-                       ((bit::flag::get(static_cast<std::uint8_t>(a_transceiving_config.mute_method), 0xFFu))
-                        << ll::usart::CR2::add) |
-                           ll::usart::CR2::addm7);
+        const std::uint32_t address =
+            bit::flag::get(static_cast<std::uint32_t>(a_transceiving_config.mute_method), 0xFFu);
+        bit::flag::set(&(a_p_registers->cr2), (address << ll::usart::CR2::add) | ll::usart::CR2::addm7);
         bit::flag::set(&(a_p_registers->cr1), ll::usart::CR1::mme | ll::usart::CR1::wake);
         a_p_registers->rqr = ll::usart::RQR::mmrq;
     }
