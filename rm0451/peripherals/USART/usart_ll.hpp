@@ -23,7 +23,7 @@ namespace xmcu::soc::st::arm::m0::l0::rm0451::peripherals::ll {
 struct usart : public usart_base
 {
 private:
-    struct usart_cr1_descriptor : private xmcu::non_constructible
+    struct cr1_descriptor : private xmcu::non_constructible
     {
         enum class Flag : std::uint32_t
         {
@@ -55,7 +55,7 @@ private:
             dedt = USART_CR1_DEDT_Pos
         };
     };
-    struct usart_cr2_descriptor : private xmcu::non_constructible
+    struct cr2_descriptor : private xmcu::non_constructible
     {
         enum class Flag : std::uint32_t
         {
@@ -90,7 +90,7 @@ private:
 
         enum class add : std::uint32_t;
     };
-    struct usart_cr3_descriptor : private xmcu::non_constructible
+    struct cr3_descriptor : private xmcu::non_constructible
     {
         enum class Flag : std::uint32_t
         {
@@ -125,11 +125,11 @@ private:
             scarcnt = USART_CR3_SCARCNT_Pos
         };
     };
-    struct usart_brr_descriptor : private xmcu::non_constructible
+    struct brr_descriptor : private xmcu::non_constructible
     {
         using Data = std::uint32_t;
     };
-    struct usart_gtpr_descriptor : private xmcu::non_constructible
+    struct gtpr_descriptor : private xmcu::non_constructible
     {
         enum class Data : std::uint32_t;
 
@@ -139,7 +139,7 @@ private:
             gt = USART_GTPR_GT_Pos
         };
     };
-    struct usart_rtor_descriptor : private xmcu::non_constructible
+    struct rtor_descriptor : private xmcu::non_constructible
     {
         enum class Data : std::uint32_t;
 
@@ -153,7 +153,7 @@ private:
             blen = USART_RTOR_BLEN_Pos
         };
     };
-    struct usart_rqr_descriptor : private xmcu::non_constructible
+    struct rqr_descriptor : private xmcu::non_constructible
     {
         enum class Flag : std::uint32_t
         {
@@ -164,7 +164,7 @@ private:
             txfrq = USART_RQR_TXFRQ
         };
     };
-    struct usart_isr_descriptor : private xmcu::non_constructible
+    struct isr_descriptor : private xmcu::non_constructible
     {
         enum class Flag : std::uint32_t
         {
@@ -194,7 +194,7 @@ private:
             tcbgt = 0x1u << 25u /*USART_ISR_TCBGT*/
         };
     };
-    struct usart_icr_descriptor : private xmcu::non_constructible
+    struct icr_descriptor : private xmcu::non_constructible
     {
         enum class Flag : std::uint32_t
         {
@@ -214,11 +214,11 @@ private:
             wucf = USART_ICR_WUCF
         };
     };
-    struct usart_rdr_descriptor : private xmcu::non_constructible
+    struct rdr_descriptor : private xmcu::non_constructible
     {
         using Data = std::uint32_t;
     };
-    struct usart_tdr_descriptor : private xmcu::non_constructible
+    struct tdr_descriptor : private xmcu::non_constructible
     {
         using Data = std::uint32_t;
     };
@@ -328,10 +328,10 @@ private:
     };
 
 public:
-    struct CR1 : public Reg_wrc<usart_cr1_descriptor, usart_cr1_descriptor::Flag>
+    struct CR1 : public Reg_wrc<cr1_descriptor, cr1_descriptor::Flag>
     {
-        using Flag = usart_cr1_descriptor::Flag;
-        using Shift_5 = usart_cr1_descriptor::Shift_5;
+        using Flag = cr1_descriptor::Flag;
+        using Shift_5 = cr1_descriptor::Shift_5;
 
         using enum Flag;
         using enum Shift_5;
@@ -342,17 +342,17 @@ public:
             return *this;
         }
     };
-    struct CR2 : public Reg_wrc<usart_cr2_descriptor, usart_cr2_descriptor::Flag>
+    struct CR2 : public Reg_wrc<cr2_descriptor, cr2_descriptor::Flag>
     {
-        using Flag = usart_cr2_descriptor::Flag;
-        using Shift_2 = usart_cr2_descriptor::Shift_2;
-        using Shift_8 = usart_cr2_descriptor::Shift_8;
+        using Flag = cr2_descriptor::Flag;
+        using Shift_2 = cr2_descriptor::Shift_2;
+        using Shift_8 = cr2_descriptor::Shift_8;
 
         using enum Flag;
         using enum Shift_2;
         using enum Shift_8;
 
-        using Data = Reg_wrc<usart_cr2_descriptor, usart_cr2_descriptor::Flag>::Data;
+        using Data = Reg_wrc<cr2_descriptor, cr2_descriptor::Flag>::Data;
 
         CR2& operator=(Flag value_a)
         {
@@ -360,17 +360,17 @@ public:
             return *this;
         }
     };
-    struct CR3 : public Reg_wrc<usart_cr3_descriptor, usart_cr3_descriptor::Flag>
+    struct CR3 : public Reg_wrc<cr3_descriptor, cr3_descriptor::Flag>
     {
-        using Flag = usart_cr3_descriptor::Flag;
-        using Shift_2 = usart_cr3_descriptor::Shift_2;
-        using Shift_3 = usart_cr3_descriptor::Shift_3;
+        using Flag = cr3_descriptor::Flag;
+        using Shift_2 = cr3_descriptor::Shift_2;
+        using Shift_3 = cr3_descriptor::Shift_3;
 
         using enum Flag;
         using enum Shift_2;
         using enum Shift_3;
 
-        using Data = Reg_wrc<usart_cr3_descriptor, usart_cr3_descriptor::Flag>::Data;
+        using Data = Reg_wrc<cr3_descriptor, cr3_descriptor::Flag>::Data;
 
         CR3& operator=(Flag value_a)
         {
@@ -378,7 +378,7 @@ public:
             return *this;
         }
     };
-    struct BRR : public Reg_wrc<usart_brr_descriptor, std::uint32_t>
+    struct BRR : public Reg_wrc<brr_descriptor, std::uint32_t>
     {
         BRR& operator=(Limited<std::uint32_t, 0x0u, 0xFFFFu> value_a)
         {
@@ -386,13 +386,13 @@ public:
             return *this;
         }
     };
-    struct GTPR : public Reg_wrc<usart_gtpr_descriptor, usart_gtpr_descriptor::Data>
+    struct GTPR : public Reg_wrc<gtpr_descriptor, gtpr_descriptor::Data>
     {
-        using Shift_8 = usart_gtpr_descriptor::Shift_8;
+        using Shift_8 = gtpr_descriptor::Shift_8;
 
         using enum Shift_8;
 
-        using Data = Reg_wrc<usart_gtpr_descriptor, usart_gtpr_descriptor::Data>::Data;
+        using Data = Reg_wrc<gtpr_descriptor, gtpr_descriptor::Data>::Data;
 
         GTPR& operator=(Data value_a)
         {
@@ -400,15 +400,15 @@ public:
             return *this;
         }
     };
-    struct RTOR : public Reg_wrc<usart_rtor_descriptor, usart_rtor_descriptor::Data>
+    struct RTOR : public Reg_wrc<rtor_descriptor, rtor_descriptor::Data>
     {
-        using Shift_23 = usart_rtor_descriptor::Shift_23;
-        using Shift_8 = usart_rtor_descriptor::Shift_8;
+        using Shift_23 = rtor_descriptor::Shift_23;
+        using Shift_8 = rtor_descriptor::Shift_8;
 
         using enum Shift_23;
         using enum Shift_8;
 
-        using Data = Reg_wrc<usart_rtor_descriptor, usart_rtor_descriptor::Data>::Data;
+        using Data = Reg_wrc<rtor_descriptor, rtor_descriptor::Data>::Data;
 
         RTOR& operator=(Data value_a)
         {
@@ -416,13 +416,13 @@ public:
             return *this;
         }
     };
-    struct RQR : public Reg_wrc<usart_rqr_descriptor, usart_rqr_descriptor::Flag>
+    struct RQR : public Reg_wrc<rqr_descriptor, rqr_descriptor::Flag>
     {
-        using Flag = usart_rqr_descriptor::Flag;
+        using Flag = rqr_descriptor::Flag;
 
         using enum Flag;
 
-        using Data = Reg_wrc<usart_rqr_descriptor, usart_rqr_descriptor::Flag>::Data;
+        using Data = Reg_wrc<rqr_descriptor, rqr_descriptor::Flag>::Data;
 
         RQR& operator=(Flag value_a)
         {
@@ -430,29 +430,29 @@ public:
             return *this;
         }
     };
-    struct ISR : public Reg_r<usart_isr_descriptor, usart_isr_descriptor::Flag>
+    struct ISR : public Reg_r<isr_descriptor, isr_descriptor::Flag>
     {
-        using Flag = usart_isr_descriptor::Flag;
+        using Flag = isr_descriptor::Flag;
 
         using enum Flag;
 
-        using Data = Reg_wrc<usart_isr_descriptor, usart_isr_descriptor::Flag>::Data;
+        using Data = Reg_wrc<isr_descriptor, isr_descriptor::Flag>::Data;
 
         ISR(Flag flag_a)
-            : Reg_r<usart_isr_descriptor, usart_isr_descriptor::Flag>(flag_a)
+            : Reg_r<isr_descriptor, isr_descriptor::Flag>(flag_a)
         {
         }
     };
-    struct ICR : public Reg_wrc<usart_icr_descriptor, usart_icr_descriptor::Flag>
+    struct ICR : public Reg_wrc<icr_descriptor, icr_descriptor::Flag>
     {
-        using Flag = usart_icr_descriptor::Flag;
+        using Flag = icr_descriptor::Flag;
 
         using enum Flag;
 
-        using Data = Reg_wrc<usart_icr_descriptor, usart_icr_descriptor::Flag>::Data;
+        using Data = Reg_wrc<icr_descriptor, icr_descriptor::Flag>::Data;
 
         ICR(Flag flag_a)
-            : Reg_wrc<usart_icr_descriptor, usart_icr_descriptor::Flag>(flag_a)
+            : Reg_wrc<icr_descriptor, icr_descriptor::Flag>(flag_a)
         {
         }
 
@@ -462,14 +462,14 @@ public:
             return *this;
         }
     };
-    struct RDR : public Reg_r<usart_rdr_descriptor, usart_rdr_descriptor::Data>
+    struct RDR : public Reg_r<rdr_descriptor, rdr_descriptor::Data>
     {
         constexpr operator std::uint32_t() const
         {
             return static_cast<std::uint32_t>(this->v);
         }
     };
-    struct TDR : public Reg_wrc<usart_tdr_descriptor, usart_tdr_descriptor::Data>
+    struct TDR : public Reg_wrc<tdr_descriptor, tdr_descriptor::Data>
     {
         constexpr operator std::uint32_t() const
         {
@@ -477,13 +477,13 @@ public:
         }
 
         TDR(Limited<std::uint32_t, 0u, 0x1FF> value_a)
-            : Reg_wrc<usart_tdr_descriptor, usart_tdr_descriptor::Data>(static_cast<Data>(value_a.get()))
+            : Reg_wrc<tdr_descriptor, tdr_descriptor::Data>(static_cast<Data>(value_a.get()))
         {
         }
 
         TDR& operator=(Data value_a)
         {
-            this->v = static_cast<Reg_wrc<usart_tdr_descriptor, usart_tdr_descriptor::Data>::Data>(value_a);
+            this->v = static_cast<Reg_wrc<tdr_descriptor, tdr_descriptor::Data>::Data>(value_a);
             return *this;
         }
     };
