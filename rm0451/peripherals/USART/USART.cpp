@@ -222,7 +222,7 @@ void enable(ll::usart::Registers* a_p_registers,
 
     std::uint32_t brr = (clk_freq * 256u + (a_transceiving_config.baud_rate / 2)) / a_transceiving_config.baud_rate;
     hkm_assert(brr >= BRR_min && brr <= BRR_max);
-    a_p_registers->BRR = brr;
+    a_p_registers->brr = brr;
 #endif
 
 #if !defined(HKM_ASSERT_ENABLED)
@@ -606,8 +606,9 @@ void USART_interrupt_handler(ll::usart::Registers* a_p_registers,
             a_p_receive_callback->function(rx_data, a_p_receive_callback->p_user_data);
         }
     }
-    // This prevents retriggering interrupt when overrun is detected, even if CR3.EIE is disabled
-    // NOTE: This might have something to do with non-multibuffer communication and might be also needed for NF/FE
+    // This prevents retriggering interrupt when overrun is detected, even if CR3.EIE is
+    // disabledhttps://dev.azure.com/heavykinematic/SOLOFirmware/_artifacts NOTE: This might have something to do with
+    // non-multibuffer communication and might be also needed for NF/FE
     bit::flag::set(&a_p_registers->icr, ll::usart::ICR::orecf | ll::usart::ICR::fecf | ll::usart::ICR::ncf);
 }
 
