@@ -28,25 +28,25 @@ private:
         enum class Flag : std::uint32_t
         {
             none = 0x0u,
-            m1 = USART_CR1_M1,
-            eobie = USART_CR1_EOBIE,
-            rtoie = USART_CR1_RTOIE,
-            over8 = USART_CR1_OVER8,
-            idleie = USART_CR1_IDLEIE,
-            cmie = USART_CR1_CMIE,
-            mme = USART_CR1_MME,
-            m0 = USART_CR1_M0,
-            wake = USART_CR1_WAKE,
-            pce = USART_CR1_PCE,
-            ps = USART_CR1_PS,
-            peie = USART_CR1_PEIE,
-            txeie = USART_CR1_TXEIE,
-            tcie = USART_CR1_TCIE,
-            rxneie = USART_CR1_RXNEIE,
-            te = USART_CR1_TE,
-            re = USART_CR1_RE,
+            ue = USART_CR1_UE,
             uesm = USART_CR1_UESM,
-            ue = USART_CR1_UE
+            re = USART_CR1_RE,
+            te = USART_CR1_TE,
+            rxneie = USART_CR1_RXNEIE,
+            tcie = USART_CR1_TCIE,
+            txeie = USART_CR1_TXEIE,
+            peie = USART_CR1_PEIE,
+            ps = USART_CR1_PS,
+            pce = USART_CR1_PCE,
+            wake = USART_CR1_WAKE,
+            m0 = USART_CR1_M0,
+            mme = USART_CR1_MME,
+            cmie = USART_CR1_CMIE,
+            idleie = USART_CR1_IDLEIE,
+            over8 = USART_CR1_OVER8,
+            rtoie = USART_CR1_RTOIE,
+            eobie = USART_CR1_EOBIE,
+            m1 = USART_CR1_M1
         };
 
         enum class Shift_5 : std::uint32_t
@@ -284,7 +284,7 @@ private:
     protected:
         const volatile Data v;
     };
-    template<typename desc_t> struct Reg_wc
+    template<typename desc> struct Reg_wc
     {
         enum class Data;
 
@@ -310,7 +310,7 @@ private:
     protected:
         volatile Data v;
     };
-    template<typename desc_t> struct Reg_wr
+    template<typename desc> struct Reg_wr
     {
         enum class Data;
 
