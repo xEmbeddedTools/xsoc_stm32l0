@@ -511,6 +511,7 @@ template<> [[nodiscard]] constexpr usart::Registers* usart::registers<usart::_2>
 {
     return reinterpret_cast<usart::Registers*>(USART2_BASE);
 }
+#endif
 
 // CR1
 constexpr usart::CR1::Data operator|(usart::CR1::Flag left_a, usart::CR1::Flag right_a)
@@ -669,17 +670,14 @@ constexpr usart::ICR::Data& operator|=(usart::ICR::Flag& left_a, usart::ICR::Fla
     left_a = (left_a | right_a);
     return left_a;
 }
-
 constexpr usart::ICR::Data operator&(usart::ICR::Flag left_a, usart::ICR::Flag right_a)
 {
     return static_cast<usart::ICR::Data>(static_cast<std::uint32_t>(left_a) & static_cast<std::uint32_t>(right_a));
 }
-
 constexpr usart::ICR::Flag operator~(usart::ICR::Flag left_a)
 {
     return static_cast<usart::ICR::Data>(~static_cast<std::uint32_t>(left_a));
 }
-#endif
 } // namespace xmcu::soc::st::arm::m0::l0::rm0451::peripherals::ll
 
 namespace xmcu {
@@ -706,5 +704,19 @@ bit::flag::get(xmcu::soc::st::arm::m0::l0::rm0451::peripherals::ll::usart::CR3 r
     return static_cast<xmcu::soc::st::arm::m0::l0::rm0451::peripherals::ll::usart::CR3::Flag>(register_a & mask_a);
 }
 // ISR
-
+template<> [[nodiscard]] inline xmcu::soc::st::arm::m0::l0::rm0451::peripherals::ll::usart::ISR::Data
+bit::flag::get(xmcu::soc::st::arm::m0::l0::rm0451::peripherals::ll::usart::ISR register_a,
+               xmcu::soc::st::arm::m0::l0::rm0451::peripherals::ll::usart::ISR::Flag mask_a)
+{
+    using ll_usart = xmcu::soc::st::arm::m0::l0::rm0451::peripherals::ll::usart;
+    return static_cast<ll_usart::ISR::Data>(static_cast<ll_usart::ISR::Flag>(register_a) & mask_a);
+}
+// ICR
+template<> [[nodiscard]] inline xmcu::soc::st::arm::m0::l0::rm0451::peripherals::ll::usart::ICR::Data
+bit::flag::get(xmcu::soc::st::arm::m0::l0::rm0451::peripherals::ll::usart::ICR register_a,
+               xmcu::soc::st::arm::m0::l0::rm0451::peripherals::ll::usart::ICR::Flag mask_a)
+{
+    using ll_usart = xmcu::soc::st::arm::m0::l0::rm0451::peripherals::ll::usart;
+    return static_cast<ll_usart::ICR::Data>(static_cast<ll_usart::ICR::Flag>(register_a) & mask_a);
+}
 } // namespace xmcu
