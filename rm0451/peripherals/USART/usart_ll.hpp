@@ -244,6 +244,11 @@ private:
         {
         }
 
+        operator Data() const
+        {
+            return this->v;
+        }
+
     protected:
         volatile Data v;
     };
@@ -263,50 +268,13 @@ private:
         {
         }
 
+        operator Data() const
+        {
+            return this->v;
+        }
+
     protected:
         const volatile Data v;
-    };
-    template<typename desc> struct Reg_wc
-    {
-        enum class Data;
-
-        Reg_wc(const volatile Reg_wc& other_a)
-            : v(other_a.v)
-        {
-        }
-
-        void zero()
-        {
-            this->v = 0x0u;
-        }
-
-        operator Data() const
-        {
-            return this->v;
-        }
-        operator const Data*() const
-        {
-            return &(this->v);
-        }
-
-    protected:
-        volatile Data v;
-    };
-    template<typename desc> struct Reg_wr
-    {
-        enum class Data;
-
-        operator Data() const
-        {
-            return this->v;
-        }
-        operator const Data*() const
-        {
-            return &(this->v);
-        }
-
-    protected:
-        volatile Data v;
     };
 
 public:
@@ -327,11 +295,6 @@ public:
         {
             this->v = value_a;
             return *this;
-        }
-
-        operator Data() const
-        {
-            return this->v;
         }
     };
     struct CR2 : public Reg_wrc<cr2_descriptor, cr2_descriptor::Flag>
@@ -356,11 +319,6 @@ public:
             this->v = value_a;
             return *this;
         }
-
-        operator Data() const
-        {
-            return this->v;
-        }
     };
     struct CR3 : public Reg_wrc<cr3_descriptor, cr3_descriptor::Flag>
     {
@@ -383,11 +341,6 @@ public:
         {
             this->v = value_a;
             return *this;
-        }
-
-        operator Data() const
-        {
-            return this->v;
         }
     };
     struct BRR : public Reg_wrc<brr_descriptor, std::uint32_t>
@@ -416,11 +369,6 @@ public:
             this->v = value_a;
             return *this;
         }
-
-        operator Data() const
-        {
-            return this->v;
-        }
     };
     struct RTOR : public Reg_wrc<rtor_descriptor, rtor_descriptor::Data>
     {
@@ -442,11 +390,6 @@ public:
             this->v = value_a;
             return *this;
         }
-
-        operator Data() const
-        {
-            return this->v;
-        }
     };
     struct RQR : public Reg_wrc<rqr_descriptor, rqr_descriptor::Flag>
     {
@@ -466,11 +409,6 @@ public:
             this->v = static_cast<Data>(value_a);
             return *this;
         }
-
-        operator Data() const
-        {
-            return this->v;
-        }
     };
     struct ISR : public Reg_r<isr_descriptor, isr_descriptor::Flag>
     {
@@ -483,11 +421,6 @@ public:
         ISR(Flag flag_a)
             : Reg_r<isr_descriptor, isr_descriptor::Flag>(flag_a)
         {
-        }
-
-        operator Data() const
-        {
-            return this->v;
         }
     };
     struct ICR : public Reg_wrc<icr_descriptor, icr_descriptor::Flag>
@@ -507,11 +440,6 @@ public:
         {
             this->v = static_cast<Data>(value_a);
             return *this;
-        }
-
-        operator Data() const
-        {
-            return this->v;
         }
     };
     struct RDR : public Reg_r<rdr_descriptor, rdr_descriptor::Data>
@@ -536,11 +464,6 @@ public:
         {
             this->v = static_cast<Reg_wrc<tdr_descriptor, tdr_descriptor::Data>::Data>(value_a);
             return *this;
-        }
-
-        operator Data() const
-        {
-            return this->v;
         }
     };
 

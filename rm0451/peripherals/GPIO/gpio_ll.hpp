@@ -197,10 +197,6 @@ private:
         {
             return this->v;
         }
-        operator const Data*() const
-        {
-            return &(this->v);
-        }
 
     protected:
         volatile Data v;
@@ -217,10 +213,6 @@ private:
         operator Data() const
         {
             return this->v;
-        }
-        operator const Data*() const
-        {
-            return &(this->v);
         }
 
     protected:
@@ -244,10 +236,6 @@ private:
         {
             return this->v;
         }
-        operator const Data*() const
-        {
-            return &(this->v);
-        }
 
     protected:
         volatile Data v;
@@ -259,10 +247,6 @@ private:
         operator Data() const
         {
             return this->v;
-        }
-        operator const Data*() const
-        {
-            return &(this->v);
         }
 
     protected:
