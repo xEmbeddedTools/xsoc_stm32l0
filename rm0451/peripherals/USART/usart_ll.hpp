@@ -230,6 +230,11 @@ private:
     {
         using Data = Type;
 
+        Reg_wrc()
+            : v(static_cast<volatile Data>(0x0u))
+        {
+        }
+
         Reg_wrc(Data data_a)
             : v(data_a)
         {
@@ -239,30 +244,16 @@ private:
         {
         }
 
-        void zero()
-        {
-            this->v = static_cast<Data>(0x0u);
-        }
-
-        operator Data() const
-        {
-            return this->v;
-        }
-        operator volatile Data&()
-        {
-            return this->v;
-        }
-
-        operator const volatile Data*() const
-        {
-            return &(this->v);
-        }
-
     protected:
         volatile Data v;
     };
     template<typename desc, typename Data> struct Reg_r
     {
+        Reg_r()
+            : v(static_cast<volatile Data>(0x0u))
+        {
+        }
+
         Reg_r(Data data_a)
             : v(data_a)
         {
@@ -270,15 +261,6 @@ private:
         Reg_r(const volatile Reg_r& other_a)
             : v(other_a.v)
         {
-        }
-
-        operator Data() const
-        {
-            return this->v;
-        }
-        operator const Data*() const
-        {
-            return &(this->v);
         }
 
     protected:
@@ -336,10 +318,20 @@ public:
         using enum Flag;
         using enum Shift_5;
 
+        CR1(Flag flag_a)
+            : Reg_wrc<cr1_descriptor, cr1_descriptor::Flag>(flag_a)
+        {
+        }
+
         CR1& operator=(Flag value_a)
         {
             this->v = value_a;
             return *this;
+        }
+
+        operator Data() const
+        {
+            return this->v;
         }
     };
     struct CR2 : public Reg_wrc<cr2_descriptor, cr2_descriptor::Flag>
@@ -354,10 +346,20 @@ public:
 
         using Data = Reg_wrc<cr2_descriptor, cr2_descriptor::Flag>::Data;
 
+        CR2(Flag flag_a)
+            : Reg_wrc<cr2_descriptor, cr2_descriptor::Flag>(flag_a)
+        {
+        }
+
         CR2& operator=(Flag value_a)
         {
             this->v = value_a;
             return *this;
+        }
+
+        operator Data() const
+        {
+            return this->v;
         }
     };
     struct CR3 : public Reg_wrc<cr3_descriptor, cr3_descriptor::Flag>
@@ -372,10 +374,20 @@ public:
 
         using Data = Reg_wrc<cr3_descriptor, cr3_descriptor::Flag>::Data;
 
+        CR3(Flag flag_a)
+            : Reg_wrc<cr3_descriptor, cr3_descriptor::Flag>(flag_a)
+        {
+        }
+
         CR3& operator=(Flag value_a)
         {
             this->v = value_a;
             return *this;
+        }
+
+        operator Data() const
+        {
+            return this->v;
         }
     };
     struct BRR : public Reg_wrc<brr_descriptor, std::uint32_t>
@@ -394,10 +406,20 @@ public:
 
         using Data = Reg_wrc<gtpr_descriptor, gtpr_descriptor::Data>::Data;
 
+        GTPR(Data data_a)
+            : Reg_wrc<gtpr_descriptor, gtpr_descriptor::Data>(data_a)
+        {
+        }
+
         GTPR& operator=(Data value_a)
         {
             this->v = value_a;
             return *this;
+        }
+
+        operator Data() const
+        {
+            return this->v;
         }
     };
     struct RTOR : public Reg_wrc<rtor_descriptor, rtor_descriptor::Data>
@@ -410,10 +432,20 @@ public:
 
         using Data = Reg_wrc<rtor_descriptor, rtor_descriptor::Data>::Data;
 
+        RTOR(Data data_a)
+            : Reg_wrc<rtor_descriptor, rtor_descriptor::Data>(data_a)
+        {
+        }
+
         RTOR& operator=(Data value_a)
         {
             this->v = value_a;
             return *this;
+        }
+
+        operator Data() const
+        {
+            return this->v;
         }
     };
     struct RQR : public Reg_wrc<rqr_descriptor, rqr_descriptor::Flag>
@@ -424,10 +456,20 @@ public:
 
         using Data = Reg_wrc<rqr_descriptor, rqr_descriptor::Flag>::Data;
 
+        RQR(Flag flag_a)
+            : Reg_wrc<rqr_descriptor, rqr_descriptor::Flag>(flag_a)
+        {
+        }
+
         RQR& operator=(Flag value_a)
         {
             this->v = static_cast<Data>(value_a);
             return *this;
+        }
+
+        operator Data() const
+        {
+            return this->v;
         }
     };
     struct ISR : public Reg_r<isr_descriptor, isr_descriptor::Flag>
@@ -441,6 +483,11 @@ public:
         ISR(Flag flag_a)
             : Reg_r<isr_descriptor, isr_descriptor::Flag>(flag_a)
         {
+        }
+
+        operator Data() const
+        {
+            return this->v;
         }
     };
     struct ICR : public Reg_wrc<icr_descriptor, icr_descriptor::Flag>
@@ -461,6 +508,11 @@ public:
             this->v = static_cast<Data>(value_a);
             return *this;
         }
+
+        operator Data() const
+        {
+            return this->v;
+        }
     };
     struct RDR : public Reg_r<rdr_descriptor, rdr_descriptor::Data>
     {
@@ -471,11 +523,10 @@ public:
     };
     struct TDR : public Reg_wrc<tdr_descriptor, tdr_descriptor::Data>
     {
-        constexpr operator std::uint32_t() const
+        TDR(Data data_a)
+            : Reg_wrc<tdr_descriptor, tdr_descriptor::Data>(data_a)
         {
-            return this->v;
         }
-
         TDR(Limited<std::uint32_t, 0u, 0x1FF> value_a)
             : Reg_wrc<tdr_descriptor, tdr_descriptor::Data>(static_cast<Data>(value_a.get()))
         {
@@ -485,6 +536,11 @@ public:
         {
             this->v = static_cast<Reg_wrc<tdr_descriptor, tdr_descriptor::Data>::Data>(value_a);
             return *this;
+        }
+
+        operator Data() const
+        {
+            return this->v;
         }
     };
 
@@ -514,63 +570,84 @@ template<> [[nodiscard]] constexpr usart::Registers* usart::registers<usart::_2>
 #endif
 
 // CR1
-constexpr usart::CR1::Data operator|(usart::CR1::Flag left_a, usart::CR1::Flag right_a)
+constexpr usart::CR1::Data operator|(usart::CR1::Data left_a, usart::CR1::Data right_a)
 {
     return static_cast<usart::CR1::Data>(static_cast<std::uint32_t>(left_a) | static_cast<std::uint32_t>(right_a));
 }
-constexpr usart::CR1::Data& operator|=(usart::CR1::Flag& left_a, usart::CR1::Flag right_a)
-{
-    left_a = (left_a | right_a);
-    return left_a;
-}
-constexpr usart::CR1& operator|=(usart::CR1& left_a, usart::CR1::Flag right_a)
-{
-    left_a = (left_a | right_a);
-    return left_a;
-}
-constexpr usart::CR1::Data operator&(usart::CR1::Flag left_a, usart::CR1::Flag right_a)
+constexpr usart::CR1::Data operator&(usart::CR1::Data left_a, usart::CR1::Data right_a)
 {
     return static_cast<usart::CR1::Data>(static_cast<std::uint32_t>(left_a) & static_cast<std::uint32_t>(right_a));
 }
-constexpr usart::CR1::Data& operator&=(usart::CR1::Flag& left_a, usart::CR1::Flag right_a)
+
+constexpr usart::CR1::Data& operator|=(usart::CR1::Data& left_a, usart::CR1::Data right_a)
+{
+    left_a = left_a | right_a;
+    return left_a;
+}
+constexpr usart::CR1::Data& operator&=(usart::CR1::Data& left_a, usart::CR1::Data right_a)
 {
     left_a = (left_a & right_a);
     return left_a;
 }
-constexpr usart::CR1& operator&=(usart::CR1& left_a, usart::CR1::Flag right_a)
+
+constexpr usart::CR1& operator|=(usart::CR1& left_a, usart::CR1::Data right_a)
+{
+    left_a = left_a | right_a;
+    return left_a;
+}
+constexpr usart::CR1& operator&=(usart::CR1& left_a, usart::CR1::Data right_a)
 {
     left_a = (left_a & right_a);
     return left_a;
+}
+
+constexpr usart::CR1::Data operator~(usart::CR1::Data left_a)
+{
+    return static_cast<usart::CR1::Data>(~static_cast<std::uint32_t>(left_a));
 }
 
 constexpr usart::CR1::Data operator<<(Limited<std::uint32_t, 0x0u, 0x1Fu> left_a, usart::CR1::Shift_5 right_a)
 {
     return static_cast<usart::CR1::Data>(left_a.get() << static_cast<std::uint32_t>(right_a));
 }
-constexpr usart::CR1::Flag operator~(usart::CR1::Flag left_a)
-{
-    return static_cast<usart::CR1::Flag>(~static_cast<std::uint32_t>(left_a));
-}
 
 // CR2
-constexpr usart::CR2::Data operator|(usart::CR2::Flag left_a, usart::CR2::Flag right_a)
+constexpr usart::CR2::Data operator|(usart::CR2::Data left_a, usart::CR2::Data right_a)
 {
     return static_cast<usart::CR2::Data>(static_cast<std::uint32_t>(left_a) | static_cast<std::uint32_t>(right_a));
 }
-constexpr usart::CR2::Data& operator|=(usart::CR2::Flag& left_a, usart::CR2::Flag right_a)
-{
-    left_a = (left_a | right_a);
-    return left_a;
-}
-constexpr usart::CR2 operator|=(usart::CR2& left_a, usart::CR2::Flag right_a)
-{
-    left_a = (left_a | right_a);
-    return left_a;
-}
-constexpr usart::CR2::Data operator&(usart::CR2::Flag left_a, usart::CR2::Flag right_a)
+constexpr usart::CR2::Data operator&(usart::CR2::Data left_a, usart::CR2::Data right_a)
 {
     return static_cast<usart::CR2::Data>(static_cast<std::uint32_t>(left_a) & static_cast<std::uint32_t>(right_a));
 }
+
+constexpr usart::CR2::Data& operator|=(usart::CR2::Data& left_a, usart::CR2::Data right_a)
+{
+    left_a = left_a | right_a;
+    return left_a;
+}
+constexpr usart::CR2::Data& operator&=(usart::CR2::Data& left_a, usart::CR2::Data right_a)
+{
+    left_a = (left_a & right_a);
+    return left_a;
+}
+
+constexpr usart::CR2& operator|=(usart::CR2& left_a, usart::CR2::Data right_a)
+{
+    left_a = left_a | right_a;
+    return left_a;
+}
+constexpr usart::CR2& operator&=(usart::CR2& left_a, usart::CR2::Data right_a)
+{
+    left_a = (left_a & right_a);
+    return left_a;
+}
+
+constexpr usart::CR2::Data operator~(usart::CR2::Data left_a)
+{
+    return static_cast<usart::CR2::Data>(~static_cast<std::uint32_t>(left_a));
+}
+
 constexpr usart::CR2::Data operator<<(Limited<std::uint32_t, 0x0u, 0x3u> left_a, usart::CR2::Shift_2 right_a)
 {
     return static_cast<usart::CR2::Data>(left_a.get() << static_cast<std::uint32_t>(right_a));
@@ -578,10 +655,6 @@ constexpr usart::CR2::Data operator<<(Limited<std::uint32_t, 0x0u, 0x3u> left_a,
 constexpr usart::CR2::Data operator<<(Limited<std::uint32_t, 0x0u, 0xFu> left_a, usart::CR2::Shift_8 right_a)
 {
     return static_cast<usart::CR2::Data>(left_a.get() << static_cast<std::uint32_t>(right_a));
-}
-constexpr usart::CR2::Flag operator~(usart::CR2::Flag left_a)
-{
-    return static_cast<usart::CR2::Flag>(~static_cast<std::uint32_t>(left_a));
 }
 
 // CR3
@@ -603,6 +676,7 @@ constexpr usart::CR3::Data& operator&=(usart::CR3::Flag& left_a, usart::CR3::Fla
     left_a = (left_a & right_a);
     return left_a;
 }
+
 constexpr usart::CR3::Data operator<<(Limited<std::uint32_t, 0x0u, 0x3u> left_a, usart::CR3::Shift_2 right_a)
 {
     return static_cast<usart::CR3::Data>(left_a.get() << static_cast<std::uint32_t>(right_a));
@@ -611,15 +685,20 @@ constexpr usart::CR3::Data operator<<(Limited<std::uint32_t, 0x0u, 0xFu> left_a,
 {
     return static_cast<usart::CR3::Data>(left_a.get() << static_cast<std::uint32_t>(right_a));
 }
+
 constexpr usart::CR3::Flag operator~(usart::CR3::Flag left_a)
 {
     return static_cast<usart::CR3::Flag>(~static_cast<std::uint32_t>(left_a));
 }
 
 // GTPR
-constexpr usart::CR1::Data operator<<(Limited<std::uint32_t, 0x0u, 0xFu> left_a, usart::GTPR::Shift_8 right_a)
+constexpr usart::GTPR::Data operator<<(Limited<std::uint32_t, 0x0u, 0xFu> left_a, usart::GTPR::Shift_8 right_a)
 {
-    return static_cast<usart::CR1::Data>(left_a.get() << static_cast<std::uint32_t>(right_a));
+    return static_cast<usart::GTPR::Data>(left_a.get() << static_cast<std::uint32_t>(right_a));
+}
+constexpr usart::GTPR::Data operator~(usart::GTPR::Data left_a)
+{
+    return static_cast<usart::GTPR::Data>(~static_cast<std::uint32_t>(left_a));
 }
 
 // RTOR
@@ -630,6 +709,10 @@ constexpr usart::RTOR::Data operator<<(Limited<std::uint32_t, 0x0u, 0xFFFFFFu> l
 constexpr usart::RTOR::Data operator<<(Limited<std::uint32_t, 0x0u, 0xFu> left_a, usart::RTOR::Shift_8 right_a)
 {
     return static_cast<usart::RTOR::Data>(left_a.get() << static_cast<std::uint32_t>(right_a));
+}
+constexpr usart::RTOR::Data operator~(usart::RTOR::Data left_a)
+{
+    return static_cast<usart::RTOR::Data>(~static_cast<std::uint32_t>(left_a));
 }
 
 // RQR
@@ -661,20 +744,38 @@ constexpr usart::ISR::Data operator~(usart::ISR::Flag left_a)
 }
 
 // ICR
-constexpr usart::ICR::Data operator|(usart::ICR::Flag left_a, usart::ICR::Flag right_a)
+constexpr usart::ICR::Data operator|(usart::ICR::Data left_a, usart::ICR::Data right_a)
 {
     return static_cast<usart::ICR::Data>(static_cast<std::uint32_t>(left_a) | static_cast<std::uint32_t>(right_a));
 }
-constexpr usart::ICR::Data& operator|=(usart::ICR::Flag& left_a, usart::ICR::Flag right_a)
-{
-    left_a = (left_a | right_a);
-    return left_a;
-}
-constexpr usart::ICR::Data operator&(usart::ICR::Flag left_a, usart::ICR::Flag right_a)
+constexpr usart::ICR::Data operator&(usart::ICR::Data left_a, usart::ICR::Data right_a)
 {
     return static_cast<usart::ICR::Data>(static_cast<std::uint32_t>(left_a) & static_cast<std::uint32_t>(right_a));
 }
-constexpr usart::ICR::Flag operator~(usart::ICR::Flag left_a)
+
+constexpr usart::ICR::Data& operator|=(usart::ICR::Data& left_a, usart::ICR::Data right_a)
+{
+    left_a = left_a | right_a;
+    return left_a;
+}
+constexpr usart::ICR::Data& operator&=(usart::ICR::Data& left_a, usart::ICR::Data right_a)
+{
+    left_a = (left_a & right_a);
+    return left_a;
+}
+
+constexpr usart::ICR& operator|=(usart::ICR& left_a, usart::ICR::Data right_a)
+{
+    left_a = left_a | right_a;
+    return left_a;
+}
+constexpr usart::ICR& operator&=(usart::ICR& left_a, usart::ICR::Data right_a)
+{
+    left_a = (left_a & right_a);
+    return left_a;
+}
+
+constexpr usart::ICR::Data operator~(usart::ICR::Data left_a)
 {
     return static_cast<usart::ICR::Data>(~static_cast<std::uint32_t>(left_a));
 }

@@ -111,5 +111,4 @@ struct wait_until : private non_constructible
         return status;
     }
 };
-
 } // namespace xmcu::soc::st::arm::m0::l0::rm0451::utils
