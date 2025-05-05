@@ -99,21 +99,22 @@ public:
             const auto itr_end = std::end(a_data);
             auto itr = itr_begin;
 
-            bit::flag::set(&(this->p_LPUART->p_registers->ICR), USART_ICR_TCCF | USART_ICR_PECF | USART_ICR_NECF);
+            bit::flag::set(&(this->p_LPUART->p_registers->icr),
+                           ll::usart::ICR::tccf | ll::usart::ICR::pecf | ll::usart::ICR::ncf);
 
             while (itr != itr_end &&
-                   false == bit::is_any(this->p_LPUART->p_registers->ISR, USART_ISR_PE | USART_ISR_NE))
+                   false == bit::is_any(this->p_LPUART->p_registers->isr, ll::usart::ISR::pe | ll::usart::ISR::ne))
             {
-                if (true == bit::flag::is(this->p_LPUART->p_registers->ISR, USART_ISR_TXE))
+                if (true == bit::flag::is(this->p_LPUART->p_registers->isr, ll::usart::ISR::txe))
                 {
-                    this->p_LPUART->p_registers->TDR = *itr;
+                    this->p_LPUART->p_registers->tdr = *itr;
                     itr++;
                 }
             }
 
-            if (false == bit::is_any(this->p_LPUART->p_registers->ISR, USART_ISR_PE | USART_ISR_NE))
+            if (false == bit::is_any(this->p_LPUART->p_registers->isr, ll::usart::ISR::pe | ll::usart::ISR::ne))
             {
-                utils::wait_until::all_bits_are_set(this->p_LPUART->p_registers->ISR, USART_ISR_TC);
+                utils::wait_until::all_bits_are_set(this->p_LPUART->p_registers->isr, ll::usart::ISR::tc);
             }
 
             return static_cast<std::uint32_t>(itr - itr_begin);
@@ -125,19 +126,20 @@ public:
             const auto itr_end = std::end(a_first);
             auto itr = itr_begin;
 
-            bit::flag::set(&(this->p_LPUART->p_registers->ICR), USART_ICR_TCCF | USART_ICR_PECF | USART_ICR_NECF);
+            bit::flag::set(&(this->p_LPUART->p_registers->icr),
+                           ll::usart::ICR::tccf | ll::usart::ICR::pecf | ll::usart::ICR::ncf);
 
             while (itr != itr_end &&
-                   false == bit::is_any(this->p_LPUART->p_registers->ISR, USART_ISR_PE | USART_ISR_NE))
+                   false == bit::is_any(this->p_LPUART->p_registers->isr, ll::usart::ISR::pe | ll::usart::ISR::ne))
             {
-                if (true == bit::flag::is(this->p_LPUART->p_registers->ISR, USART_ISR_TXE))
+                if (true == bit::flag::is(this->p_LPUART->p_registers->isr, ll::usart::ISR::txe))
                 {
-                    this->p_LPUART->p_registers->TDR = *itr;
+                    this->p_LPUART->p_registers->tdr = *itr;
                     itr++;
                 }
             }
 
-            if (false == bit::is_any(this->p_LPUART->p_registers->ISR, USART_ISR_PE | USART_ISR_NE))
+            if (false == bit::is_any(this->p_LPUART->p_registers->isr, ll::usart::ISR::pe | ll::usart::ISR::ne))
             {
                 return this->transmit_2(a_tail...) + static_cast<std::uint32_t>(itr - itr_begin);
             }
@@ -153,22 +155,23 @@ public:
             const auto itr_end = std::end(a_data);
             auto itr = itr_begin;
 
-            bit::flag::set(&(this->p_LPUART->p_registers->ICR), USART_ICR_TCCF | USART_ICR_PECF | USART_ICR_NECF);
+            bit::flag::set(&(this->p_LPUART->p_registers->icr),
+                           ll::usart::ICR::tccf | ll::usart::ICR::pecf | ll::usart::ICR::ncf);
 
             while (itr != itr_end &&
-                   false == bit::is_any(this->p_LPUART->p_registers->ISR, USART_ISR_PE | USART_ISR_NE) &&
+                   false == bit::is_any(this->p_LPUART->p_registers->isr, ll::usart::ISR::pe | ll::usart::ISR::ne) &&
                    utils::tick_counter<Milliseconds>::get() <= timeout_end_timestamp)
             {
-                if (true == bit::flag::is(this->p_LPUART->p_registers->ISR, USART_ISR_TXE))
+                if (true == bit::flag::is(this->p_LPUART->p_registers->isr, ll::usart::ISR::txe))
                 {
-                    this->p_LPUART->p_registers->TDR = *itr;
+                    this->p_LPUART->p_registers->tdr = *itr;
                     itr++;
                 }
             }
 
-            if (false == bit::is_any(this->p_LPUART->p_registers->ISR, USART_ISR_PE | USART_ISR_NE))
+            if (false == bit::is_any(this->p_LPUART->p_registers->isr, ll::usart::ISR::pe | ll::usart::ISR::ne))
             {
-                utils::wait_until::all_bits_are_set(this->p_LPUART->p_registers->ISR, USART_ISR_TC);
+                utils::wait_until::all_bits_are_set(this->p_LPUART->p_registers->isr, ll::usart::ISR::tc);
             }
 
             return static_cast<std::uint32_t>(itr - itr_begin);
@@ -183,20 +186,21 @@ public:
             const auto itr_end = std::end(a_first);
             auto itr = itr_begin;
 
-            bit::flag::set(&(this->p_LPUART->p_registers->ICR), USART_ICR_TCCF | USART_ICR_PECF | USART_ICR_NECF);
+            bit::flag::set(&(this->p_LPUART->p_registers->icr),
+                           ll::usart::ICR::tccf | ll::usart::ICR::pecf | ll::usart::ICR::ncf);
 
             while (itr != itr_end &&
-                   false == bit::is_any(this->p_LPUART->p_registers->ISR, USART_ISR_PE | USART_ISR_NE) &&
+                   false == bit::is_any(this->p_LPUART->p_registers->isr, ll::usart::ISR::pe | ll::usart::ISR::ne) &&
                    utils::tick_counter<Milliseconds>::get() <= timeout_end_timestamp)
             {
-                if (true == bit::flag::is(this->p_LPUART->p_registers->ISR, USART_ISR_TXE))
+                if (true == bit::flag::is(this->p_LPUART->p_registers->isr, ll::usart::ISR::txe))
                 {
-                    this->p_LPUART->p_registers->TDR = *itr;
+                    this->p_LPUART->p_registers->tdr = *itr;
                     itr++;
                 }
             }
 
-            if (false == bit::is_any(this->p_LPUART->p_registers->ISR, USART_ISR_PE | USART_ISR_NE) &&
+            if (false == bit::is_any(this->p_LPUART->p_registers->isr, ll::usart::ISR::pe | ll::usart::ISR::ne) &&
                 utils::tick_counter<Milliseconds>::get() <= timeout_end_timestamp)
             {
                 const std::uint64_t new_timeout =
@@ -281,7 +285,8 @@ public:
 
     bool is_enabled() const
     {
-        return bit::is_any(this->p_registers->ISR, USART_ISR_REACK_Pos | USART_ISR_TEACK_Pos);
+        return bit::is_any(this->p_registers->isr, ll::usart::ISR::reack | ll::usart::ISR::teack) &&
+               bit::flag::is(this->p_registers->cr1, ll::usart::CR1::ue);
     }
 
     Transceiving_config get_Transceiving_config() const
@@ -294,12 +299,12 @@ public:
         return {};
     }
 
-    operator USART_TypeDef*()
+    operator ll::usart::Registers*()
     {
         return this->p_registers;
     }
 
-    operator const USART_TypeDef*() const
+    operator const ll::usart::Registers*() const
     {
         return this->p_registers;
     }
@@ -308,7 +313,7 @@ public:
     Interrupt interrupt;
 
 private:
-    LPUART(std::uint32_t a_idx, USART_TypeDef* a_p_registers, IRQn_Type a_irqn)
+    LPUART(std::uint32_t a_idx, ll::usart::Registers* a_p_registers, IRQn_Type a_irqn)
         : idx(a_idx)
         , p_registers(a_p_registers)
         , irqn(a_irqn)
@@ -318,7 +323,7 @@ private:
     }
 
     std::uint32_t idx;
-    USART_TypeDef* p_registers;
+    ll::usart::Registers* p_registers;
 
     IRQn_Type irqn;
     Interrupt::Transmit_callback transmit_callback;
@@ -349,7 +354,8 @@ operator|(LPUART::Transceiving_config::Flow_control_flag a_f1,
 
     return static_cast<LPUART::Transceiving_config::Flow_control_flag>(
         static_cast<std::uint32_t>(LPUART::Transceiving_config::Flow_control_flag::RS485) |
-        (a_f2.assertion_time << USART_CR1_DEAT_Pos) | (a_f2.deassertion_time << USART_CR1_DEDT_Pos));
+        static_cast<std::uint32_t>((a_f2.assertion_time << ll::usart::CR1::deat) |
+                                   (a_f2.deassertion_time << ll::usart::CR1::dedt)));
 }
 
 constexpr LPUART::Transceiving_config::Flow_control_flag operator&(LPUART::Transceiving_config::Flow_control_flag a_f1,
@@ -432,7 +438,10 @@ template<> class peripheral<st::arm::m0::l0::rm0451::peripherals::LPUART, 1u> : 
 public:
     static st::arm::m0::l0::rm0451::peripherals::LPUART create()
     {
-        return st::arm::m0::l0::rm0451::peripherals::LPUART(0u, LPUART1, IRQn_Type::LPUART1_IRQn);
+        return st::arm::m0::l0::rm0451::peripherals::LPUART(
+            0u,
+            reinterpret_cast<st::arm::m0::l0::rm0451::peripherals::ll::usart::Registers*>(LPUART1),
+            IRQn_Type::LPUART1_IRQn);
     }
 };
 } // namespace xmcu::soc
