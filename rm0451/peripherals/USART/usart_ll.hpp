@@ -345,9 +345,9 @@ public:
     };
     struct BRR : public Reg_wrc<brr_descriptor, std::uint32_t>
     {
-        BRR& operator=(Limited<std::uint32_t, 0x0u, 0xFFFFu> value_a)
+        BRR& operator=(std::uint32_t value_a)
         {
-            this->v = (value_a.get());
+            this->v = value_a;
             return *this;
         }
     };
