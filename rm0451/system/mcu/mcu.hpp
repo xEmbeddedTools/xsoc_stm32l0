@@ -88,4 +88,29 @@ public:
         return static_cast<std::uint32_t>((*(reinterpret_cast<uint32_t*>(UID_BASE + 0x14))));
     }
 };
+
+constexpr mcu<1u>::Reset_source operator~(mcu<1u>::Reset_source a_rhs)
+{
+    return static_cast<mcu<1u>::Reset_source>(~static_cast<std::uint32_t>(a_rhs));
+}
+
+constexpr mcu<1u>::Reset_source operator|(mcu<1u>::Reset_source left_a, mcu<1u>::Reset_source right_a)
+{
+    return static_cast<mcu<1u>::Reset_source>(static_cast<std::uint32_t>(left_a) | static_cast<std::uint32_t>(right_a));
+}
+constexpr mcu<1u>::Reset_source operator&(mcu<1u>::Reset_source left_a, mcu<1u>::Reset_source right_a)
+{
+    return static_cast<mcu<1u>::Reset_source>(static_cast<std::uint32_t>(left_a) & static_cast<std::uint32_t>(right_a));
+}
+
+constexpr mcu<1u>::Reset_source& operator&=(mcu<1u>::Reset_source& a_lhs, mcu<1u>::Reset_source a_rhs)
+{
+    a_lhs = (a_lhs & a_rhs);
+    return a_lhs;
+}
+constexpr mcu<1u>::Reset_source& operator|=(mcu<1u>::Reset_source& a_lhs, mcu<1u>::Reset_source a_rhs)
+{
+    a_lhs = (a_lhs | a_rhs);
+    return a_lhs;
+}
 } // namespace xmcu::soc::st::arm::m0::l0::rm0451::system
