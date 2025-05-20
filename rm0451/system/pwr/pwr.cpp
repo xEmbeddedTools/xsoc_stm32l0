@@ -73,4 +73,16 @@ pwr<mcu<1u>>::Voltage_scaling pwr<mcu<1u>>::get_voltage_scaling()
 {
     return static_cast<Voltage_scaling>(bit::flag::get(PWR->CR, PWR_CR_VOS));
 }
+
+bool pwr<mcu<1u>>::backup_domain::enable(Milliseconds timeout_a)
+{
+    bit::flag::set(&(PWR->CR), PWR_CR_DBP);
+    return wait_until::all_bits_are_cleared(PWR->CR, PWR_CR_DBP, timeout_a);
+}
+
+bool pwr<mcu<1u>>::backup_domain::disable(Milliseconds timeout_a)
+{
+    bit::flag::clear(&(PWR->CR), PWR_CR_DBP);
+    return wait_until::all_bits_are_set(PWR->CR, PWR_CR_DBP, timeout_a);
+}
 } // namespace xmcu::soc::st::arm::m0::l0::rm0451::system
