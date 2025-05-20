@@ -56,6 +56,11 @@ public:
         static void enter(Type a_type, Method a_method, Sleeponexit a_sleeponexit);
         static void exit();
     };
+    struct backup_domain : private xmcu::non_constructible
+    {
+        static bool enable(xmcu::Milliseconds timeout_a);
+        static bool disable(xmcu::Milliseconds timeout_a);
+    };
 
     static void set_voltage_scaling(Voltage_scaling a_scaling);
     static bool set_voltage_scaling(Voltage_scaling a_scaling, Milliseconds a_timeout);
