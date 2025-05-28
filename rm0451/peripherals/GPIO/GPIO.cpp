@@ -169,7 +169,7 @@ void GPIO::Out::Bus::set_value(std::uint32_t a_value)
 
     ll::gpio::BSRR::Data mask = mask_from_lower_bit << static_cast<std::uint32_t>(this->id_start);
 
-    this->p_port->p_registers->bsrr = mask << 16 | static_cast<ll::gpio::BSRR::Data> (a_value) << this->id_start;
+    this->p_port->p_registers->bsrr = mask << 16 | static_cast<ll::gpio::BSRR::Data>(a_value) << this->id_start;
 }
 
 // TODO: parallel write to configuration registers
@@ -202,12 +202,12 @@ void GPIO::Out::Bus::set_speed(Speed a_speed)
 {
     hkm_assert(nullptr != this->p_port && 0xFFu != this->id_start && 0xFFu != this->id_end);
 
-    // for (std::int32_t id = this->id_start; id <= this->id_end; ++id)
-    //{
-    //     bit_flag::set(&(static_cast<GPIO_TypeDef*>(*(this->p_port))->OSPEEDR),
-    //                   0x3u << (id * 2),
-    //                   static_cast<std::uint32_t>(a_speed) << (id * 2u));
-    // }
+    for (std::int32_t id = this->id_start; id <= this->id_end; ++id)
+    {
+        bit::flag::set(&(this->p_port->p_registers->ospeedr),
+                       ll::gpio::OSPEEDR::mask << id,
+                       static_cast<ll::gpio::OSPEEDR::Flag>(a_speed) << id);
+    }
 }
 
 void GPIO::Analog::Pin::set_pull(Pull a_pull)
