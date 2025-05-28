@@ -945,6 +945,18 @@ constexpr gpio::BSRR::Data operator<<(gpio::BSRR::Flag left_a, xmcu::Limited<std
 {
     return static_cast<gpio::BSRR::Data>(0x1u << (pin_a * static_cast<std::uint32_t>(left_a)));
 }
+constexpr gpio::BSRR::Data operator<<(gpio::BSRR::Data left_a, xmcu::Limited<std::uint32_t, 0u, 31u> right_a)
+{
+    return static_cast<gpio::BSRR::Data>(static_cast<std::uint32_t>(left_a) << static_cast<std::uint32_t>(right_a));
+}
+constexpr gpio::BSRR::Data operator<<(gpio::BSRR::Data left_a, gpio::BSRR::Data right_a)
+{
+    return static_cast<gpio::BSRR::Data>(static_cast<std::uint32_t>(left_a) << static_cast<std::uint32_t>(right_a));
+}
+constexpr gpio::BSRR::Data operator>>(gpio::BSRR::Data left_a, gpio::BSRR::Data right_a)
+{
+    return static_cast<gpio::BSRR::Data>(static_cast<std::uint32_t>(left_a) >> static_cast<std::uint32_t>(right_a));
+}
 constexpr gpio::BSRR::Data operator|(gpio::BSRR::Data left_a, gpio::BSRR::Data right_a)
 {
     return static_cast<gpio::BSRR::Data>(static_cast<std::uint32_t>(left_a) | static_cast<std::uint32_t>(right_a));
