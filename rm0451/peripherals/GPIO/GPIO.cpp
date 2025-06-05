@@ -162,13 +162,12 @@ void GPIO::Out::Bus::set_value(std::uint32_t a_value)
     hkm_assert(nullptr != this->p_port && 0xFFu != this->id_start && 0xFFu != this->id_end);
 
     const std::uint32_t bus_width = 1 + this->id_end - this->id_start;
-    const ll::gpio::BSRR::Flag mask_from_lower_bit = static_cast<ll::gpio::BSRR::Flag>((0x1u << bus_width) - 1u);
+    std::uint32_t mask_from_lower_bit = (1 << bus_width) - 1;
 
-    hkm_assert(0 ==
-               (static_cast<ll::gpio::BSRR::Data>(mask_from_lower_bit) & static_cast<ll::gpio::BSRR::Data>(a_value)));
+    hkm_assert(0 == (mask_from_lower_bit & a_value));
+    std::uint32_t mask = mask_from_lower_bit << this->id_start;
 
-    ll::gpio::BSRR::Data mask = mask_from_lower_bit << static_cast<std::uint32_t>(this->id_start);
-
+    std::uint32_t sr_val = mask << 16 | a_value << this->id_start;
     this->p_port->p_registers->bsrr = mask << 16 | static_cast<ll::gpio::BSRR::Data>(a_value) << this->id_start;
 }
 
