@@ -168,7 +168,7 @@ void GPIO::Out::Bus::set_value(std::uint32_t a_value)
     std::uint32_t mask = mask_from_lower_bit << this->id_start;
 
     std::uint32_t sr_val = mask << 16 | a_value << this->id_start;
-    this->p_port->p_registers->bsrr = mask << 16 | static_cast<ll::gpio::BSRR::Data>(a_value) << this->id_start;
+    this->p_port->p_registers->bsrr = static_cast<ll::gpio::BSRR::Data>(sr_val);
 }
 
 // TODO: parallel write to configuration registers
