@@ -648,10 +648,10 @@ void LPUART_interrupt_handler(LPUART* a_p_this)
 {
     hkm_assert(nullptr != a_p_this);
 
-    //::USART_interrupt_handler(a_p_this->p_registers,
-    //                          &(a_p_this->transmit_callback),
-    //                          &(a_p_this->receive_callback),
-    //                          &(a_p_this->event_callback));
+    ::USART_interrupt_handler(a_p_this->p_registers,
+                             &(a_p_this->transmit_callback),
+                             &(a_p_this->receive_callback),
+                             &(a_p_this->event_callback));
 }
 
 void USART::enable(const Clock_config& a_clock_config,
