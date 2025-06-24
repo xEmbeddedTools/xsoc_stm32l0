@@ -177,36 +177,42 @@ void GPIO::Out::Bus::set_type(Type a_type)
 {
     hkm_assert(nullptr != this->p_port && 0xFFu != this->id_start && 0xFFu != this->id_end);
 
+    ll::gpio::OTYPER temp = this->p_port->p_registers->otyper;
+
     for (std::int32_t id = this->id_start; id <= this->id_end; ++id)
     {
-        bit::flag::set(&(this->p_port->p_registers->otyper),
-                       ll::gpio::OTYPER::mask << id,
-                       static_cast<ll::gpio::OTYPER::Flag>(a_type) << id);
+        bit::flag::set(&temp, ll::gpio::OTYPER::mask << id, static_cast<ll::gpio::OTYPER::Flag>(a_type) << id);
     }
+
+    this->p_port->p_registers->otyper = temp;
 }
 
 void GPIO::Out::Bus::set_pull(Pull a_pull)
 {
     hkm_assert(nullptr != this->p_port && 0xFFu != this->id_start && 0xFFu != this->id_end);
 
+    ll::gpio::PUPDR temp = this->p_port->p_registers->pupdr;
+
     for (std::int32_t id = this->id_start; id <= this->id_end; ++id)
     {
-        bit::flag::set(&(this->p_port->p_registers->pupdr),
-                       ll::gpio::PUPDR::mask << (id * 2u),
-                       static_cast<ll::gpio::PUPDR::Flag>(a_pull) << (id * 2));
+        bit::flag::set(&temp, ll::gpio::PUPDR::mask << id, static_cast<ll::gpio::PUPDR::Flag>(a_pull) << id);
     }
+
+    this->p_port->p_registers->pupdr = temp;
 }
 
 void GPIO::Out::Bus::set_speed(Speed a_speed)
 {
     hkm_assert(nullptr != this->p_port && 0xFFu != this->id_start && 0xFFu != this->id_end);
 
+    ll::gpio::OSPEEDR temp = this->p_port->p_registers->ospeedr;
+
     for (std::int32_t id = this->id_start; id <= this->id_end; ++id)
     {
-        bit::flag::set(&(this->p_port->p_registers->ospeedr),
-                       ll::gpio::OSPEEDR::mask << id,
-                       static_cast<ll::gpio::OSPEEDR::Flag>(a_speed) << id);
+        bit::flag::set(&temp, ll::gpio::OSPEEDR::mask << id, static_cast<ll::gpio::OSPEEDR::Flag>(a_speed) << id);
     }
+
+    this->p_port->p_registers->ospeedr = temp;
 }
 
 void GPIO::Analog::Pin::set_pull(Pull a_pull)
