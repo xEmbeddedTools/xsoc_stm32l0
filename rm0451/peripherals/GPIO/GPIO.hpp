@@ -18,8 +18,8 @@
 #include <rm0451/peripherals/GPIO/gpio_ll.hpp>
 #include <rm0451/rcc.hpp>
 #include <rm0451/system/mcu/mcu.hpp>
-#include <soc/st/arm/IRQ_config.hpp>
 #include <soc/peripheral.hpp>
+#include <soc/st/arm/IRQ_config.hpp>
 #include <xmcu/Limited.hpp>
 #include <xmcu/Non_copyable.hpp>
 #include <xmcu/bit.hpp>
@@ -38,20 +38,17 @@ public:
         low = 0x0u,
         high = 0x1u
     };
-
     enum class Type : std::uint32_t
     {
         push_pull = static_cast<std::uint32_t>(ll::gpio::OTYPER::push_pull),
         open_drain = static_cast<std::uint32_t>(ll::gpio::OTYPER::open_drain),
     };
-
     enum class Pull : std::uint32_t
     {
         none = static_cast<std::uint32_t>(ll::gpio::PUPDR::none),
         up = static_cast<std::uint32_t>(ll::gpio::PUPDR::pull_up),
         down = static_cast<std::uint32_t>(ll::gpio::PUPDR::pull_down),
     };
-
     enum class Speed : std::uint32_t
     {
         low = static_cast<std::uint32_t>(ll::gpio::OSPEEDR::low),
@@ -106,8 +103,36 @@ public:
 
             friend Out;
         };
+        class Bus : private Non_copyable
+        {
+        public:
+            Bus()
+                : p_port(nullptr)
+                , id_start(0xFFu)
+                , id_end(0xFF)
+            {
+            }
+
+            void set_value(std::uint32_t a_value);
+
+            void set_type(Type a_type);
+            void set_pull(Pull a_pull);
+            void set_speed(Speed a_speed);
+
+            GPIO* get_port() const
+            {
+                return this->p_port;
+            }
+
+        private:
+            GPIO* p_port;
+            std::uint8_t id_start, id_end;
+
+            friend Out;
+        };
 
         void enable(Limited<std::uint32_t, 0, 15> a_id, const Enable_config& a_enable_config, Pin* a_p_pin = nullptr);
+        void enable(Limited<std::uint32_t, 0, 15> a_id, const Enable_config& a_enable_config, Bus* a_p_bus);
         void disable(Limited<std::uint32_t, 0, 15> a_id);
         void disable(Pin* p_pin);
 
