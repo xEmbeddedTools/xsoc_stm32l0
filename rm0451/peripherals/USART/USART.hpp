@@ -526,23 +526,18 @@ inline void peripherals::GPIO::Alternate_function::enable<peripherals::USART, 2>
     // DS12323 table 11
     hkm_assert(
         (0u == this->p_port->idx && (0u == a_id || 2u == a_id || 3u == a_id || 9u == a_id || 10u == a_id || // PORTA
-                                     14u == a_id || 15u == a_id)) ||                                        // PORTA
-        (1u == this->p_port->idx && (6u == a_id || 7u == a_id)) ||                                          // PORTB
-        /* DE (RTS pin)*/                                                                                   //
-        (0u == this->p_port->idx && (1u == a_id || 12u == a_id)) ||                                         // PORTA
-        (1u == this->p_port->idx && 0u == a_id)                                                             // PORTB
-    );
+                                     14u == a_id || 15u == a_id || 1u == a_id || 12u == a_id)) ||           // PORTA
+        (1u == this->p_port->idx && (6u == a_id || 7u == a_id || 0u == a_id)));                             // PORTB
+
     // Be careful when enabling CTS functionality, as pin PA0 is shared with RX functionality.
     alternate_function_index =
         ((0u == this->p_port->idx && a_id > 0) || (1u == this->p_port->idx && 0u == a_id)) ? 4u : 0u;
 #elif defined(XMCU_SOC_MODEL_STM32L010C6T6)
-    hkm_assert((0u == this->p_port->idx &&
-                (2u == a_id || 3u == a_id || 9u == a_id || 10u == a_id || 14u == a_id || 15u == a_id)) || // PORTA
-               (1u == this->p_port->idx && (6u == a_id || 7u == a_id)) ||                                 // PORTB
-               /* DE (RTS pin) */                                                                         //
-               (0u == this->p_port->idx && (1u == a_id || 12u == a_id)) ||                                // PORTA
-               (1u == this->p_port->idx && 0u == a_id)                                                    // PORTB
-    );
+    hkm_assert(
+        (0u == this->p_port->idx && (2u == a_id || 3u == a_id || 9u == a_id || 10u == a_id || 14u == a_id || // PORTA
+                                     15u == a_id || 1u == a_id || 12u == a_id)) ||                           // PORTA
+        (1u == this->p_port->idx && (6u == a_id || 7u == a_id || 0u == a_id)));                              // PORTB
+
     alternate_function_index =
         ((0u == this->p_port->idx ) || (1u == this->p_port->idx && 0u == a_id)) ? 4u : 0u;
 #else
