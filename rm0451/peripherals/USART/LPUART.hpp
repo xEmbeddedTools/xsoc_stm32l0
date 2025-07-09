@@ -429,8 +429,8 @@ inline void peripherals::GPIO::Alternate_function::enable<peripherals::LPUART, 1
                (1u == this->p_port->idx && (10u == a_id || 11u == a_id)) ||
                (2u == this->p_port->idx && (0u == a_id)));
 #endif
-
-    this->enable(a_id, a_config, 0x6u, a_p_pin);
+    std::uint8_t alternate_function_index = (1u == this->p_port->idx && (1u == a_id)) ? 0x4u : 0x6u;
+    this->enable(a_id, a_config, alternate_function_index, a_p_pin);
     // TODO: add alternate function support for rts/cts pins?
 }
 
