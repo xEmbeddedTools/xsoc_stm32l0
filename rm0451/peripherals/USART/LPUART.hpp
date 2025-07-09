@@ -422,18 +422,12 @@ inline void peripherals::GPIO::Alternate_function::enable<peripherals::LPUART, 1
                                                                                   Pin* a_p_pin)
 {
 #if defined(XMCU_SOC_MODEL_STM32L010F4P6)
-    hkm_assert((0u == this->p_port->idx && (4u >= a_id || 13u == a_id || 14u == a_id)) || // PORTA
-               (1u == this->p_port->idx && (6u == a_id || 7u == a_id)) ||                 // PORTB
-               /* DE (RTS pin) */                                                         //
-               (1u == this->p_port->idx && (1u == a_id))                                  // PORTB
-    );
+    hkm_assert((0u == this->p_port->idx && (4u >= a_id || 13u == a_id || 14u == a_id)) ||
+               (1u == this->p_port->idx && (6u == a_id || 7u == a_id)));
 #elif defined(XMCU_SOC_MODEL_STM32L010C6T6)
-    hkm_assert((0u == this->p_port->idx && (2u == a_id || 3u == a_id || 13u == a_id || 14u == a_id)) || // PORTA
-               (1u == this->p_port->idx && (10u == a_id || 11u == a_id)) ||                             // PORTB
-               (2u == this->p_port->idx && (0u == a_id)) ||                                             // PORTC
-               /* DE (RTS pin) */                                                                       //
-               (1u == this->p_port->idx && (1u == a_id || 14u == a_id))                                 // PORTB
-    );
+    hkm_assert((0u == this->p_port->idx && (2u == a_id || 3u == a_id || 13u == a_id || 14u == a_id)) ||
+               (1u == this->p_port->idx && (10u == a_id || 11u == a_id)) ||
+               (2u == this->p_port->idx && (0u == a_id)));
 #endif
     std::uint8_t alternate_function_index = (1u == this->p_port->idx && (1u == a_id)) ? 0x4u : 0x6u;
     this->enable(a_id, a_config, alternate_function_index, a_p_pin);
