@@ -13,8 +13,8 @@
 #include <rm0451/peripherals/internal_flash/internal_flash.hpp>
 #include <rm0451/utils/tick_counter.hpp>
 #include <rm0451/utils/wait_until.hpp>
-#include <soc/st/arm/m0/nvic.hpp>
 #include <soc/Scoped_guard.hpp>
+#include <soc/st/arm/m0/nvic.hpp>
 #include <xmcu/bit.hpp>
 
 namespace {
@@ -131,7 +131,7 @@ bool option_bytes::BOR::set(Level a_level)
     return false;
 }
 
-option_bytes::BOR::Level option_bytes::BOR::get()
+option_bytes::BOR::Level option_bytes::BOR::get_level()
 {
     Scoped_guard<internal_flash::unlocker> flash_guard;
     return static_cast<Level>(bit::flag::get(FLASH->OPTR, FLASH_OPTR_BOR_LEV) >> FLASH_OPTR_BOR_LEV_Pos);
