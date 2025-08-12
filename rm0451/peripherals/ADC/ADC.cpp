@@ -45,7 +45,7 @@ bool is_channel(ADC::Channel::Id a_type, const ADC::Channel::Id* a_p_channels, s
     return found;
 }
 
-// This was part of polling_read but was moved away to separate function in order to speed up davin sample stream.
+// This was part of polling_read but was moved away to separate function in order to speed up stream.
 void polling_read_setup(ADC_TypeDef* a_p_registers, ADC::Mode a_mode, std::size_t a_group_size)
 {
     hkm_assert((ADC::Mode::discontinuous == a_mode && 0 < a_group_size && a_group_size <= 1) ||
@@ -228,7 +228,7 @@ bool ADC::enable(Resolution a_resolution,
 
         if (true == enable_voltage_reference)
         {
-            bit::flag::set(&(ADC1_COMMON->CCR), ADC_CCR_VREFEN);
+            bit::flag::set(&(ADC1_COMMON->CCR), ADC_CCR_VREFEN); //TODO: add delay after enabling vrefint (STM32L010F4 datasheet, 6.3.3)
         }
     }
 

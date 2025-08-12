@@ -19,8 +19,8 @@
 #include <rm0451/clocks/sysclk.hpp>
 #include <rm0451/rcc.hpp>
 #include <rm0451/system/mcu/mcu.hpp>
-#include <soc/st/arm/IRQ_config.hpp>
 #include <soc/peripheral.hpp>
+#include <soc/st/arm/IRQ_config.hpp>
 #include <xmcu/Duration.hpp>
 #include <xmcu/Non_copyable.hpp>
 #include <xmcu/Not_null.hpp>
@@ -53,7 +53,8 @@ public:
 
     struct Calibration_data
     {
-        std::uint16_t internal_voltage_reference = 0u;
+        const std::uint16_t vrefint = 0u;
+        const std::uint16_t vrefint_calibration_voltage_mV = 0u;
     };
 
     struct Channel
@@ -195,7 +196,8 @@ public:
 
     constexpr Calibration_data get_calibration_data() const
     {
-        return { .internal_voltage_reference = *(reinterpret_cast<const std::uint16_t*>(0x1FFF75A8)) };
+        return { .vrefint = *(reinterpret_cast<const std::uint16_t*>(0x1FFF75A8)),
+                 .vrefint_calibration_voltage_mV = 3000u };
     }
 
     bool is_enabled() const
