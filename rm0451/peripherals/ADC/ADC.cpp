@@ -16,8 +16,8 @@
 #include <rm0451/utils/delay.hpp>
 #include <rm0451/utils/tick_counter.hpp>
 #include <rm0451/utils/wait_until.hpp>
-#include <soc/st/arm/m0/nvic.hpp>
 #include <soc/Scoped_guard.hpp>
+#include <soc/st/arm/m0/nvic.hpp>
 #include <xmcu/bit.hpp>
 
 // debug
@@ -228,7 +228,8 @@ bool ADC::enable(Resolution a_resolution,
 
         if (true == enable_voltage_reference)
         {
-            bit::flag::set(&(ADC1_COMMON->CCR), ADC_CCR_VREFEN); //TODO: add delay after enabling vrefint (STM32L010F4 datasheet, 6.3.3)
+            bit::flag::set(&(ADC1_COMMON->CCR),
+                           ADC_CCR_VREFEN); // TODO: add delay after enabling vrefint (STM32L010F4 datasheet, 6.3.3)
         }
     }
 
