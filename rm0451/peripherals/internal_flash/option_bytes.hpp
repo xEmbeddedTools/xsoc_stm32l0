@@ -47,7 +47,7 @@ public:
         };
 
         static bool set(Level a_level);
-        static Level get();
+        static Level get_level();
     };
     struct USER : private non_constructible
     {
