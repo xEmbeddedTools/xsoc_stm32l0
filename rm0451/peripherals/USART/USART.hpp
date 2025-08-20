@@ -20,8 +20,8 @@
 #include <rm0451/system/mcu/mcu.hpp>
 #include <rm0451/utils/tick_counter.hpp>
 #include <rm0451/utils/wait_until.hpp>
-#include <soc/st/arm/IRQ_config.hpp>
 #include <soc/peripheral.hpp>
+#include <soc/st/arm/IRQ_config.hpp>
 #include <xmcu/Duration.hpp>
 #include <xmcu/Non_copyable.hpp>
 #include <xmcu/Not_null.hpp>
@@ -384,6 +384,12 @@ public:
         return {};
     }
 
+    bool request_mute_mode(Milliseconds a_timeout) const
+    {
+        this->p_registers->rqr = ll::usart::RQR::mmrq;
+        return utils::wait_until::all_bits_are_set(this->p_registers->isr, ll::usart::ISR::rwu, a_timeout);
+    }
+
     operator ll::usart::Registers*()
     {
         return this->p_registers;
@@ -538,8 +544,7 @@ inline void peripherals::GPIO::Alternate_function::enable<peripherals::USART, 2>
                                      15u == a_id || 1u == a_id || 12u == a_id)) ||                           // PORTA
         (1u == this->p_port->idx && (6u == a_id || 7u == a_id || 0u == a_id)));                              // PORTB
 
-    alternate_function_index =
-        ((0u == this->p_port->idx ) || (1u == this->p_port->idx && 0u == a_id)) ? 4u : 0u;
+    alternate_function_index = ((0u == this->p_port->idx) || (1u == this->p_port->idx && 0u == a_id)) ? 4u : 0u;
 #else
 #error "Undefined pin constraints for uC - add missing model refering to its *datasheet*"
 #endif
