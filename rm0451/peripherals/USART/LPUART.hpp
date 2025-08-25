@@ -299,6 +299,17 @@ public:
         return {};
     }
 
+    bool request_mute_mode(Milliseconds a_timeout) const
+    {
+        this->p_registers->rqr = ll::usart::RQR::mmrq;
+        return utils::wait_until::all_bits_are_set(this->p_registers->isr, ll::usart::ISR::rwu, a_timeout);
+    }
+
+    bool is_mute_mode_requested() const
+    {
+        return bit::flag::is(this->p_registers->rqr, ll::usart::RQR::mmrq);
+    }
+
     operator ll::usart::Registers*()
     {
         return this->p_registers;
