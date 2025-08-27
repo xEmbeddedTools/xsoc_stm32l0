@@ -257,12 +257,10 @@ void enable(ll::usart::Registers* a_p_registers,
                         << ll::usart::CR2::add) |
                            ll::usart::CR2::addm7);
         bit::flag::set(&(a_p_registers->cr1), ll::usart::CR1::mme | ll::usart::CR1::wake);
-        a_p_registers->rqr = ll::usart::RQR::mmrq;
     }
     else if (LPUART::Transceiving_config::Mute_method::idle_line == a_transceiving_config.mute_method)
     {
         bit::flag::set(&(a_p_registers->cr1), ll::usart::CR1::mme);
-        a_p_registers->rqr = ll::usart::RQR::mmrq;
     }
 
     if (USART::Low_power_wakeup_method::none != a_low_power_wakeup)
@@ -343,7 +341,6 @@ void enable(ll::usart::Registers* a_p_registers,
             bit::flag::get(static_cast<std::uint32_t>(a_transceiving_config.mute_method), 0xFFu);
         bit::flag::set(&(a_p_registers->cr2), (address << ll::usart::CR2::add) | ll::usart::CR2::addm7);
         bit::flag::set(&(a_p_registers->cr1), ll::usart::CR1::mme | ll::usart::CR1::wake);
-        a_p_registers->rqr = ll::usart::RQR::mmrq;
     }
     else if (USART::Transceiving_config::Mute_method::idle_line == a_transceiving_config.mute_method)
     {
