@@ -16,7 +16,7 @@ if (XMCU_SOC_MODEL STREQUAL "XMCU_SOC_MODEL_STM32L010F4P6")
             "${CMAKE_CURRENT_LIST_DIR}/CMSIS/Device/ST/STM32L0xx/Source/Templates/system_stm32l0xx.c")
     set(XMCU_LD_SCRIPT "${CMAKE_CURRENT_LIST_DIR}/CMSIS/Device/ST/STM32L0xx/Source/Templates/gcc/linker/STM32L010F4Px_FLASH.ld")
     add_library(XMCU_SOC OBJECT ${XMCU_SOC_SRC})
-    add_compile_definitions(XMCU_SOC PUBLIC "XMCU_SOC_MODEL_STM32L010F4P6" "STM32L010x4")
+    add_compile_definitions("XMCU_SOC_MODEL_STM32L010F4P6" "STM32L010x4")
 elseif(XMCU_SOC_MODEL STREQUAL "XMCU_SOC_MODEL_STM32L010C6T6")
     file(GLOB_RECURSE XMCU_SOC_SRC
             "${CMAKE_CURRENT_LIST_DIR}/rm0451/*.cpp"
@@ -28,7 +28,7 @@ elseif(XMCU_SOC_MODEL STREQUAL "XMCU_SOC_MODEL_STM32L010C6T6")
             "${CMAKE_CURRENT_LIST_DIR}/CMSIS/Device/ST/STM32L0xx/Source/Templates/system_stm32l0xx.c")
     set(XMCU_LD_SCRIPT "${CMAKE_CURRENT_LIST_DIR}/CMSIS/Device/ST/STM32L0xx/Source/Templates/gcc/linker/STM32L010C6Tx_FLASH.ld")
     add_library(XMCU_SOC OBJECT ${XMCU_SOC_SRC})
-    add_compile_definitions(XMCU_SOC PUBLIC "XMCU_SOC_MODEL_STM32L010C6T6" "STM32L010x6")
+    add_compile_definitions("XMCU_SOC_MODEL_STM32L010C6T6" "STM32L010x6")
 else()
     message("Unsupported SOC model")
 endif()
@@ -42,7 +42,7 @@ if (${XMCU_NOSTDLIB} STREQUAL "ON")
     set(XMCU_LINKER_FLAGS ${XMCU_LINKER_FLAGS} -nostdlib -nostartfiles --specs=nosys.specs -lc_nano)
 endif()
 
-include_directories(XMCU_SOC PUBLIC
+include_directories(
                     ${XMCU_PATH}
                     ${CMAKE_CURRENT_LIST_DIR}
                     "${XMCU_PATH}/soc/st/arm/CMSIS/Include"
