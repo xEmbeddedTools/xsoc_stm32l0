@@ -37,7 +37,10 @@ target_include_directories(XMCU_SOC PUBLIC
                                     ${CMAKE_CURRENT_LIST_DIR}
                                     "${CMAKE_CURRENT_LIST_DIR}/CMSIS/Device/ST/STM32L0xx/Include/"
                                     "${XMCU_PATH}/soc/st/arm/CMSIS/Include")
-
-if (${XMCU_NOSTDLIB} STREQUAL "ON")
-    target_compile_definitions(XMCU_SOC PUBLIC XMCU_NOSTDLIB)
+if (DEFINED XMCU_NOSTDLIB)
+    if (${XMCU_NOSTDLIB} STREQUAL "ON")
+        target_compile_definitions(XMCU_SOC PUBLIC XMCU_NOSTDLIB)
+    endif()
+else()
+    message(FATAL_ERROR "XMCU_NOSTDLIB is not set (expected values: ON/OFF)")
 endif()
