@@ -99,9 +99,11 @@ SPI::Polling::Result SPI::Polling::receive(Not_null<std::uint8_t*> a_p_data, std
 
 namespace xmcu::soc::st::arm::m0::l0::rm0451 {
 using namespace xmcu;
+using namespace xmcu::soc::st::arm::m0::l0::rm0451::peripherals;
 using namespace xmcu::soc::st::arm::m0::l0::rm0451::clocks::sources;
 
-template<> template<> void rcc<peripherals::SPI, 1u>::enable<hsi16>(bool a_enable_in_lp)
+#if defined(XMCU_SPI1_PRESENT)
+template<> void rcc<SPI, SPI::_1>::enable<hsi16>(bool a_enable_in_lp)
 {
     bit::flag::set(&(RCC->APB2ENR), RCC_APB2ENR_SPI1EN);
 
@@ -114,10 +116,9 @@ template<> template<> void rcc<peripherals::SPI, 1u>::enable<hsi16>(bool a_enabl
         bit::flag::clear(&(RCC->APB2SMENR), RCC_APB2SMENR_SPI1SMEN);
     }
 }
-
-template<> void rcc<peripherals::SPI, 1>::disable()
+void rcc<peripherals::SPI, SPI::_1>::disable()
 {
     bit::flag::clear(&(RCC->APB2ENR), RCC_APB2ENR_SPI1EN);
 }
-
+#endif
 } // namespace xmcu::soc::st::arm::m0::l0::rm0451

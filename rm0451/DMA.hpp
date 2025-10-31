@@ -12,8 +12,9 @@
 #include <stm32l0xx.h>
 
 // xmcu
-#include <soc/st/arm/m0/l0/rm0451/defs.hpp>
-#include <soc/st/arm/m0/l0/rm0451/rcc.hpp>
+#include <rm0451/config.hpp>
+#include <rm0451/defs.hpp>
+#include <rm0451/rcc.hpp>
 #include <xmcu/Non_copyable.hpp>
 #include <xmcu/bit.hpp>
 #include <xmcu/non_constructible.hpp>
@@ -24,6 +25,10 @@ namespace xmcu::soc::st::arm::m0::l0::rm0451 {
 template<typename Perihperal_t = void*> class DMA : private xmcu::Non_copyable
 {
 public:
+#if defined(XMCU_DMA1_PRESENT)
+    enum class _1;
+#endif
+
     enum class Priority : std::uint32_t
     {
         very_high = DMA_CCR_PL_0 | DMA_CCR_PL_1,
@@ -99,7 +104,7 @@ constexpr DMA<>::Event_flag operator|=(DMA<>::Event_flag& a_f1, DMA<>::Event_fla
     return a_f1;
 }
 
-template<> class rcc<DMA<>, 1> : private xmcu::non_constructible
+template<> class rcc<DMA<>, DMA<>::_1> : private xmcu::non_constructible
 {
 public:
     static void enable()

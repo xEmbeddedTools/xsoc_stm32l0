@@ -320,7 +320,7 @@ template<> void rcc<peripherals::ADC>::sync::enable<clocks::hclk<1u>>(Prescaler 
 } // namespace xmcu::soc::st::arm::m0::l0::rm0451
 
 namespace xmcu::soc {
-template<> class peripheral<st::arm::m0::l0::rm0451::peripherals::ADC, 1u> : private non_constructible
+template<> class peripheral<st::arm::m0::l0::rm0451::peripherals::ADC> : private non_constructible
 {
 public:
     static st::arm::m0::l0::rm0451::peripherals::ADC create()

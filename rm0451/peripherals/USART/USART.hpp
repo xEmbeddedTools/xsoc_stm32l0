@@ -14,6 +14,7 @@
 // xmcu
 #include <rm0451/clocks/pclk.hpp>
 #include <rm0451/clocks/sources/hsi16.hpp>
+#include <rm0451/config.hpp>
 #include <rm0451/peripherals/GPIO/GPIO.hpp>
 #include <rm0451/peripherals/USART/usart_ll.hpp>
 #include <rm0451/rcc.hpp>
@@ -32,6 +33,9 @@ namespace xmcu::soc::st::arm::m0::l0::rm0451::peripherals {
 class USART : private Non_copyable
 {
 public:
+#if defined(XMCU_USART2_PRESENT)
+    using _2 = ll::usart_base::_2;
+#endif
     enum class Event_flag : std::uint32_t
     {
         none = 0x0u,
@@ -509,18 +513,17 @@ constexpr USART::Event_flag operator|=(USART::Event_flag& a_f1, USART::Event_fla
 } // namespace xmcu::soc::st::arm::m0::l0::rm0451::peripherals
 
 namespace xmcu::soc::st::arm::m0::l0::rm0451 {
-template<std::uint32_t id> class rcc<peripherals::USART, id> : private non_constructible
+#if defined(XMCU_USART2_PRESENT)
+template<> class rcc<peripherals::USART, peripherals::USART::_2> : private non_constructible
 {
 public:
     template<typename Source_t> static void enable(bool a_enable_in_lp) = delete;
-    static void disable() = delete;
+    static void disable();
 };
-template<> template<> void rcc<peripherals::USART, 2u>::enable<clocks::pclk<2u>>(bool a_enable_in_lp);
-template<> template<> void rcc<peripherals::USART, 2u>::enable<rcc<system::mcu<1u>>>(bool a_enable_in_lp);
-template<> template<> void rcc<peripherals::USART, 2u>::enable<clocks::sources::hsi16>(bool a_enable_in_lp);
-// template<> template<> void rcc<peripherals::USART, 2u>::enable<sources::lse>(bool a_enable_in_lp);
-template<> void rcc<peripherals::USART, 2u>::disable();
-
+template<> void rcc<peripherals::USART, peripherals::USART::_2>::enable<clocks::pclk<2u>>(bool a_enable_in_lp);
+template<> void rcc<peripherals::USART, peripherals::USART::_2>::enable<rcc<system::mcu<1u>>>(bool a_enable_in_lp);
+template<> void rcc<peripherals::USART, peripherals::USART::_2>::enable<clocks::sources::hsi16>(bool a_enable_in_lp);
+#endif
 template<>
 inline void peripherals::GPIO::Alternate_function::enable<peripherals::USART, 2>(Limited<std::uint32_t, 0, 15> a_id,
                                                                                  const Enable_config& a_config,
@@ -555,7 +558,10 @@ inline void peripherals::GPIO::Alternate_function::enable<peripherals::USART, 2>
 } // namespace xmcu::soc::st::arm::m0::l0::rm0451
 
 namespace xmcu::soc {
-template<> class peripheral<st::arm::m0::l0::rm0451::peripherals::USART, 2u> : private non_constructible
+#if defined(XMCU_USART2_PRESENT)
+template<>
+class peripheral<st::arm::m0::l0::rm0451::peripherals::USART, st::arm::m0::l0::rm0451::peripherals::USART::_2>
+    : private non_constructible
 {
 public:
     static st::arm::m0::l0::rm0451::peripherals::USART create()
@@ -566,4 +572,5 @@ public:
             IRQn_Type::USART2_IRQn);
     }
 };
+#endif
 } // namespace xmcu::soc

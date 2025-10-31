@@ -14,7 +14,7 @@
 // xmcu
 #include <xmcu/non_constructible.hpp>
 
-namespace xmcu::soc::st::arm::m0::l0::rm0451::peripherals {
+namespace xmcu::soc::st::arm::m0::l0::rm0451::peripherals::ll {
 #if defined(XMCU_SOC_MODEL_STM32L010F4P6)
 struct usart_base : private non_constructible
 {
@@ -27,4 +27,4 @@ struct usart_base : private non_constructible
     enum class _2 : std::uint32_t;
 };
 #endif
-} // namespace xmcu::soc::st::arm::m0::l0::rm0451::peripherals
+} // namespace xmcu::soc::st::arm::m0::l0::rm0451::peripherals::ll

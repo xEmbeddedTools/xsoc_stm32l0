@@ -14,7 +14,7 @@
 // xmcu
 #include <xmcu/non_constructible.hpp>
 
-namespace xmcu::soc::st::arm::m0::l0::rm0451::peripherals {
+namespace xmcu::soc::st::arm::m0::l0::rm0451::peripherals::ll {
 #if defined(XMCU_SOC_MODEL_STM32L010F4P6)
 struct gpio_base : private non_constructible
 {
@@ -176,4 +176,4 @@ constexpr bool operator==(gpio_base::H, gpio_base::C)
     return false;
 }
 #endif
-} // namespace xmcu::soc::st::arm::m0::l0::rm0451::peripherals
+} // namespace xmcu::soc::st::arm::m0::l0::rm0451::peripherals::ll
