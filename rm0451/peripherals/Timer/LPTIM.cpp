@@ -9,8 +9,8 @@
 // hkm
 #include <rm0451/utils/tick_counter.hpp>
 #include <rm0451/utils/wait_until.hpp>
-#include <soc/st/arm/m0/nvic.hpp>
 #include <soc/Scoped_guard.hpp>
+#include <soc/st/arm/m0/nvic.hpp>
 #include <xmcu/various.hpp>
 
 // debug
@@ -158,7 +158,8 @@ using namespace xmcu::soc::st::arm::m0::l0::rm0451::clocks;
 using namespace xmcu::soc::st::arm::m0::l0::rm0451::clocks::sources;
 using namespace xmcu::soc::st::arm::m0::l0::rm0451::system;
 
-template<> template<> void rcc<LPTIM, 1>::enable<pclk<1u>>(bool a_enable_in_lp)
+#if defined(XMCU_LPTIM1_PRESENT)
+template<> void rcc<LPTIM, LPTIM::_1>::enable<pclk<1u>>(bool a_enable_in_lp)
 {
     bit::flag::clear(&(RCC->CCIPR), RCC_CCIPR_LPTIM1SEL);
     bit::flag::set(&(RCC->APB1ENR), RCC_APB1ENR_LPTIM1EN);
@@ -172,7 +173,7 @@ template<> template<> void rcc<LPTIM, 1>::enable<pclk<1u>>(bool a_enable_in_lp)
         bit::flag::clear(&(RCC->APB1SMENR), RCC_APB1SMENR_LPTIM1SMEN);
     }
 }
-template<> template<> void rcc<peripherals::LPTIM, 1>::enable<hsi16>(bool a_enable_in_lp)
+template<> void rcc<peripherals::LPTIM, LPTIM::_1>::enable<hsi16>(bool a_enable_in_lp)
 {
     bit::flag::set(&(RCC->CCIPR), RCC_CCIPR_LPTIM1SEL, RCC_CCIPR_LPTIM1SEL_1);
     bit::flag::set(&(RCC->APB1ENR), RCC_APB1ENR_LPTIM1EN);
@@ -186,4 +187,5 @@ template<> template<> void rcc<peripherals::LPTIM, 1>::enable<hsi16>(bool a_enab
         bit::flag::clear(&(RCC->APB1SMENR), RCC_APB1SMENR_LPTIM1SMEN);
     }
 }
+#endif
 } // namespace xmcu::soc::st::arm::m0::l0::rm0451

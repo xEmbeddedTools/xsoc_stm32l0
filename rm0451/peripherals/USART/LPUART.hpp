@@ -21,6 +21,10 @@ namespace xmcu::soc::st::arm::m0::l0::rm0451::peripherals {
 class LPUART : private Non_copyable
 {
 public:
+#if defined(XMCU_LPUART1_PRESENT)
+    enum class _1;
+#endif
+
     using Event_flag = USART::Event_flag;
     using Low_power_wakeup_method = USART::Low_power_wakeup_method;
     using Clock_config = USART::Clock_config;
@@ -410,17 +414,16 @@ operator|(LPUART::Transceiving_config::RS232_flow_control_flag a_f1,
 } // namespace xmcu::soc::st::arm::m0::l0::rm0451::peripherals
 
 namespace xmcu::soc::st::arm::m0::l0::rm0451 {
-template<std::uint32_t id> class rcc<peripherals::LPUART, id> : private non_constructible
+#if defined(XMCU_LPUART1_PRESENT)
+template<> class rcc<peripherals::LPUART, peripherals::LPUART::_1> : private non_constructible
 {
 public:
     template<typename Source_t> static void enable(bool a_enable_in_lp) = delete;
-    static void disable() = delete;
+    static void disable();
 };
-template<> template<> void rcc<peripherals::LPUART, 1u>::enable<clocks::pclk<1u>>(bool a_enable_in_lp);
-template<> template<> void rcc<peripherals::LPUART, 1u>::enable<clocks::sysclk<1u>>(bool a_enable_in_lp);
-template<> template<> void rcc<peripherals::LPUART, 1u>::enable<clocks::sources::hsi16>(bool a_enable_in_lp);
-// template<> template<> void rcc<peripherals::LPUART, 1u>::enable<sources::lse>(bool a_enable_in_lp);
-template<> void rcc<peripherals::LPUART, 1u>::disable();
+template<> void rcc<peripherals::LPUART, peripherals::LPUART::_1>::enable<clocks::pclk<1u>>(bool a_enable_in_lp);
+template<> void rcc<peripherals::LPUART, peripherals::LPUART::_1>::enable<clocks::sysclk<1u>>(bool a_enable_in_lp);
+template<> void rcc<peripherals::LPUART, peripherals::LPUART::_1>::enable<clocks::sources::hsi16>(bool a_enable_in_lp);
 
 template<>
 inline void peripherals::GPIO::Alternate_function::enable<peripherals::LPUART, 1>(Limited<std::uint32_t, 0, 15> a_id,
@@ -438,11 +441,14 @@ inline void peripherals::GPIO::Alternate_function::enable<peripherals::LPUART, 1
     std::uint8_t alternate_function_index = (1u == this->p_port->idx && (1u == a_id)) ? 0x4u : 0x6u;
     this->enable(a_id, a_config, alternate_function_index, a_p_pin);
 }
-
+#endif
 } // namespace xmcu::soc::st::arm::m0::l0::rm0451
 
 namespace xmcu::soc {
-template<> class peripheral<st::arm::m0::l0::rm0451::peripherals::LPUART, 1u> : private non_constructible
+#if defined(XMCU_LPUART1_PRESENT)
+template<>
+class peripheral<st::arm::m0::l0::rm0451::peripherals::LPUART, st::arm::m0::l0::rm0451::peripherals::LPUART::_1>
+    : private non_constructible
 {
 public:
     static st::arm::m0::l0::rm0451::peripherals::LPUART create()
@@ -453,4 +459,5 @@ public:
             IRQn_Type::LPUART1_IRQn);
     }
 };
+#endif
 } // namespace xmcu::soc

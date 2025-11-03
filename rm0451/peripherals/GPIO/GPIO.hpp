@@ -33,6 +33,19 @@ namespace xmcu::soc::st::arm::m0::l0::rm0451::peripherals {
 class GPIO : private Non_copyable
 {
 public:
+#if defined(XMCU_GPIOA_PRESENT)
+    using A = ll::gpio_base::A;
+#endif
+#if defined(XMCU_GPIOB_PRESENT)
+    using B = ll::gpio_base::B;
+#endif
+#if defined(XMCU_GPIOC_PRESENT)
+    using C = ll::gpio_base::C;
+#endif
+#if defined(XMCU_GPIOH_PRESENT)
+    using H = ll::gpio_base::H;
+#endif
+
     enum class Level : std::uint32_t
     {
         low = 0x0u,
@@ -532,31 +545,38 @@ constexpr GPIO::Interrupt::Trigger_flag operator|=(GPIO::Interrupt::Trigger_flag
 } // namespace xmcu::soc::st::arm::m0::l0::rm0451::peripherals
 
 namespace xmcu::soc::st::arm::m0::l0::rm0451 {
-template<std::uint32_t id> class rcc<peripherals::GPIO, id> : private xmcu::non_constructible
+#if defined(XMCU_GPIOA_PRESENT)
+template<> class rcc<peripherals::GPIO, peripherals::GPIO::A>
 {
 public:
-    static void enable(bool a_enable_in_lp) = delete;
-    static void disable() = delete;
+    static void enable(bool a_enable_in_lp);
+    static void disable();
 };
-
-template<> void rcc<peripherals::GPIO, 1>::enable(bool a_enable_in_lp);
-template<> void rcc<peripherals::GPIO, 1>::disable();
-
-template<> void rcc<peripherals::GPIO, 2>::enable(bool a_enable_in_lp);
-template<> void rcc<peripherals::GPIO, 2>::disable();
-
-template<> void rcc<peripherals::GPIO, 3>::enable(bool a_enable_in_lp);
-template<> void rcc<peripherals::GPIO, 3>::disable();
-
-template<> void rcc<peripherals::GPIO, 4>::enable(bool a_enable_in_lp);
-template<> void rcc<peripherals::GPIO, 4>::disable();
-
-template<> void rcc<peripherals::GPIO, 5>::enable(bool a_enable_in_lp);
-template<> void rcc<peripherals::GPIO, 5>::disable();
-
-template<> void rcc<peripherals::GPIO, 8>::enable(bool a_enable_in_lp);
-template<> void rcc<peripherals::GPIO, 8>::disable();
-
+#endif
+#if defined(XMCU_GPIOB_PRESENT)
+template<> class rcc<peripherals::GPIO, peripherals::GPIO::B>
+{
+public:
+    static void enable(bool a_enable_in_lp);
+    static void disable();
+};
+#endif
+#if defined(XMCU_GPIOC_PRESENT)
+template<> class rcc<peripherals::GPIO, peripherals::GPIO::C>
+{
+public:
+    static void enable(bool a_enable_in_lp);
+    static void disable();
+};
+#endif
+#if defined(XMCU_GPIOH_PRESENT)
+template<> class rcc<peripherals::GPIO, peripherals::GPIO::H>
+{
+public:
+    static void enable(bool a_enable_in_lp);
+    static void disable();
+};
+#endif
 template<>
 void peripherals::GPIO::Alternate_function::enable<peripherals::GPIO::mco>(Limited<std::uint32_t, 0, 15> a_id,
                                                                            const Enable_config& a_config,
@@ -568,9 +588,9 @@ void peripherals::GPIO::Alternate_function::enable<peripherals::GPIO::lsco>(Limi
 } // namespace xmcu::soc::st::arm::m0::l0::rm0451
 
 namespace xmcu::soc {
-
 #if defined(XMCU_GPIOA_PRESENT)
-template<> class peripheral<st::arm::m0::l0::rm0451::peripherals::GPIO, 1u> : private xmcu::non_constructible
+template<> class peripheral<st::arm::m0::l0::rm0451::peripherals::GPIO, st::arm::m0::l0::rm0451::peripherals::GPIO::A>
+    : private xmcu::non_constructible
 {
 public:
     static st::arm::m0::l0::rm0451::peripherals::GPIO create()
@@ -582,7 +602,8 @@ public:
 #endif
 
 #if defined(XMCU_GPIOB_PRESENT)
-template<> class peripheral<st::arm::m0::l0::rm0451::peripherals::GPIO, 2u> : private xmcu::non_constructible
+template<> class peripheral<st::arm::m0::l0::rm0451::peripherals::GPIO, st::arm::m0::l0::rm0451::peripherals::GPIO::B>
+    : private xmcu::non_constructible
 {
 public:
     static st::arm::m0::l0::rm0451::peripherals::GPIO create()
@@ -594,7 +615,8 @@ public:
 #endif
 
 #if defined(XMCU_GPIOC_PRESENT)
-template<> class peripheral<st::arm::m0::l0::rm0451::peripherals::GPIO, 3u> : private xmcu::non_constructible
+template<> class peripheral<st::arm::m0::l0::rm0451::peripherals::GPIO, st::arm::m0::l0::rm0451::peripherals::GPIO::C>
+    : private xmcu::non_constructible
 {
 public:
     static st::arm::m0::l0::rm0451::peripherals::GPIO create()
@@ -603,5 +625,9 @@ public:
         return l0_peripherals::GPIO(2u, l0_peripherals::ll::gpio::registers<l0_peripherals::ll::gpio::C>());
     }
 };
+#endif
+
+#if defined(XMCU_GPIOH_PRESENT)
+// not implemented yet
 #endif
 } // namespace xmcu::soc

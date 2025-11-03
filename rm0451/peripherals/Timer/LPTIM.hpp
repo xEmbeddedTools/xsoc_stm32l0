@@ -13,8 +13,8 @@
 #include <rm0451/clocks/sources/hsi16.hpp>
 #include <rm0451/rcc.hpp>
 #include <rm0451/system/mcu/mcu.hpp>
-#include <soc/st/arm/IRQ_config.hpp>
 #include <soc/peripheral.hpp>
+#include <soc/st/arm/IRQ_config.hpp>
 #include <xmcu/Duration.hpp>
 #include <xmcu/Non_copyable.hpp>
 #include <xmcu/bit.hpp>
@@ -24,6 +24,10 @@ namespace xmcu::soc::st::arm::m0::l0::rm0451::peripherals {
 class LPTIM : private xmcu::Non_copyable
 {
 public:
+#if defined(XMCU_LPTIM1_PRESENT)
+    enum class _1;
+#endif
+
     class Tick_counter : private xmcu::Non_copyable
     {
     public:
@@ -158,20 +162,24 @@ void LPTIM_interrupt_handler(LPTIM* a_p_this);
 } // namespace xmcu::soc::st::arm::m0::l0::rm0451::peripherals
 
 namespace xmcu::soc::st::arm::m0::l0::rm0451 {
-template<std::uint32_t id> class rcc<peripherals::LPTIM, id> : private xmcu::non_constructible
+#if defined(XMCU_LPTIM1_PRESENT)
+template<> class rcc<peripherals::LPTIM, peripherals::LPTIM::_1> : private xmcu::non_constructible
 {
 public:
     template<typename Source_t> static void enable(bool a_enable_in_lp) = delete;
-    static void disable() = delete;
+    static void disable();
 };
 
-template<> template<> void rcc<peripherals::LPTIM, 1>::enable<clocks::pclk<1u>>(bool a_enable_in_lp);
-template<> template<> void rcc<peripherals::LPTIM, 1>::enable<clocks::sources::hsi16>(bool a_enable_in_lp);
-
+template<> void rcc<peripherals::LPTIM, peripherals::LPTIM::_1>::enable<clocks::pclk<1u>>(bool a_enable_in_lp);
+template<> void rcc<peripherals::LPTIM, peripherals::LPTIM::_1>::enable<clocks::sources::hsi16>(bool a_enable_in_lp);
+#endif
 } // namespace xmcu::soc::st::arm::m0::l0::rm0451
 
 namespace xmcu::soc {
-template<> class peripheral<st::arm::m0::l0::rm0451::peripherals::LPTIM, 1u> : private non_constructible
+#if defined(XMCU_LPTIM1_PRESENT)
+template<>
+class peripheral<st::arm::m0::l0::rm0451::peripherals::LPTIM, st::arm::m0::l0::rm0451::peripherals::LPTIM::_1>
+    : private non_constructible
 {
 public:
     static st::arm::m0::l0::rm0451::peripherals::LPTIM create()
@@ -179,4 +187,5 @@ public:
         return st::arm::m0::l0::rm0451::peripherals::LPTIM(0u, LPTIM1, IRQn_Type::LPTIM1_IRQn);
     }
 };
+#endif
 } // namespace xmcu::soc

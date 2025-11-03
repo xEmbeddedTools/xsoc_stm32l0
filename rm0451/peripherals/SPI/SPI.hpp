@@ -25,6 +25,10 @@ namespace xmcu::soc::st::arm::m0::l0::rm0451::peripherals {
 class SPI : private xmcu::Non_copyable
 {
 public:
+#if defined(XMCU_SPI1_PRESENT)
+    enum class _1;
+#endif
+
     enum class Event_flag : std::uint32_t
     {
         none = 0x0u,
@@ -96,14 +100,15 @@ private:
 } // namespace xmcu::soc::st::arm::m0::l0::rm0451::peripherals
 
 namespace xmcu::soc::st::arm::m0::l0::rm0451 {
-template<std::uint32_t id> class rcc<peripherals::SPI, id> : private xmcu::non_constructible
+#if defined(XMCU_SPI1_PRESENT)
+template<> class rcc<peripherals::SPI, peripherals::SPI::_1> : private xmcu::non_constructible
 {
 public:
     template<typename Source_t> static void enable(bool a_enable_in_lp) = delete;
-    static void disable() = delete;
+    static void disable();
 };
-template<> template<> void rcc<peripherals::SPI, 1u>::enable<clocks::sources::hsi16>(bool a_enable_in_lp);
-template<> void rcc<peripherals::SPI, 1u>::disable();
+template<> void rcc<peripherals::SPI, peripherals::SPI::_1>::enable<clocks::sources::hsi16>(bool a_enable_in_lp);
+#endif
 
 template<>
 inline void peripherals::GPIO::Alternate_function::enable<peripherals::SPI, 1>(Limited<std::uint32_t, 0, 15> a_id,
@@ -160,7 +165,9 @@ inline void peripherals::GPIO::Alternate_function::enable<peripherals::SPI, 1>(L
 } // namespace xmcu::soc::st::arm::m0::l0::rm0451
 
 namespace xmcu::soc {
-template<> class peripheral<st::arm::m0::l0::rm0451::peripherals::SPI, 1u> : private xmcu::non_constructible
+#if defined(XMCU_SPI1_PRESENT)
+template<> class peripheral<st::arm::m0::l0::rm0451::peripherals::SPI, st::arm::m0::l0::rm0451::peripherals::SPI::_1>
+    : private xmcu::non_constructible
 {
 public:
     static st::arm::m0::l0::rm0451::peripherals::SPI create()
@@ -168,4 +175,5 @@ public:
         return st::arm::m0::l0::rm0451::peripherals::SPI(0u, SPI1, IRQn_Type::SPI1_IRQn);
     }
 };
+#endif
 } // namespace xmcu::soc

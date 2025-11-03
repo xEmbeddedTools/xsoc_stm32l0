@@ -26,6 +26,18 @@
 // USART
 #define XMCU_USART2_PRESENT
 
+// LPUART
+#define XMCU_LPUART1_PRESENT
+
+// LPTIM
+#define XMCU_LPTIM1_PRESENT
+
+// SPI
+#define XMCU_SPI1_PRESENT
+
+// DMA
+#define XMCU_DMA1_PRESENT
+
 // clock sources
 #define XMCU_HSE_PRESENT
 #define XMCU_HSI16_PRESENT
@@ -46,6 +58,18 @@
 
 // USART
 #define XMCU_USART2_PRESENT
+
+// LPUART
+#define XMCU_LPUART1_PRESENT
+
+// LPTIM
+#define XMCU_LPTIM1_PRESENT
+
+// SPI
+#define XMCU_SPI1_PRESENT
+
+// DMA
+#define XMCU_DMA1_PRESENT
 
 // clock sources
 #define XMCU_HSE_PRESENT

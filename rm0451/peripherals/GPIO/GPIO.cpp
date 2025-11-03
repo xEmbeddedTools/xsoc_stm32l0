@@ -638,7 +638,8 @@ void GPIO::mco::disable()
 namespace xmcu::soc::st::arm::m0::l0::rm0451 {
 using namespace xmcu::soc::st::arm::m0::l0::rm0451::system;
 
-template<> void rcc<GPIO, 1>::enable(bool a_enable_in_lp)
+#if defined(XMCU_GPIOA_PRESENT)
+void rcc<GPIO, GPIO::A>::enable(bool a_enable_in_lp)
 {
     bit::flag::set(&(RCC->IOPENR), RCC_IOPENR_GPIOAEN);
 
@@ -651,12 +652,14 @@ template<> void rcc<GPIO, 1>::enable(bool a_enable_in_lp)
         bit::flag::clear(&(RCC->IOPSMENR), RCC_IOPSMENR_GPIOASMEN);
     }
 }
-template<> void rcc<GPIO, 1>::disable()
+void rcc<GPIO, GPIO::A>::disable()
 {
     bit::flag::clear(&(RCC->IOPENR), RCC_IOPENR_GPIOAEN);
 }
+#endif
 
-template<> void rcc<GPIO, 2>::enable(bool a_enable_in_lp)
+#if defined(XMCU_GPIOB_PRESENT)
+void rcc<GPIO, GPIO::B>::enable(bool a_enable_in_lp)
 {
     bit::flag::set(&(RCC->IOPENR), RCC_IOPENR_GPIOBEN);
 
@@ -669,12 +672,14 @@ template<> void rcc<GPIO, 2>::enable(bool a_enable_in_lp)
         bit::flag::clear(&(RCC->IOPSMENR), RCC_IOPSMENR_GPIOBSMEN);
     }
 }
-template<> void rcc<GPIO, 2>::disable()
+void rcc<GPIO, GPIO::B>::disable()
 {
     bit::flag::clear(&(RCC->IOPENR), RCC_IOPENR_GPIOBEN);
 }
+#endif
 
-template<> void rcc<GPIO, 3>::enable(bool a_enable_in_lp)
+#if defined(XMCU_GPIOC_PRESENT)
+void rcc<GPIO, GPIO::C>::enable(bool a_enable_in_lp)
 {
     bit::flag::set(&(RCC->IOPENR), RCC_IOPENR_GPIOCEN);
 
@@ -687,10 +692,11 @@ template<> void rcc<GPIO, 3>::enable(bool a_enable_in_lp)
         bit::flag::clear(&(RCC->IOPSMENR), RCC_IOPSMENR_GPIOCSMEN);
     }
 }
-template<> void rcc<GPIO, 3>::disable()
+void rcc<GPIO, GPIO::C>::disable()
 {
     bit::flag::clear(&(RCC->IOPENR), RCC_IOPENR_GPIOCEN);
 }
+#endif
 
 template<> void GPIO::Alternate_function::enable<GPIO::mco>(Limited<std::uint32_t, 0, 15> a_id,
                                                             const Enable_config& a_config,

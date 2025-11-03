@@ -15,8 +15,8 @@
 #include <rm0451/DMA.hpp>
 #include <rm0451/peripherals/USART/LPUART.hpp>
 #include <rm0451/peripherals/USART/USART.hpp>
-#include <soc/st/arm/IRQ_config.hpp>
 #include <soc/peripheral.hpp>
+#include <soc/st/arm/IRQ_config.hpp>
 #include <xmcu/Duration.hpp>
 #include <xmcu/Non_copyable.hpp>
 #include <xmcu/Not_null.hpp>
@@ -419,8 +419,11 @@ private:
 } // namespace xmcu::soc::st::arm::m0::l0::rm0451
 
 namespace xmcu::soc {
-template<> class peripheral<st::arm::m0::l0::rm0451::peripherals::LPUART, 1u, st::arm::m0::l0::rm0451::DMA<>, 1u>
-    : private non_constructible
+#if defined(XMCU_DMA1_PRESENT)
+#if defined(XMCU_LPUART1_PRESENT)
+template<> class peripheral<st::arm::m0::l0::rm0451::peripherals::LPUART,
+                            st::arm::m0::l0::rm0451::peripherals::LPUART::_1,
+                            st::arm::m0::l0::rm0451::DMA<>::_1> : private non_constructible
 {
 public:
     static st::arm::m0::l0::rm0451::DMA<st::arm::m0::l0::rm0451::peripherals::LPUART> create()
@@ -429,9 +432,12 @@ public:
             0x0u, DMA1, LPUART1, st::arm::m0::l0::rm0451::DMA<>::Request::lpuart1);
     }
 };
-
-template<> class peripheral<st::arm::m0::l0::rm0451::peripherals::USART, 2u, st::arm::m0::l0::rm0451::DMA<>, 1u>
-    : private non_constructible
+#endif
+#if defined(XMCU_USART2_PRESENT)
+template<> class peripheral<st::arm::m0::l0::rm0451::peripherals::USART,
+                            st::arm::m0::l0::rm0451::peripherals::USART::_2,
+                            st::arm::m0::l0::rm0451::DMA<>,
+                            st::arm::m0::l0::rm0451::DMA<>::_1> : private non_constructible
 {
 public:
     static constexpr st::arm::m0::l0::rm0451::DMA<st::arm::m0::l0::rm0451::peripherals::USART> create()
@@ -440,4 +446,6 @@ public:
             0x0u, DMA1, USART2, st::arm::m0::l0::rm0451::DMA<>::Request::usart2);
     }
 };
+#endif
+#endif
 } // namespace xmcu::soc
