@@ -16,25 +16,25 @@
 #include <xmcu/non_constructible.hpp>
 
 namespace xmcu::soc::st::arm::m0::l0::rm0451::peripherals {
-class option_bytes : private non_constructible
+class option_bytes : private xmcu::non_constructible
 {
 public:
-    class unlocker : private non_constructible
+    class unlocker : private xmcu::non_constructible
     {
     public:
         static void unlock();
-        static bool unlock(Milliseconds a_timeout);
+        static bool unlock(xmcu::Milliseconds a_timeout);
 
         static void lock();
     };
 
-    struct secure_flash : private non_constructible
+    struct secure_flash : private xmcu::non_constructible
     {
         static std::uint32_t get_start_address();
-        static std::uint32_t get_start_address(Milliseconds a_timeout);
+        static std::uint32_t get_start_address(xmcu::Milliseconds a_timeout);
     };
 
-    struct BOR : private non_constructible
+    struct BOR : private xmcu::non_constructible
     {
         enum class Level : std::uint8_t
         {
@@ -46,17 +46,67 @@ public:
             _5 = 0xCu
         };
 
-        static bool set(Level a_level);
-        static Level get_level();
-    };
-    struct USER : private non_constructible
-    {
-        static std::uint32_t get();
+        using enum Level;
+
+        static bool set(Level level_a);
+        static bool set(Level level_a, xmcu::Milliseconds timeout_a);
+
+        static Level get();
     };
 
-    static void reload();
+    struct RDP : private xmcu::non_constructible
+    {
+        enum class Level : std::uint32_t
+        {
+            _0 = 0xAAu,
+            _1 = 0xBBu,
+            _2 = 0xCCu
+        };
+
+        using enum Level;
+
+        static bool set(Level level_a);
+        static bool set(Level level_a, xmcu::Milliseconds timeout_a);
+
+        static Level get();
+    };
+
+    struct USR : private xmcu::non_constructible
+    {
+        enum class Flags : std::uint32_t
+        {
+            boot_1 = FLASH_OPTR_BOOT1 >> 16u,
+            rst_stby = FLASH_OPTR_nRST_STDBY >> 16u,
+            rst_stop = FLASH_OPTR_nRST_STOP >> 16u,
+            iwdg_sw = FLASH_OPTR_IWDG_SW >> 16u
+        };
+
+        using enum Flags;
+
+        static bool set(Flags flags_a);
+        static bool set(Flags flags_a, xmcu::Milliseconds timeout_a);
+
+        static Flags get();
+    };
+
+    static bool launch();
+    static bool launch(xmcu::Milliseconds a_timeout);
 };
 
+constexpr option_bytes::USR::Flags operator|(option_bytes::USR::Flags left_a, option_bytes::USR::Flags right_a)
+{
+    return static_cast<option_bytes::USR::Flags>(static_cast<std::uint32_t>(left_a) |
+                                                 static_cast<std::uint32_t>(right_a));
+}
+constexpr option_bytes::USR::Flags operator&(option_bytes::USR::Flags left_a, option_bytes::USR::Flags right_a)
+{
+    return static_cast<option_bytes::USR::Flags>(static_cast<std::uint32_t>(left_a) &
+                                                 static_cast<std::uint32_t>(right_a));
+}
+constexpr option_bytes::USR::Flags operator~(option_bytes::USR::Flags left_a)
+{
+    return static_cast<option_bytes::USR::Flags>(~static_cast<std::uint32_t>(left_a));
+}
 } // namespace xmcu::soc::st::arm::m0::l0::rm0451::peripherals
 
 namespace xmcu::soc {
