@@ -263,6 +263,10 @@ bool option_bytes::USR::set(Flags flags_a)
             slot_1_entry.complementary_byte_0 = static_cast<std::uint8_t>(~(slot_1_entry.byte_0));
             slot_1_entry.complementary_byte_1 = static_cast<std::uint8_t>(~(slot_1_entry.byte_1));
 
+            std::uint32_t value = 0x0u;
+            std::memcpy(&value, &slot_1_entry, sizeof(slot_1_entry));
+            std::memcpy((reinterpret_cast<std::uint32_t*>(map::slot_1)), &value, sizeof(value));
+
             wait_until::all_bits_are_cleared(FLASH->SR, FLASH_SR_BSY);
 
             if (true == bit::flag::is(FLASH->SR, FLASH_SR_EOP))
@@ -297,6 +301,10 @@ bool option_bytes::USR::set(Flags flags_a, xmcu::Milliseconds timeout_a)
 
             slot_1_entry.complementary_byte_0 = static_cast<std::uint8_t>(~(slot_1_entry.byte_0));
             slot_1_entry.complementary_byte_1 = static_cast<std::uint8_t>(~(slot_1_entry.byte_1));
+
+            std::uint32_t value = 0x0u;
+            std::memcpy(&value, &slot_1_entry, sizeof(slot_1_entry));
+            std::memcpy((reinterpret_cast<std::uint32_t*>(map::slot_1)), &value, sizeof(value));
 
             wait_until::all_bits_are_cleared(
                 FLASH->SR, FLASH_SR_BSY, timeout_a.get() - (tick_counter<Milliseconds>::get() - start));
