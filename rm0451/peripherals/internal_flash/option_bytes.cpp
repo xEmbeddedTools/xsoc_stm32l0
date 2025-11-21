@@ -108,7 +108,7 @@ bool option_bytes::RDP::set(Level level_a)
 
             std::uint32_t value = 0x0u;
             std::memcpy(&value, &slot_0_entry, sizeof(slot_0_entry));
-            std::memcpy((reinterpret_cast<std::uint32_t*>(map::slot_0)), &value, sizeof(value));
+            *reinterpret_cast<volatile std::uint32_t*>(map::slot_0) = value;
 
             wait_until::all_bits_are_cleared(FLASH->SR, FLASH_SR_BSY);
 
@@ -188,7 +188,7 @@ bool option_bytes::BOR::set(Level level_a)
 
             std::uint32_t value = 0x0u;
             std::memcpy(&value, &slot_1_entry, sizeof(slot_1_entry));
-            std::memcpy((reinterpret_cast<std::uint32_t*>(map::slot_1)), &value, sizeof(value));
+            *reinterpret_cast<volatile std::uint32_t*>(map::slot_1) = value;
 
             wait_until::all_bits_are_cleared(FLASH->SR, FLASH_SR_BSY);
 
@@ -220,7 +220,7 @@ bool option_bytes::BOR::set(Level level_a, Milliseconds timeout_a)
 
             std::uint32_t value = 0x0u;
             std::memcpy(&value, &slot_1_entry, sizeof(slot_1_entry));
-            std::memcpy((reinterpret_cast<std::uint32_t*>(map::slot_1)), &value, sizeof(value));
+            *reinterpret_cast<volatile std::uint32_t*>(map::slot_1) = value;
 
             if (true == wait_until::all_bits_are_cleared(
                             FLASH->SR, FLASH_SR_BSY, timeout_a.get() - (tick_counter<Milliseconds>::get() - start)))
@@ -265,7 +265,7 @@ bool option_bytes::USR::set(Flags flags_a)
 
             std::uint32_t value = 0x0u;
             std::memcpy(&value, &slot_1_entry, sizeof(slot_1_entry));
-            std::memcpy((reinterpret_cast<std::uint32_t*>(map::slot_1)), &value, sizeof(value));
+            *reinterpret_cast<volatile std::uint32_t*>(map::slot_1) = value;
 
             wait_until::all_bits_are_cleared(FLASH->SR, FLASH_SR_BSY);
 
@@ -304,7 +304,7 @@ bool option_bytes::USR::set(Flags flags_a, xmcu::Milliseconds timeout_a)
 
             std::uint32_t value = 0x0u;
             std::memcpy(&value, &slot_1_entry, sizeof(slot_1_entry));
-            std::memcpy((reinterpret_cast<std::uint32_t*>(map::slot_1)), &value, sizeof(value));
+            *reinterpret_cast<volatile std::uint32_t*>(map::slot_1) = value;
 
             wait_until::all_bits_are_cleared(
                 FLASH->SR, FLASH_SR_BSY, timeout_a.get() - (tick_counter<Milliseconds>::get() - start));
