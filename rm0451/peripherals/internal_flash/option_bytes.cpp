@@ -141,13 +141,12 @@ bool option_bytes::RDP::set(Level level_a)
 }
 bool option_bytes::RDP::set(Level level_a, Milliseconds timeout_a)
 {
-    const std::uint64_t start = tick_counter<Milliseconds>::get();
-
-    Scoped_guard<internal_flash::unlocker> flash_guard(timeout_a.get() - (tick_counter<Milliseconds>::get() - start));
+    const std::uint64_t timeout_timestamp = tick_counter<Milliseconds>::get() + timeout_a.get();
+    Scoped_guard<internal_flash::unlocker> flash_guard(timeout_timestamp - tick_counter<Milliseconds>::get());
 
     if (true == flash_guard.is_unlocked())
     {
-        Scoped_guard<option_bytes::unlocker> ob_guard(timeout_a.get() - (tick_counter<Milliseconds>::get() - start));
+        Scoped_guard<option_bytes::unlocker> ob_guard(timeout_timestamp - tick_counter<Milliseconds>::get());
 
         if (true == ob_guard.is_unlocked())
         {
@@ -157,7 +156,7 @@ bool option_bytes::RDP::set(Level level_a, Milliseconds timeout_a)
             p_option_bytes->slot_0 = slot;
 
             if (true == wait_until::all_bits_are_cleared(
-                            FLASH->SR, FLASH_SR_BSY, timeout_a.get() - (tick_counter<Milliseconds>::get() - start)))
+                            FLASH->SR, FLASH_SR_BSY, timeout_timestamp - tick_counter<Milliseconds>::get()))
             {
                 if (true == bit::flag::is(FLASH->SR, FLASH_SR_EOP))
                 {
@@ -215,13 +214,12 @@ bool option_bytes::BOR::set(Level level_a)
 }
 bool option_bytes::BOR::set(Level level_a, Milliseconds timeout_a)
 {
-    const std::uint64_t start = tick_counter<Milliseconds>::get();
-
-    Scoped_guard<internal_flash::unlocker> flash_guard(timeout_a.get() - (tick_counter<Milliseconds>::get() - start));
+    const std::uint64_t timeout_timestamp = tick_counter<Milliseconds>::get() + timeout_a.get();
+    Scoped_guard<internal_flash::unlocker> flash_guard(timeout_timestamp - tick_counter<Milliseconds>::get());
 
     if (true == flash_guard.is_unlocked())
     {
-        Scoped_guard<option_bytes::unlocker> ob_guard(timeout_a.get() - (tick_counter<Milliseconds>::get() - start));
+        Scoped_guard<option_bytes::unlocker> ob_guard(timeout_timestamp - tick_counter<Milliseconds>::get());
 
         if (true == ob_guard.is_unlocked())
         {
@@ -231,7 +229,7 @@ bool option_bytes::BOR::set(Level level_a, Milliseconds timeout_a)
             p_option_bytes->slot_1 = slot;
 
             if (true == wait_until::all_bits_are_cleared(
-                            FLASH->SR, FLASH_SR_BSY, timeout_a.get() - (tick_counter<Milliseconds>::get() - start)))
+                            FLASH->SR, FLASH_SR_BSY, timeout_timestamp - tick_counter<Milliseconds>::get()))
             {
                 if (true == bit::flag::is(FLASH->SR, FLASH_SR_EOP))
                 {
@@ -287,13 +285,12 @@ bool option_bytes::USR::set(Flags flags_a)
 }
 bool option_bytes::USR::set(Flags flags_a, xmcu::Milliseconds timeout_a)
 {
-    const std::uint64_t start = tick_counter<Milliseconds>::get();
-
-    Scoped_guard<internal_flash::unlocker> flash_guard(timeout_a.get() - (tick_counter<Milliseconds>::get() - start));
+    const std::uint64_t timeout_timestamp = tick_counter<Milliseconds>::get() + timeout_a.get();
+    Scoped_guard<internal_flash::unlocker> flash_guard(timeout_timestamp - tick_counter<Milliseconds>::get());
 
     if (true == flash_guard.is_unlocked())
     {
-        Scoped_guard<option_bytes::unlocker> ob_guard(timeout_a.get() - (tick_counter<Milliseconds>::get() - start));
+        Scoped_guard<option_bytes::unlocker> ob_guard(timeout_timestamp - tick_counter<Milliseconds>::get());
 
         if (true == ob_guard.is_unlocked())
         {
@@ -311,7 +308,7 @@ bool option_bytes::USR::set(Flags flags_a, xmcu::Milliseconds timeout_a)
             p_option_bytes->slot_1 = slot;
 
             wait_until::all_bits_are_cleared(
-                FLASH->SR, FLASH_SR_BSY, timeout_a.get() - (tick_counter<Milliseconds>::get() - start));
+                FLASH->SR, FLASH_SR_BSY, timeout_timestamp - tick_counter<Milliseconds>::get());
 
             if (true == bit::flag::is(FLASH->SR, FLASH_SR_EOP))
             {
@@ -348,13 +345,12 @@ bool option_bytes::launch()
 }
 bool option_bytes::launch(Milliseconds timeout_a)
 {
-    const std::uint64_t start = tick_counter<Milliseconds>::get();
-
-    Scoped_guard<internal_flash::unlocker> flash_guard(timeout_a.get() - (tick_counter<Milliseconds>::get() - start));
+    const std::uint64_t timeout_timestamp = tick_counter<Milliseconds>::get() + timeout_a.get();
+    Scoped_guard<internal_flash::unlocker> flash_guard(timeout_timestamp - tick_counter<Milliseconds>::get());
 
     if (true == flash_guard.is_unlocked())
     {
-        Scoped_guard<option_bytes::unlocker> ob_guard(timeout_a.get() - (tick_counter<Milliseconds>::get() - start));
+        Scoped_guard<option_bytes::unlocker> ob_guard(timeout_timestamp - tick_counter<Milliseconds>::get());
 
         if (true == ob_guard.is_unlocked())
         {
