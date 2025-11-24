@@ -18,7 +18,7 @@
 #include <xmcu/bit.hpp>
 
 // std
-#include <cstring>
+#include <memory>
 
 namespace {
 using namespace xmcu;
@@ -29,18 +29,38 @@ struct Slot
     std::uint8_t byte_1 = 0x0u;
     std::uint8_t complementary_byte_0 = 0x0u;
     std::uint8_t complementary_byte_1 = 0x0u;
+
+    Slot() = default;
+    Slot(volatile const Slot& slot_a)
+        : byte_0(slot_a.byte_0)
+        , byte_1(slot_a.byte_1)
+        , complementary_byte_0(slot_a.complementary_byte_0)
+        , complementary_byte_1(slot_a.complementary_byte_1)
+    {
+    }
+
+    // return value cannot be reference!
+    Slot operator=(const volatile Slot& slot_a) volatile
+    {
+        *(reinterpret_cast<volatile std::uint32_t*>(this)) =
+            *(reinterpret_cast<volatile const std::uint32_t*>(&slot_a));
+        return *this;
+    }
+};
+
+struct Option_bytes
+{
+    volatile Slot slot_0;
+    volatile Slot slot_1;
+    volatile Slot slot_2;
+    volatile Slot slot_3;
+    volatile Slot slot_4;
 };
 
 static_assert(sizeof(Slot) == sizeof(std::uint32_t));
+static_assert(sizeof(Option_bytes) == sizeof(Slot) * 5u);
 
-struct map : private non_constructible
-{
-    static constexpr std::uint32_t slot_0 = OB_BASE;
-    static constexpr std::uint32_t slot_1 = slot_0 + 4u;
-    static constexpr std::uint32_t slot_2 = slot_1 + 4u;
-    static constexpr std::uint32_t slot_3 = slot_2 + 4u;
-    static constexpr std::uint32_t slot_4 = slot_3 + 4u;
-};
+Option_bytes* p_option_bytes = reinterpret_cast<Option_bytes*>(OB_BASE);
 } // namespace
 
 namespace xmcu::soc::st::arm::m0::l0::rm0451::peripherals {
@@ -102,13 +122,10 @@ bool option_bytes::RDP::set(Level level_a)
 
         if (true == ob_guard.is_unlocked())
         {
-            Slot slot_0_entry = *(reinterpret_cast<Slot*>(map::slot_0));
-            bit::flag::set(&slot_0_entry.byte_0, 0xFFu, static_cast<std::uint8_t>(level_a));
-            slot_0_entry.complementary_byte_0 = static_cast<std::uint8_t>(~(slot_0_entry.byte_0));
-
-            std::uint32_t value = 0x0u;
-            std::memcpy(&value, &slot_0_entry, sizeof(slot_0_entry));
-            *reinterpret_cast<volatile std::uint32_t*>(map::slot_0) = value;
+            Slot slot = p_option_bytes->slot_0;
+            bit::flag::set(&slot.byte_0, 0xFFu, static_cast<std::uint8_t>(level_a));
+            slot.complementary_byte_0 = static_cast<std::uint8_t>(~(slot.byte_0));
+            p_option_bytes->slot_0 = slot;
 
             wait_until::all_bits_are_cleared(FLASH->SR, FLASH_SR_BSY);
 
@@ -134,13 +151,10 @@ bool option_bytes::RDP::set(Level level_a, Milliseconds timeout_a)
 
         if (true == ob_guard.is_unlocked())
         {
-            Slot slot_0_entry = *(reinterpret_cast<Slot*>(map::slot_0));
-            bit::flag::set(&slot_0_entry.byte_0, 0xFFu, static_cast<std::uint8_t>(level_a));
-            slot_0_entry.complementary_byte_0 = static_cast<std::uint8_t>(~(slot_0_entry.byte_0));
-
-            std::uint32_t value = 0x0u;
-            std::memcpy(&value, &slot_0_entry, sizeof(slot_0_entry));
-            std::memcpy((reinterpret_cast<std::uint32_t*>(map::slot_0)), &value, sizeof(value));
+            Slot slot = p_option_bytes->slot_0;
+            bit::flag::set(&slot.byte_0, 0xFFu, static_cast<std::uint8_t>(level_a));
+            slot.complementary_byte_0 = static_cast<std::uint8_t>(~(slot.byte_0));
+            p_option_bytes->slot_0 = slot;
 
             if (true == wait_until::all_bits_are_cleared(
                             FLASH->SR, FLASH_SR_BSY, timeout_a.get() - (tick_counter<Milliseconds>::get() - start)))
@@ -182,13 +196,10 @@ bool option_bytes::BOR::set(Level level_a)
 
         if (true == ob_guard.is_unlocked())
         {
-            Slot slot_1_entry = *(reinterpret_cast<Slot*>(map::slot_1));
-            bit::flag::set(&slot_1_entry.byte_0, 0xFu, static_cast<std::uint8_t>(level_a));
-            slot_1_entry.complementary_byte_0 = static_cast<std::uint8_t>(~(slot_1_entry.byte_0));
-
-            std::uint32_t value = 0x0u;
-            std::memcpy(&value, &slot_1_entry, sizeof(slot_1_entry));
-            *reinterpret_cast<volatile std::uint32_t*>(map::slot_1) = value;
+            Slot slot = p_option_bytes->slot_1;
+            bit::flag::set(&slot.byte_0, 0xFu, static_cast<std::uint8_t>(level_a));
+            slot.complementary_byte_0 = static_cast<std::uint8_t>(~(slot.byte_0));
+            p_option_bytes->slot_1 = slot;
 
             wait_until::all_bits_are_cleared(FLASH->SR, FLASH_SR_BSY);
 
@@ -214,13 +225,10 @@ bool option_bytes::BOR::set(Level level_a, Milliseconds timeout_a)
 
         if (true == ob_guard.is_unlocked())
         {
-            Slot slot_1_entry = *(reinterpret_cast<Slot*>(map::slot_1));
-            bit::flag::set(&slot_1_entry.byte_0, 0xFu, static_cast<std::uint8_t>(level_a));
-            slot_1_entry.complementary_byte_0 = static_cast<std::uint8_t>(~(slot_1_entry.byte_0));
-
-            std::uint32_t value = 0x0u;
-            std::memcpy(&value, &slot_1_entry, sizeof(slot_1_entry));
-            *reinterpret_cast<volatile std::uint32_t*>(map::slot_1) = value;
+            Slot slot = p_option_bytes->slot_1;
+            bit::flag::set(&slot.byte_0, 0xFu, static_cast<std::uint8_t>(level_a));
+            slot.complementary_byte_0 = static_cast<std::uint8_t>(~(slot.byte_0));
+            p_option_bytes->slot_1 = slot;
 
             if (true == wait_until::all_bits_are_cleared(
                             FLASH->SR, FLASH_SR_BSY, timeout_a.get() - (tick_counter<Milliseconds>::get() - start)))
@@ -255,17 +263,15 @@ bool option_bytes::USR::set(Flags flags_a)
             std::uint8_t byte_0_mask = (static_cast<std::uint32_t>(flags_a)) & 0xFFu;
             std::uint8_t byte_1_mask = (static_cast<std::uint32_t>(flags_a) >> 8u) & 0xFFu;
 
-            Slot slot_1_entry = *(reinterpret_cast<Slot*>(map::slot_1));
+            Slot slot = p_option_bytes->slot_1;
 
-            bit::flag::set(&slot_1_entry.byte_0, 0x70u, byte_0_mask);
-            bit::flag::set(&slot_1_entry.byte_1, 0x80u, byte_1_mask);
+            bit::flag::set(&slot.byte_0, 0x70u, byte_0_mask);
+            bit::flag::set(&slot.byte_1, 0x80u, byte_1_mask);
 
-            slot_1_entry.complementary_byte_0 = static_cast<std::uint8_t>(~(slot_1_entry.byte_0));
-            slot_1_entry.complementary_byte_1 = static_cast<std::uint8_t>(~(slot_1_entry.byte_1));
+            slot.complementary_byte_0 = static_cast<std::uint8_t>(~(slot.byte_0));
+            slot.complementary_byte_1 = static_cast<std::uint8_t>(~(slot.byte_1));
 
-            std::uint32_t value = 0x0u;
-            std::memcpy(&value, &slot_1_entry, sizeof(slot_1_entry));
-            *reinterpret_cast<volatile std::uint32_t*>(map::slot_1) = value;
+            p_option_bytes->slot_1 = slot;
 
             wait_until::all_bits_are_cleared(FLASH->SR, FLASH_SR_BSY);
 
@@ -294,17 +300,15 @@ bool option_bytes::USR::set(Flags flags_a, xmcu::Milliseconds timeout_a)
             std::uint8_t byte_0_mask = (static_cast<std::uint32_t>(flags_a)) & 0xFFu;
             std::uint8_t byte_1_mask = (static_cast<std::uint32_t>(flags_a) >> 8u) & 0xFFu;
 
-            Slot slot_1_entry = *(reinterpret_cast<Slot*>(map::slot_1));
+            Slot slot = p_option_bytes->slot_1;
 
-            bit::flag::set(&slot_1_entry.byte_0, 0x70u, byte_0_mask);
-            bit::flag::set(&slot_1_entry.byte_1, 0x80u, byte_1_mask);
+            bit::flag::set(&slot.byte_0, 0x70u, byte_0_mask);
+            bit::flag::set(&slot.byte_1, 0x80u, byte_1_mask);
 
-            slot_1_entry.complementary_byte_0 = static_cast<std::uint8_t>(~(slot_1_entry.byte_0));
-            slot_1_entry.complementary_byte_1 = static_cast<std::uint8_t>(~(slot_1_entry.byte_1));
+            slot.complementary_byte_0 = static_cast<std::uint8_t>(~(slot.byte_0));
+            slot.complementary_byte_1 = static_cast<std::uint8_t>(~(slot.byte_1));
 
-            std::uint32_t value = 0x0u;
-            std::memcpy(&value, &slot_1_entry, sizeof(slot_1_entry));
-            *reinterpret_cast<volatile std::uint32_t*>(map::slot_1) = value;
+            p_option_bytes->slot_1 = slot;
 
             wait_until::all_bits_are_cleared(
                 FLASH->SR, FLASH_SR_BSY, timeout_a.get() - (tick_counter<Milliseconds>::get() - start));
