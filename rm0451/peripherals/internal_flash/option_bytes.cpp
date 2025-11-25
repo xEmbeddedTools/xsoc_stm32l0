@@ -115,26 +115,19 @@ void option_bytes::unlocker::lock()
 bool option_bytes::RDP::set(Level level_a)
 {
     Scoped_guard<internal_flash::unlocker> flash_guard;
+    Scoped_guard<option_bytes::unlocker> ob_guard;
 
-    if (true == flash_guard.is_unlocked())
+    Slot slot = p_option_bytes->slot_0;
+    bit::flag::set(&slot.byte_0, 0xFFu, static_cast<std::uint8_t>(level_a));
+    slot.complementary_byte_0 = static_cast<std::uint8_t>(~(slot.byte_0));
+    p_option_bytes->slot_0 = slot;
+
+    wait_until::all_bits_are_cleared(FLASH->SR, FLASH_SR_BSY);
+
+    if (true == bit::flag::is(FLASH->SR, FLASH_SR_EOP))
     {
-        Scoped_guard<option_bytes::unlocker> ob_guard;
-
-        if (true == ob_guard.is_unlocked())
-        {
-            Slot slot = p_option_bytes->slot_0;
-            bit::flag::set(&slot.byte_0, 0xFFu, static_cast<std::uint8_t>(level_a));
-            slot.complementary_byte_0 = static_cast<std::uint8_t>(~(slot.byte_0));
-            p_option_bytes->slot_0 = slot;
-
-            wait_until::all_bits_are_cleared(FLASH->SR, FLASH_SR_BSY);
-
-            if (true == bit::flag::is(FLASH->SR, FLASH_SR_EOP))
-            {
-                FLASH->SR = FLASH_SR_EOP;
-                return true;
-            }
-        }
+        FLASH->SR = FLASH_SR_EOP;
+        return true;
     }
 
     return false;
@@ -188,26 +181,19 @@ option_bytes::RDP::Level option_bytes::RDP::get()
 bool option_bytes::BOR::set(Level level_a)
 {
     Scoped_guard<internal_flash::unlocker> flash_guard;
+    Scoped_guard<option_bytes::unlocker> ob_guard;
 
-    if (true == flash_guard.is_unlocked())
+    Slot slot = p_option_bytes->slot_1;
+    bit::flag::set(&slot.byte_0, 0xFu, static_cast<std::uint8_t>(level_a));
+    slot.complementary_byte_0 = static_cast<std::uint8_t>(~(slot.byte_0));
+    p_option_bytes->slot_1 = slot;
+
+    wait_until::all_bits_are_cleared(FLASH->SR, FLASH_SR_BSY);
+
+    if (true == bit::flag::is(FLASH->SR, FLASH_SR_EOP))
     {
-        Scoped_guard<option_bytes::unlocker> ob_guard;
-
-        if (true == ob_guard.is_unlocked())
-        {
-            Slot slot = p_option_bytes->slot_1;
-            bit::flag::set(&slot.byte_0, 0xFu, static_cast<std::uint8_t>(level_a));
-            slot.complementary_byte_0 = static_cast<std::uint8_t>(~(slot.byte_0));
-            p_option_bytes->slot_1 = slot;
-
-            wait_until::all_bits_are_cleared(FLASH->SR, FLASH_SR_BSY);
-
-            if (true == bit::flag::is(FLASH->SR, FLASH_SR_EOP))
-            {
-                FLASH->SR = FLASH_SR_EOP;
-                return true;
-            }
-        }
+        FLASH->SR = FLASH_SR_EOP;
+        return true;
     }
 
     return false;
@@ -252,33 +238,27 @@ bool option_bytes::USR::set(Flags flags_a)
 {
     Scoped_guard<internal_flash::unlocker> flash_guard;
 
-    if (true == flash_guard.is_unlocked())
+    Scoped_guard<option_bytes::unlocker> ob_guard;
+
+    std::uint8_t byte_0_mask = (static_cast<std::uint32_t>(flags_a)) & 0xFFu;
+    std::uint8_t byte_1_mask = (static_cast<std::uint32_t>(flags_a) >> 8u) & 0xFFu;
+
+    Slot slot = p_option_bytes->slot_1;
+
+    bit::flag::set(&slot.byte_0, 0x70u, byte_0_mask);
+    bit::flag::set(&slot.byte_1, 0x80u, byte_1_mask);
+
+    slot.complementary_byte_0 = static_cast<std::uint8_t>(~(slot.byte_0));
+    slot.complementary_byte_1 = static_cast<std::uint8_t>(~(slot.byte_1));
+
+    p_option_bytes->slot_1 = slot;
+
+    wait_until::all_bits_are_cleared(FLASH->SR, FLASH_SR_BSY);
+
+    if (true == bit::flag::is(FLASH->SR, FLASH_SR_EOP))
     {
-        Scoped_guard<option_bytes::unlocker> ob_guard;
-
-        if (true == ob_guard.is_unlocked())
-        {
-            std::uint8_t byte_0_mask = (static_cast<std::uint32_t>(flags_a)) & 0xFFu;
-            std::uint8_t byte_1_mask = (static_cast<std::uint32_t>(flags_a) >> 8u) & 0xFFu;
-
-            Slot slot = p_option_bytes->slot_1;
-
-            bit::flag::set(&slot.byte_0, 0x70u, byte_0_mask);
-            bit::flag::set(&slot.byte_1, 0x80u, byte_1_mask);
-
-            slot.complementary_byte_0 = static_cast<std::uint8_t>(~(slot.byte_0));
-            slot.complementary_byte_1 = static_cast<std::uint8_t>(~(slot.byte_1));
-
-            p_option_bytes->slot_1 = slot;
-
-            wait_until::all_bits_are_cleared(FLASH->SR, FLASH_SR_BSY);
-
-            if (true == bit::flag::is(FLASH->SR, FLASH_SR_EOP))
-            {
-                FLASH->SR = FLASH_SR_EOP;
-                return true;
-            }
-        }
+        FLASH->SR = FLASH_SR_EOP;
+        return true;
     }
 
     return false;
@@ -329,19 +309,10 @@ option_bytes::USR::Flags option_bytes::USR::get()
 bool option_bytes::launch()
 {
     Scoped_guard<internal_flash::unlocker> flash_guard;
+    Scoped_guard<option_bytes::unlocker> ob_guard;
 
-    if (true == flash_guard.is_unlocked())
-    {
-        Scoped_guard<option_bytes::unlocker> ob_guard;
-
-        if (true == ob_guard.is_unlocked())
-        {
-            bit::flag::set(&FLASH->PECR, FLASH_PECR_OBL_LAUNCH);
-            return false; // we should never get to this point
-        }
-    }
-
-    return false;
+    bit::flag::set(&FLASH->PECR, FLASH_PECR_OBL_LAUNCH);
+    return false; // we should never get to this point
 }
 bool option_bytes::launch(Milliseconds timeout_a)
 {
