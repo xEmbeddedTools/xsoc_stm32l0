@@ -92,129 +92,6 @@
 namespace xmcu::soc::st::arm::m0::l0::rm0451::peripherals::ll {
 struct usart : public usart_base
 {
-private:
-    struct gtpr_descriptor : private xmcu::non_constructible
-    {
-        enum class Data : std::uint32_t;
-
-        enum class Shift_8 : std::uint32_t
-        {
-            psc = USART_GTPR_PSC_Pos,
-            gt = USART_GTPR_GT_Pos
-        };
-    };
-    struct rtor_descriptor : private xmcu::non_constructible
-    {
-        enum class Data : std::uint32_t;
-
-        enum class Shift_23 : std::uint32_t
-        {
-            rto = USART_RTOR_RTO_Pos
-        };
-
-        enum class Shift_8 : std::uint32_t
-        {
-            blen = USART_RTOR_BLEN_Pos
-        };
-    };
-    struct rqr_descriptor : private xmcu::non_constructible
-    {
-        enum class Flag : std::uint32_t
-        {
-            abrrq = USART_RQR_ABRRQ,
-            sbkrq = USART_RQR_SBKRQ,
-            mmrq = USART_RQR_MMRQ,
-            rxfrq = USART_RQR_RXFRQ,
-            txfrq = USART_RQR_TXFRQ
-        };
-    };
-    struct isr_descriptor : private xmcu::non_constructible
-    {
-    };
-    struct icr_descriptor : private xmcu::non_constructible
-    {
-        enum class Flag : std::uint32_t
-        {
-            none = 0x0u,
-            pecf = USART_ICR_PECF,
-            fecf = USART_ICR_FECF,
-            ncf = USART_ICR_NCF,
-            orecf = USART_ICR_ORECF,
-            idlecf = USART_ICR_IDLECF,
-            tccf = USART_ICR_TCCF,
-            tcbgtcf = 0x1u << 7u /*USART_ICR_TCBGTCF*/,
-            lbdcf = USART_ICR_LBDCF,
-            ctscf = USART_ICR_CTSCF,
-            rtocf = USART_ICR_RTOCF,
-            eobcf = USART_ICR_EOBCF,
-            cmcf = USART_ICR_CMCF,
-            wucf = USART_ICR_WUCF
-        };
-    };
-    struct rdr_descriptor : private xmcu::non_constructible
-    {
-        using Data = std::uint32_t;
-    };
-    struct tdr_descriptor : private xmcu::non_constructible
-    {
-        using Data = std::uint32_t;
-    };
-
-    /*
-     * w - write, r - read, c - clear
-     */
-    template<typename desc, typename Type> struct Reg_wrc
-    {
-        using Data = Type;
-
-        Reg_wrc()
-            : v(static_cast<volatile Data>(0x0u))
-        {
-        }
-
-        Reg_wrc(Data data_a)
-            : v(data_a)
-        {
-        }
-        Reg_wrc(const volatile Reg_wrc& other_a)
-            : v(other_a.v)
-        {
-        }
-
-        operator Data() const
-        {
-            return this->v;
-        }
-
-    protected:
-        volatile Data v;
-    };
-    template<typename desc, typename Data> struct Reg_r
-    {
-        Reg_r()
-            : v(static_cast<volatile Data>(0x0u))
-        {
-        }
-
-        Reg_r(Data data_a)
-            : v(data_a)
-        {
-        }
-        Reg_r(const volatile Reg_r& other_a)
-            : v(other_a.v)
-        {
-        }
-
-        operator Data() const
-        {
-            return this->v;
-        }
-
-    protected:
-        const volatile Data v;
-    };
-
-public:
     struct CR1
     {
         enum class Flag : std::uint32_t
@@ -396,57 +273,72 @@ public:
     private:
         volatile std::uint32_t v;
     };
-    struct GTPR : public Reg_wrc<gtpr_descriptor, gtpr_descriptor::Data>
+    struct GTPR
     {
-        using Shift_8 = gtpr_descriptor::Shift_8;
+        enum class Shift_8 : std::uint32_t
+        {
+            psc = USART_GTPR_PSC_Pos,
+            gt = USART_GTPR_GT_Pos
+        };
 
         using enum Shift_8;
 
-        using Data = Reg_wrc<gtpr_descriptor, gtpr_descriptor::Data>::Data;
-
-        GTPR(Data data_a)
-            : Reg_wrc<gtpr_descriptor, gtpr_descriptor::Data>(data_a)
-        {
-        }
+        enum class Data : std::uint32_t;
 
         GTPR& operator=(Data value_a)
         {
             this->v = value_a;
             return *this;
         }
+
+    private:
+        volatile Data v;
     };
-    struct RTOR : public Reg_wrc<rtor_descriptor, rtor_descriptor::Data>
+    struct RTOR
     {
-        using Shift_23 = rtor_descriptor::Shift_23;
-        using Shift_8 = rtor_descriptor::Shift_8;
+        enum class Shift_23 : std::uint32_t
+        {
+            rto = USART_RTOR_RTO_Pos
+        };
+
+        enum class Shift_8 : std::uint32_t
+        {
+            blen = USART_RTOR_BLEN_Pos
+        };
 
         using enum Shift_23;
         using enum Shift_8;
 
-        using Data = Reg_wrc<rtor_descriptor, rtor_descriptor::Data>::Data;
-
-        RTOR(Data data_a)
-            : Reg_wrc<rtor_descriptor, rtor_descriptor::Data>(data_a)
-        {
-        }
+        enum class Data : std::uint32_t;
 
         RTOR& operator=(Data value_a)
         {
             this->v = value_a;
             return *this;
         }
+
+    private:
+        volatile Data v;
     };
-    struct RQR : public Reg_wrc<rqr_descriptor, rqr_descriptor::Flag>
+    struct RQR
     {
-        using Flag = rqr_descriptor::Flag;
+        enum class Flag : std::uint32_t
+        {
+            abrrq = USART_RQR_ABRRQ,
+            sbkrq = USART_RQR_SBKRQ,
+            mmrq = USART_RQR_MMRQ,
+            rxfrq = USART_RQR_RXFRQ,
+            txfrq = USART_RQR_TXFRQ
+        };
 
         using enum Flag;
 
-        using Data = Reg_wrc<rqr_descriptor, rqr_descriptor::Flag>::Data;
+        enum class Data : std::uint32_t;
 
-        RQR(Flag flag_a)
-            : Reg_wrc<rqr_descriptor, rqr_descriptor::Flag>(flag_a)
+        RQR& operator=(Data value_a)
         {
+            this->v = value_a;
+            return *this;
         }
 
         RQR& operator=(Flag value_a)
@@ -454,6 +346,9 @@ public:
             this->v = static_cast<Data>(value_a);
             return *this;
         }
+
+    private:
+        volatile Data v;
     };
     struct ISR
     {
@@ -493,10 +388,6 @@ public:
             : v(static_cast<Data>(0x0u))
         {
         }
-        ISR(const ISR& l)
-            : v(l.v)
-        {
-        }
 
         operator Data() const
         {
@@ -506,17 +397,34 @@ public:
     private:
         const volatile Data v;
     };
-    struct ICR : public Reg_wrc<icr_descriptor, icr_descriptor::Flag>
+    struct ICR
     {
-        using Flag = icr_descriptor::Flag;
+        enum class Flag : std::uint32_t
+        {
+            none = 0x0u,
+            pecf = USART_ICR_PECF,
+            fecf = USART_ICR_FECF,
+            ncf = USART_ICR_NCF,
+            orecf = USART_ICR_ORECF,
+            idlecf = USART_ICR_IDLECF,
+            tccf = USART_ICR_TCCF,
+            tcbgtcf = 0x1u << 7u /*USART_ICR_TCBGTCF*/,
+            lbdcf = USART_ICR_LBDCF,
+            ctscf = USART_ICR_CTSCF,
+            rtocf = USART_ICR_RTOCF,
+            eobcf = USART_ICR_EOBCF,
+            cmcf = USART_ICR_CMCF,
+            wucf = USART_ICR_WUCF
+        };
 
         using enum Flag;
 
-        using Data = Reg_wrc<icr_descriptor, icr_descriptor::Flag>::Data;
+        enum class Data : std::uint32_t;
 
-        ICR(Flag flag_a)
-            : Reg_wrc<icr_descriptor, icr_descriptor::Flag>(flag_a)
+        ICR& operator=(Data value_a)
         {
+            this->v = value_a;
+            return *this;
         }
 
         ICR& operator=(Flag value_a)
@@ -524,30 +432,54 @@ public:
             this->v = static_cast<Data>(value_a);
             return *this;
         }
+
+        operator Data() const
+        {
+            return this->v;
+        }
+
+    private:
+        volatile Data v;
     };
-    struct RDR : public Reg_r<rdr_descriptor, rdr_descriptor::Data>
+    struct RDR
     {
+        enum class Data : std::uint32_t;
+
+        RDR()
+            : v(static_cast<Data>(0x0u))
+        {
+        }
+
         constexpr operator std::uint32_t() const
         {
             return static_cast<std::uint32_t>(this->v);
         }
+
+    private:
+        const volatile Data v;
     };
-    struct TDR : public Reg_wrc<tdr_descriptor, tdr_descriptor::Data>
+    struct TDR
     {
-        TDR(Data data_a)
-            : Reg_wrc<tdr_descriptor, tdr_descriptor::Data>(data_a)
-        {
-        }
+        enum class Data : std::uint32_t;
+
         TDR(Limited<std::uint32_t, 0u, 0x1FF> value_a)
-            : Reg_wrc<tdr_descriptor, tdr_descriptor::Data>(static_cast<Data>(value_a.get()))
+            : v(static_cast<Data>(value_a.get()))
         {
         }
 
         TDR& operator=(Data value_a)
         {
-            this->v = static_cast<Reg_wrc<tdr_descriptor, tdr_descriptor::Data>::Data>(value_a);
+            this->v = value_a;
             return *this;
         }
+        TDR& operator=(std::uint32_t value_a)
+        {
+            this->v = static_cast<Data>(value_a);
+            return *this;
+        }
+
+    private:
+        volatile Data v;
     };
 
     struct Registers : private xmcu::Non_copyable
@@ -638,16 +570,20 @@ constexpr usart::CR3::Data operator<<(Limited<std::uint32_t, 0x0u, 0xFu> left_a,
 }
 
 // GTPR
+XSOC_USART_LL_GENERATE_BITMASK_OPERATORS(usart::GTPR::Data, usart::GTPR::Data, usart::GTPR::Data);
+XSOC_USART_LL_GENERATE_BITMASK_ASSIGMENT_OPERATORS(usart::GTPR::Data);
+XSOC_USART_LL_GENERATE_BITMASK_UNARY_OPERATORS(usart::GTPR::Data);
+
 constexpr usart::GTPR::Data operator<<(Limited<std::uint32_t, 0x0u, 0xFu> left_a, usart::GTPR::Shift_8 right_a)
 {
     return static_cast<usart::GTPR::Data>(left_a.get() << static_cast<std::uint32_t>(right_a));
 }
-constexpr usart::GTPR::Data operator~(usart::GTPR::Data left_a)
-{
-    return static_cast<usart::GTPR::Data>(~static_cast<std::uint32_t>(left_a));
-}
 
 // RTOR
+XSOC_USART_LL_GENERATE_BITMASK_OPERATORS(usart::RTOR::Data, usart::RTOR::Data, usart::RTOR::Data);
+XSOC_USART_LL_GENERATE_BITMASK_ASSIGMENT_OPERATORS(usart::RTOR::Data);
+XSOC_USART_LL_GENERATE_BITMASK_UNARY_OPERATORS(usart::RTOR::Data);
+
 constexpr usart::RTOR::Data operator<<(Limited<std::uint32_t, 0x0u, 0xFFFFFFu> left_a, usart::RTOR::Shift_23 right_a)
 {
     return static_cast<usart::RTOR::Data>(left_a.get() << static_cast<std::uint32_t>(right_a));
@@ -656,24 +592,19 @@ constexpr usart::RTOR::Data operator<<(Limited<std::uint32_t, 0x0u, 0xFu> left_a
 {
     return static_cast<usart::RTOR::Data>(left_a.get() << static_cast<std::uint32_t>(right_a));
 }
-constexpr usart::RTOR::Data operator~(usart::RTOR::Data left_a)
-{
-    return static_cast<usart::RTOR::Data>(~static_cast<std::uint32_t>(left_a));
-}
 
 // RQR
-constexpr usart::RQR::Data operator|(usart::RQR::Flag left_a, usart::RQR::Flag right_a)
-{
-    return static_cast<usart::RQR::Data>(static_cast<std::uint32_t>(left_a) | static_cast<std::uint32_t>(right_a));
-}
-constexpr usart::RQR::Data operator&(usart::RQR::Flag left_a, usart::RQR::Flag right_a)
-{
-    return static_cast<usart::RQR::Data>(static_cast<std::uint32_t>(left_a) & static_cast<std::uint32_t>(right_a));
-}
-constexpr usart::RQR::Data operator~(usart::RQR::Data left_a)
-{
-    return static_cast<usart::RQR::Data>(~static_cast<std::uint32_t>(left_a));
-}
+XSOC_USART_LL_GENERATE_BITMASK_OPERATORS(usart::RQR::Data, usart::RQR::Flag, usart::RQR::Flag);
+XSOC_USART_LL_GENERATE_BITMASK_OPERATORS(usart::RQR::Data, usart::RQR::Data, usart::RQR::Data);
+XSOC_USART_LL_GENERATE_BITMASK_OPERATORS(usart::RQR::Data, usart::RQR::Data, usart::RQR::Flag);
+XSOC_USART_LL_GENERATE_BITMASK_OPERATORS(usart::RQR::Data, usart::RQR::Flag, usart::RQR::Data);
+
+XSOC_USART_LL_GENERATE_BITMASK_ASSIGMENT_OPERATORS(usart::RQR::Flag);
+XSOC_USART_LL_GENERATE_BITMASK_ASSIGMENT_OPERATORS(usart::RQR::Data);
+
+XSOC_USART_LL_GENERATE_BITMASK_UNARY_OPERATORS(usart::RQR::Flag);
+XSOC_USART_LL_GENERATE_BITMASK_UNARY_OPERATORS(usart::RQR::Data);
+XSOC_USART_LL_GENERATE_COMPARISON_OPERATORS(usart::RQR::Flag, usart::RQR::Data);
 
 // ISR
 XSOC_USART_LL_GENERATE_BITMASK_OPERATORS(usart::ISR::Data, usart::ISR::Flag, usart::ISR::Flag);
@@ -689,41 +620,17 @@ XSOC_USART_LL_GENERATE_BITMASK_UNARY_OPERATORS(usart::ISR::Data);
 XSOC_USART_LL_GENERATE_COMPARISON_OPERATORS(usart::ISR::Flag, usart::ISR::Data);
 
 // ICR
-constexpr usart::ICR::Data operator|(usart::ICR::Data left_a, usart::ICR::Data right_a)
-{
-    return static_cast<usart::ICR::Data>(static_cast<std::uint32_t>(left_a) | static_cast<std::uint32_t>(right_a));
-}
-constexpr usart::ICR::Data operator&(usart::ICR::Data left_a, usart::ICR::Data right_a)
-{
-    return static_cast<usart::ICR::Data>(static_cast<std::uint32_t>(left_a) & static_cast<std::uint32_t>(right_a));
-}
+XSOC_USART_LL_GENERATE_BITMASK_OPERATORS(usart::ICR::Data, usart::ICR::Flag, usart::ICR::Flag);
+XSOC_USART_LL_GENERATE_BITMASK_OPERATORS(usart::ICR::Data, usart::ICR::Data, usart::ICR::Data);
+XSOC_USART_LL_GENERATE_BITMASK_OPERATORS(usart::ICR::Data, usart::ICR::Data, usart::ICR::Flag);
+XSOC_USART_LL_GENERATE_BITMASK_OPERATORS(usart::ICR::Data, usart::ICR::Flag, usart::ICR::Data);
 
-constexpr usart::ICR::Data& operator|=(usart::ICR::Data& left_a, usart::ICR::Data right_a)
-{
-    left_a = left_a | right_a;
-    return left_a;
-}
-constexpr usart::ICR::Data& operator&=(usart::ICR::Data& left_a, usart::ICR::Data right_a)
-{
-    left_a = (left_a & right_a);
-    return left_a;
-}
+XSOC_USART_LL_GENERATE_BITMASK_ASSIGMENT_OPERATORS(usart::ICR::Flag);
+XSOC_USART_LL_GENERATE_BITMASK_ASSIGMENT_OPERATORS(usart::ICR::Data);
 
-constexpr usart::ICR& operator|=(usart::ICR& left_a, usart::ICR::Data right_a)
-{
-    left_a = left_a | right_a;
-    return left_a;
-}
-constexpr usart::ICR& operator&=(usart::ICR& left_a, usart::ICR::Data right_a)
-{
-    left_a = (left_a & right_a);
-    return left_a;
-}
-
-constexpr usart::ICR::Data operator~(usart::ICR::Data left_a)
-{
-    return static_cast<usart::ICR::Data>(~static_cast<std::uint32_t>(left_a));
-}
+XSOC_USART_LL_GENERATE_BITMASK_UNARY_OPERATORS(usart::ICR::Flag);
+XSOC_USART_LL_GENERATE_BITMASK_UNARY_OPERATORS(usart::ICR::Data);
+XSOC_USART_LL_GENERATE_COMPARISON_OPERATORS(usart::ICR::Flag, usart::ICR::Data);
 } // namespace xmcu::soc::st::arm::m0::l0::rm0451::peripherals::ll
 
 namespace xmcu {
@@ -758,11 +665,11 @@ bit::flag::get(xmcu::soc::st::arm::m0::l0::rm0451::peripherals::ll::usart::ISR r
     return static_cast<ll_usart::ISR::Flag>(register_a & mask_a);
 }
 // ICR
-template<> [[nodiscard]] inline xmcu::soc::st::arm::m0::l0::rm0451::peripherals::ll::usart::ICR::Data
+template<> [[nodiscard]] inline xmcu::soc::st::arm::m0::l0::rm0451::peripherals::ll::usart::ICR::Flag
 bit::flag::get(xmcu::soc::st::arm::m0::l0::rm0451::peripherals::ll::usart::ICR register_a,
                xmcu::soc::st::arm::m0::l0::rm0451::peripherals::ll::usart::ICR::Flag mask_a)
 {
     using ll_usart = xmcu::soc::st::arm::m0::l0::rm0451::peripherals::ll::usart;
-    return static_cast<ll_usart::ICR::Data>(static_cast<ll_usart::ICR::Flag>(register_a) & mask_a);
+    return static_cast<ll_usart::ICR::Flag>(register_a & mask_a);
 }
 } // namespace xmcu
