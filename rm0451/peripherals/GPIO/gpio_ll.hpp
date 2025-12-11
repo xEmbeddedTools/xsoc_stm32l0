@@ -31,54 +31,54 @@
             (static_cast<std::uint32_t>(mask_a) >> (static_cast<std::uint32_t>(pin_a) * shift_value) & mask_value)); \
     }
 
-#define XSOC_GPIO_LL_GENERATE_BITMASK_OPERATORS(EnumTypeT, EnumTypeL, EnumTypeR)            \
-    constexpr EnumTypeT operator|(EnumTypeL lhs, EnumTypeR rhs) noexcept                    \
-    {                                                                                       \
-        return static_cast<EnumTypeT>(static_cast<std::underlying_type_t<EnumTypeL>>(lhs) | \
-                                      static_cast<std::underlying_type_t<EnumTypeR>>(rhs)); \
-    }                                                                                       \
-                                                                                            \
-    constexpr EnumTypeT operator&(EnumTypeL lhs, EnumTypeR rhs) noexcept                    \
-    {                                                                                       \
-        return static_cast<EnumTypeT>(static_cast<std::underlying_type_t<EnumTypeL>>(lhs) & \
-                                      static_cast<std::underlying_type_t<EnumTypeR>>(rhs)); \
-    }                                                                                       \
-                                                                                            \
-    constexpr EnumTypeT operator^(EnumTypeL lhs, EnumTypeR rhs) noexcept                    \
-    {                                                                                       \
-        return static_cast<EnumTypeT>(static_cast<std::underlying_type_t<EnumTypeL>>(lhs) ^ \
-                                      static_cast<std::underlying_type_t<EnumTypeR>>(rhs)); \
+#define XSOC_GPIO_LL_GENERATE_BITMASK_OPERATORS(ReturnEnumType, LeftEnumType, RightEnumType)             \
+    constexpr ReturnEnumType operator|(LeftEnumType left_a, RightEnumType right_a) noexcept              \
+    {                                                                                                    \
+        return static_cast<ReturnEnumType>(static_cast<std::underlying_type_t<LeftEnumType>>(left_a) |   \
+                                           static_cast<std::underlying_type_t<RightEnumType>>(right_a)); \
+    }                                                                                                    \
+                                                                                                         \
+    constexpr ReturnEnumType operator&(LeftEnumType left_a, RightEnumType right_a) noexcept              \
+    {                                                                                                    \
+        return static_cast<ReturnEnumType>(static_cast<std::underlying_type_t<LeftEnumType>>(left_a) &   \
+                                           static_cast<std::underlying_type_t<RightEnumType>>(right_a)); \
+    }                                                                                                    \
+                                                                                                         \
+    constexpr ReturnEnumType operator^(LeftEnumType left_a, RightEnumType right_a) noexcept              \
+    {                                                                                                    \
+        return static_cast<ReturnEnumType>(static_cast<std::underlying_type_t<LeftEnumType>>(left_a) ^   \
+                                           static_cast<std::underlying_type_t<RightEnumType>>(right_a)); \
     }
 
-#define XSOC_GPIO_LL_GENERATE_BITMASK_ASSIGMENT_OPERATORS(EnumType)      \
-    constexpr EnumType& operator|=(EnumType& lhs, EnumType rhs) noexcept \
-    {                                                                    \
-        lhs = static_cast<EnumType>(lhs | rhs);                          \
-        return lhs;                                                      \
-    }                                                                    \
-                                                                         \
-    constexpr EnumType& operator&=(EnumType& lhs, EnumType rhs) noexcept \
-    {                                                                    \
-        lhs = static_cast<EnumType>(lhs & rhs);                          \
-        return lhs;                                                      \
-    }                                                                    \
-                                                                         \
-    constexpr EnumType& operator^=(EnumType& lhs, EnumType rhs) noexcept \
-    {                                                                    \
-        lhs = static_cast<EnumType>(lhs ^ rhs);                          \
-        return lhs;                                                      \
+#define XSOC_GPIO_LL_GENERATE_BITMASK_ASSIGMENT_OPERATORS(EnumType)             \
+    constexpr EnumType& operator|=(EnumType& left_a, EnumType right_a) noexcept \
+    {                                                                           \
+        left_a = static_cast<EnumType>(left_a | right_a);                       \
+        return left_a;                                                          \
+    }                                                                           \
+                                                                                \
+    constexpr EnumType& operator&=(EnumType& left_a, EnumType right_a) noexcept \
+    {                                                                           \
+        left_a = static_cast<EnumType>(left_a & right_a);                       \
+        return left_a;                                                          \
+    }                                                                           \
+                                                                                \
+    constexpr EnumType& operator^=(EnumType& left_a, EnumType right_a) noexcept \
+    {                                                                           \
+        left_a = static_cast<EnumType>(left_a ^ right_a);                       \
+        return left_a;                                                          \
     }
 
-#define XSOC_GPIO_LL_GENERATE_BITMASK_UNARY_OPERATORS(EnumType) \
-    constexpr EnumType operator~(EnumType rhs) noexcept         \
-    {                                                           \
-        using Type = std::underlying_type_t<EnumType>;          \
-        return static_cast<EnumType>(~static_cast<Type>(rhs));  \
-    }                                                           \
-    constexpr bool operator!(EnumType val) noexcept             \
-    {                                                           \
-        using Type = std::underlying_type_t<EnumType>;          \
-        return static_cast<Type>(val) == 0;                     \
+#define XSOC_GPIO_LL_GENERATE_BITMASK_UNARY_OPERATORS(EnumType)    \
+    constexpr EnumType operator~(EnumType right_a) noexcept        \
+    {                                                              \
+        using Type = std::underlying_type_t<EnumType>;             \
+        return static_cast<EnumType>(~static_cast<Type>(right_a)); \
+    }                                                              \
+    constexpr bool operator!(EnumType right_a) noexcept            \
+    {                                                              \
+        using Type = std::underlying_type_t<EnumType>;             \
+        return static_cast<Type>(right_a) == 0;                    \
     }
 
 namespace xmcu::soc::st::arm::m0::l0::rm0451::peripherals::ll {

@@ -20,73 +20,73 @@
 #include <xmcu/Non_copyable.hpp>
 #include <xmcu/non_constructible.hpp>
 
-#define XSOC_USART_LL_GENERATE_BITMASK_OPERATORS(ReturnEnumType, LeftEnumType, RightEnumType)          \
-                                                                                                       \
-    constexpr ReturnEnumType operator|(LeftEnumType lhs_a, RightEnumType rhs_a) noexcept               \
-    {                                                                                                  \
-        return static_cast<ReturnEnumType>(static_cast<std::underlying_type_t<LeftEnumType>>(lhs_a) |  \
-                                           static_cast<std::underlying_type_t<RightEnumType>>(rhs_a)); \
-    }                                                                                                  \
-                                                                                                       \
-    constexpr ReturnEnumType operator&(LeftEnumType lhs_a, RightEnumType rhs_a) noexcept               \
-    {                                                                                                  \
-        return static_cast<ReturnEnumType>(static_cast<std::underlying_type_t<LeftEnumType>>(lhs_a) &  \
-                                           static_cast<std::underlying_type_t<RightEnumType>>(rhs_a)); \
-    }                                                                                                  \
-                                                                                                       \
-    constexpr ReturnEnumType operator^(LeftEnumType lhs_a, RightEnumType rhs_a) noexcept               \
-    {                                                                                                  \
-        return static_cast<ReturnEnumType>(static_cast<std::underlying_type_t<LeftEnumType>>(lhs_a) ^  \
-                                           static_cast<std::underlying_type_t<RightEnumType>>(rhs_a)); \
+#define XSOC_USART_LL_GENERATE_BITMASK_OPERATORS(ReturnEnumType, LeftEnumType, RightEnumType)            \
+                                                                                                         \
+    constexpr ReturnEnumType operator|(LeftEnumType left_a, RightEnumType right_a) noexcept              \
+    {                                                                                                    \
+        return static_cast<ReturnEnumType>(static_cast<std::underlying_type_t<LeftEnumType>>(left_a) |   \
+                                           static_cast<std::underlying_type_t<RightEnumType>>(right_a)); \
+    }                                                                                                    \
+                                                                                                         \
+    constexpr ReturnEnumType operator&(LeftEnumType left_a, RightEnumType right_a) noexcept              \
+    {                                                                                                    \
+        return static_cast<ReturnEnumType>(static_cast<std::underlying_type_t<LeftEnumType>>(left_a) &   \
+                                           static_cast<std::underlying_type_t<RightEnumType>>(right_a)); \
+    }                                                                                                    \
+                                                                                                         \
+    constexpr ReturnEnumType operator^(LeftEnumType left_a, RightEnumType right_a) noexcept              \
+    {                                                                                                    \
+        return static_cast<ReturnEnumType>(static_cast<std::underlying_type_t<LeftEnumType>>(left_a) ^   \
+                                           static_cast<std::underlying_type_t<RightEnumType>>(right_a)); \
     }
 
-#define XSOC_USART_LL_GENERATE_BITMASK_ASSIGMENT_OPERATORS(EnumType)         \
-    constexpr EnumType& operator|=(EnumType& lhs_a, EnumType rhs_a) noexcept \
-    {                                                                        \
-        lhs_a = static_cast<EnumType>(lhs_a | rhs_a);                        \
-        return lhs_a;                                                        \
-    }                                                                        \
-                                                                             \
-    constexpr EnumType& operator&=(EnumType& lhs_a, EnumType rhs_a) noexcept \
-    {                                                                        \
-        lhs_a = static_cast<EnumType>(lhs_a & rhs_a);                        \
-        return lhs_a;                                                        \
-    }                                                                        \
-                                                                             \
-    constexpr EnumType& operator^=(EnumType& lhs_a, EnumType rhs_a) noexcept \
-    {                                                                        \
-        lhs_a = static_cast<EnumType>(lhs_a ^ rhs_a);                        \
-        return lhs_a;                                                        \
+#define XSOC_USART_LL_GENERATE_BITMASK_ASSIGMENT_OPERATORS(EnumType)            \
+    constexpr EnumType& operator|=(EnumType& left_a, EnumType right_a) noexcept \
+    {                                                                           \
+        left_a = static_cast<EnumType>(left_a | right_a);                       \
+        return left_a;                                                          \
+    }                                                                           \
+                                                                                \
+    constexpr EnumType& operator&=(EnumType& left_a, EnumType right_a) noexcept \
+    {                                                                           \
+        left_a = static_cast<EnumType>(left_a & right_a);                       \
+        return left_a;                                                          \
+    }                                                                           \
+                                                                                \
+    constexpr EnumType& operator^=(EnumType& left_a, EnumType right_a) noexcept \
+    {                                                                           \
+        left_a = static_cast<EnumType>(left_a ^ right_a);                       \
+        return left_a;                                                          \
     }
 
-#define XSOC_USART_LL_GENERATE_BITMASK_UNARY_OPERATORS(EnumType) \
-    constexpr EnumType operator~(EnumType rhs_a) noexcept        \
-    {                                                            \
-        using Type = std::underlying_type_t<EnumType>;           \
-        return static_cast<EnumType>(~static_cast<Type>(rhs_a)); \
-    }                                                            \
-    constexpr bool operator!(EnumType rhs_a) noexcept            \
-    {                                                            \
-        using Type = std::underlying_type_t<EnumType>;           \
-        return static_cast<Type>(rhs_a) == 0;                    \
+#define XSOC_USART_LL_GENERATE_BITMASK_UNARY_OPERATORS(EnumType)   \
+    constexpr EnumType operator~(EnumType right_a) noexcept        \
+    {                                                              \
+        using Type = std::underlying_type_t<EnumType>;             \
+        return static_cast<EnumType>(~static_cast<Type>(right_a)); \
+    }                                                              \
+    constexpr bool operator!(EnumType right_a) noexcept            \
+    {                                                              \
+        using Type = std::underlying_type_t<EnumType>;             \
+        return static_cast<Type>(right_a) == 0;                    \
     }
 
-#define XSOC_USART_LL_GENERATE_COMPARISON_OPERATORS(LeftEnumType, RightEnumType)         \
-    constexpr bool operator==(LeftEnumType lhs_a, RightEnumType rhs_a)                   \
-    {                                                                                    \
-        return (static_cast<std::uint32_t>(lhs_a) == static_cast<std::uint32_t>(rhs_a)); \
-    }                                                                                    \
-    constexpr bool operator==(RightEnumType lhs_a, LeftEnumType rhs_a)                   \
-    {                                                                                    \
-        return (static_cast<std::uint32_t>(lhs_a) == static_cast<std::uint32_t>(rhs_a)); \
-    }                                                                                    \
-    constexpr bool operator!=(LeftEnumType lhs_a, RightEnumType rhs_a)                   \
-    {                                                                                    \
-        return false == (lhs_a == rhs_a);                                                \
-    }                                                                                    \
-    constexpr bool operator!=(RightEnumType lhs_a, LeftEnumType rhs_a)                   \
-    {                                                                                    \
-        return false == (lhs_a == rhs_a);                                                \
+#define XSOC_USART_LL_GENERATE_COMPARISON_OPERATORS(LeftEnumType, RightEnumType)            \
+    constexpr bool operator==(LeftEnumType left_a, RightEnumType right_a)                   \
+    {                                                                                       \
+        return (static_cast<std::uint32_t>(left_a) == static_cast<std::uint32_t>(right_a)); \
+    }                                                                                       \
+    constexpr bool operator==(RightEnumType left_a, LeftEnumType right_a)                   \
+    {                                                                                       \
+        return (static_cast<std::uint32_t>(left_a) == static_cast<std::uint32_t>(right_a)); \
+    }                                                                                       \
+    constexpr bool operator!=(LeftEnumType left_a, RightEnumType right_a)                   \
+    {                                                                                       \
+        return false == (left_a == right_a);                                                \
+    }                                                                                       \
+    constexpr bool operator!=(RightEnumType left_a, LeftEnumType right_a)                   \
+    {                                                                                       \
+        return false == (left_a == right_a);                                                \
     }
 
 namespace xmcu::soc::st::arm::m0::l0::rm0451::peripherals::ll {
