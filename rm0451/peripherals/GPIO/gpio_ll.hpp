@@ -387,8 +387,6 @@ struct gpio : public gpio_base
     };
     struct BRR
     {
-        // static constexpr std::uint32_t shift_multiplier = 1u;
-
         enum class Flag : std::uint32_t
         {
             low = 0x0u,

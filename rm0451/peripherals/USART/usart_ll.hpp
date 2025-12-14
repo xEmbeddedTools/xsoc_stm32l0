@@ -5,20 +5,20 @@
  *  Licensed under the Apache License, Version 2.0. See LICENSE file in the project root for details.
  */
 
-// std
-#include <cstdint>
-
-// CMSIS
-#include <stm32l0xx.h>
-
 // soc
 #include <rm0451/peripherals/USART/base.hpp>
 
 // xmcu
-#include <type_traits>
 #include <xmcu/Limited.hpp>
 #include <xmcu/Non_copyable.hpp>
 #include <xmcu/non_constructible.hpp>
+
+// CMSIS
+#include <stm32l0xx.h>
+
+// std
+#include <cstdint>
+#include <type_traits>
 
 #define XSOC_USART_LL_GENERATE_BITMASK_OPERATORS(ReturnEnumType, LeftEnumType, RightEnumType)            \
                                                                                                          \
