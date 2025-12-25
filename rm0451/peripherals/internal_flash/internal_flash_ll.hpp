@@ -1,7 +1,13 @@
 #pragma once
 
+/*
+ *  Copyright (c) xEmbeddedTools team and contributors.
+ *  Licensed under the Apache License, Version 2.0. See LICENSE file in the project root for details.
+ */
+
 // xmcu
 #include <xmcu/Non_copyable.hpp>
+#include <xmcu/bit.hpp>
 #include <xmcu/non_constructible.hpp>
 
 // CMSIS
@@ -84,14 +90,6 @@ namespace xmcu::soc::st::arm::m0::l0::rm0451::peripherals::ll {
 struct internal_flash : private xmcu::non_constructible
 {
 public:
-    struct sr_descriptor : private xmcu::non_constructible
-    {
-    };
-
-    struct optr_descriptor : private xmcu::non_constructible
-    {
-    };
-
     struct ACR
     {
         enum class Flag : std::uint32_t
@@ -125,7 +123,7 @@ public:
         }
 
     private:
-        Data v;
+        volatile Data v;
     };
     struct PECR
     {
@@ -166,7 +164,7 @@ public:
         }
 
     private:
-        Data v;
+        volatile Data v;
     };
     struct PDKEYR
     {
@@ -189,7 +187,7 @@ public:
         }
 
     private:
-        Data v;
+        volatile Data v;
     };
     struct PEKEYR
     {
@@ -212,7 +210,7 @@ public:
         }
 
     private:
-        Data v;
+        volatile Data v;
     };
     struct OPTKEYR
     {
@@ -235,7 +233,30 @@ public:
         }
 
     private:
-        Data v;
+        volatile Data v;
+    };
+    struct PRGKEYR
+    {
+        enum class Data : std::uint32_t;
+
+        PRGKEYR& operator=(Data value_a)
+        {
+            this->v = value_a;
+            return *this;
+        }
+        PRGKEYR& operator=(std::uint32_t value_a)
+        {
+            this->v = static_cast<Data>(value_a);
+            return *this;
+        }
+
+        operator Data() const
+        {
+            return this->v;
+        }
+
+    private:
+        volatile Data v;
     };
     struct SR
     {
@@ -274,7 +295,7 @@ public:
         }
 
     private:
-        Data v;
+        volatile Data v;
     };
     struct OPTR
     {
@@ -289,8 +310,78 @@ public:
                 _4,
                 _5
             };
+
+            using enum Flag;
         } static bor;
+
+        enum class Flag : std::uint32_t
+        {
+            wprmod = FLASH_OPTR_WPRMOD,
+            wdg_sw = FLASH_OPTR_IWDG_SW,
+            nrst_stop = FLASH_OPTR_nRST_STOP,
+            nrst_stdby = FLASH_OPTR_nRST_STDBY,
+            nboot_sel = 0x1u << 29u, // nBOOT_SEL,
+            nboot0 = 0x1u << 30u,    // nBOOT0
+            nboot1 = FLASH_OPTR_BOOT1
+        };
+        using enum Flag;
+
+        enum class Data : std::uint32_t;
+
+        OPTR()
+            : v(static_cast<Data>(0x0u))
+        {
+        }
+
+        operator Data() const
+        {
+            return this->v;
+        }
+
+    private:
+        volatile const Data v;
     };
+    struct WPROT
+    {
+        enum class Data : std::uint32_t;
+
+        WPROT()
+            : v(static_cast<Data>(0x0u))
+        {
+        }
+
+        operator Data() const
+        {
+            return this->v;
+        }
+
+        operator std::uint32_t() const
+        {
+            return static_cast<std::uint32_t>(this->v);
+        }
+
+    private:
+        volatile const Data v;
+    };
+
+    struct Registers : private xmcu::Non_copyable
+    {
+        ACR acr;         // access control register
+        PECR pecr;       // program/erase control register
+        PDKEYR pdkeyr;   // power down key register
+        PEKEYR pekeyr;   // program/erase key register
+        PRGKEYR prgkeyr; // program memory key register
+        OPTKEYR optkeyr; // option byte key register
+        SR sr;           // status register
+        OPTR optr;       // option byte register
+        WPROT wrprot1;   // write protection register 1
+        WPROT wrprot2;   // write protection register 2
+    };
+
+    [[nodiscard]] static constexpr Registers* registers()
+    {
+        return reinterpret_cast<Registers*>(FLASH_BASE);
+    }
 };
 
 // ACR
@@ -310,9 +401,9 @@ XSOC_FLASH_LL_GENERATE_BITMASK_OPERATORS(internal_flash::ACR::Data,
 XSOC_FLASH_LL_GENERATE_BITMASK_ASSIGMENT_OPERATORS(internal_flash::ACR::Flag);
 XSOC_FLASH_LL_GENERATE_BITMASK_ASSIGMENT_OPERATORS(internal_flash::ACR::Data);
 
-XSOC_USART_LL_GENERATE_BITMASK_UNARY_OPERATORS(internal_flash::ACR::Flag);
-XSOC_USART_LL_GENERATE_BITMASK_UNARY_OPERATORS(internal_flash::ACR::Data);
-XSOC_USART_LL_GENERATE_COMPARISON_OPERATORS(internal_flash::ACR::Flag, internal_flash::ACR::Data);
+XSOC_FLASH_LL_GENERATE_BITMASK_UNARY_OPERATORS(internal_flash::ACR::Flag);
+XSOC_FLASH_LL_GENERATE_BITMASK_UNARY_OPERATORS(internal_flash::ACR::Data);
+XSOC_FLASH_LL_GENERATE_COMPARISON_OPERATORS(internal_flash::ACR::Flag, internal_flash::ACR::Data);
 
 // PECR
 XSOC_FLASH_LL_GENERATE_BITMASK_OPERATORS(internal_flash::PECR::Data,
@@ -331,9 +422,9 @@ XSOC_FLASH_LL_GENERATE_BITMASK_OPERATORS(internal_flash::PECR::Data,
 XSOC_FLASH_LL_GENERATE_BITMASK_ASSIGMENT_OPERATORS(internal_flash::PECR::Flag);
 XSOC_FLASH_LL_GENERATE_BITMASK_ASSIGMENT_OPERATORS(internal_flash::PECR::Data);
 
-XSOC_USART_LL_GENERATE_BITMASK_UNARY_OPERATORS(internal_flash::PECR::Flag);
-XSOC_USART_LL_GENERATE_BITMASK_UNARY_OPERATORS(internal_flash::PECR::Data);
-XSOC_USART_LL_GENERATE_COMPARISON_OPERATORS(internal_flash::PECR::Flag, internal_flash::PECR::Data);
+XSOC_FLASH_LL_GENERATE_BITMASK_UNARY_OPERATORS(internal_flash::PECR::Flag);
+XSOC_FLASH_LL_GENERATE_BITMASK_UNARY_OPERATORS(internal_flash::PECR::Data);
+XSOC_FLASH_LL_GENERATE_COMPARISON_OPERATORS(internal_flash::PECR::Flag, internal_flash::PECR::Data);
 
 // SR
 XSOC_FLASH_LL_GENERATE_BITMASK_OPERATORS(internal_flash::SR::Data, internal_flash::SR::Flag, internal_flash::SR::Flag);
@@ -344,7 +435,34 @@ XSOC_FLASH_LL_GENERATE_BITMASK_OPERATORS(internal_flash::SR::Data, internal_flas
 XSOC_FLASH_LL_GENERATE_BITMASK_ASSIGMENT_OPERATORS(internal_flash::SR::Flag);
 XSOC_FLASH_LL_GENERATE_BITMASK_ASSIGMENT_OPERATORS(internal_flash::SR::Data);
 
-XSOC_USART_LL_GENERATE_BITMASK_UNARY_OPERATORS(internal_flash::SR::Flag);
-XSOC_USART_LL_GENERATE_BITMASK_UNARY_OPERATORS(internal_flash::SR::Data);
-XSOC_USART_LL_GENERATE_COMPARISON_OPERATORS(internal_flash::SR::Flag, internal_flash::SR::Data);
+XSOC_FLASH_LL_GENERATE_BITMASK_UNARY_OPERATORS(internal_flash::SR::Flag);
+XSOC_FLASH_LL_GENERATE_BITMASK_UNARY_OPERATORS(internal_flash::SR::Data);
+XSOC_FLASH_LL_GENERATE_COMPARISON_OPERATORS(internal_flash::SR::Flag, internal_flash::SR::Data);
+
+// OPTR
+XSOC_FLASH_LL_GENERATE_BITMASK_OPERATORS(internal_flash::OPTR::Data,
+                                         internal_flash::OPTR::Data,
+                                         internal_flash::OPTR::Data);
+
+XSOC_FLASH_LL_GENERATE_BITMASK_OPERATORS(internal_flash::OPTR::Data,
+                                         internal_flash::OPTR::BOR::Flag,
+                                         internal_flash::OPTR::BOR::Flag);
+XSOC_FLASH_LL_GENERATE_BITMASK_OPERATORS(internal_flash::OPTR::Data,
+                                         internal_flash::OPTR::Data,
+                                         internal_flash::OPTR::BOR::Flag);
+XSOC_FLASH_LL_GENERATE_BITMASK_OPERATORS(internal_flash::OPTR::Data,
+                                         internal_flash::OPTR::BOR::Flag,
+                                         internal_flash::OPTR::Data);
+XSOC_FLASH_LL_GENERATE_COMPARISON_OPERATORS(internal_flash::OPTR::Data, internal_flash::OPTR::BOR::Flag);
+
+XSOC_FLASH_LL_GENERATE_BITMASK_OPERATORS(internal_flash::OPTR::Data,
+                                         internal_flash::OPTR::Flag,
+                                         internal_flash::OPTR::Flag);
+XSOC_FLASH_LL_GENERATE_BITMASK_OPERATORS(internal_flash::OPTR::Data,
+                                         internal_flash::OPTR::Data,
+                                         internal_flash::OPTR::Flag);
+XSOC_FLASH_LL_GENERATE_BITMASK_OPERATORS(internal_flash::OPTR::Data,
+                                         internal_flash::OPTR::Flag,
+                                         internal_flash::OPTR::Data);
+XSOC_FLASH_LL_GENERATE_COMPARISON_OPERATORS(internal_flash::OPTR::Data, internal_flash::OPTR::Flag);
 } // namespace xmcu::soc::st::arm::m0::l0::rm0451::peripherals::ll

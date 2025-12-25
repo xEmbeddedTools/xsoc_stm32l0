@@ -13,8 +13,9 @@
 
 // xmcu
 #include <rm0451/defs.hpp>
-#include <soc/st/arm/m0/nvic.hpp>
+#include <rm0451/peripherals/internal_flash/internal_flash_ll.hpp>
 #include <soc/Scoped_guard.hpp>
+#include <soc/st/arm/m0/nvic.hpp>
 #include <xmcu/Duration.hpp>
 #include <xmcu/Limited.hpp>
 #include <xmcu/Not_null.hpp>
@@ -52,26 +53,26 @@ public:
 
     enum class Latency : std::uint32_t
     {
-        _0 = 0 << FLASH_ACR_LATENCY_Pos,
-        _1 = 1 << FLASH_ACR_LATENCY_Pos,
+        _0u,
+        _1 = static_cast<std::uint32_t>(ll::internal_flash::ACR::latency),
     };
 
-    enum class Cache_mode_flag : std::uint32_t
+    enum class Cache_mode : std::uint32_t
     {
         disabled = 0x0u,
-        prefetech = FLASH_ACR_PRFTEN
+        prefetech = static_cast<std::uint32_t>(ll::internal_flash::ACR::prften)
     };
 
     enum class Status_flag : std::uint32_t
     {
         ok = 0x0u,
-        read_protection_error = FLASH_SR_RDERR,
-        write_protection_error = FLASH_SR_WRPERR,
-        size_error = FLASH_SR_SIZERR,
-        programming_aligment_error = FLASH_SR_PGAERR,
-        fetch_wr_abort_error = FLASH_SR_FWWERR,
-        overwrite_not_zero_error = FLASH_SR_NOTZEROERR,
-        option_bytes_load_error = FLASH_SR_OPTVERR,
+        read_protection_error = static_cast<std::uint32_t>(ll::internal_flash::SR::rderr),
+        write_protection_error = static_cast<std::uint32_t>(ll::internal_flash::SR::wrperr),
+        size_error = static_cast<std::uint32_t>(ll::internal_flash::SR::sizerr),
+        programming_aligment_error = static_cast<std::uint32_t>(ll::internal_flash::SR::pgaerr),
+        fetch_wr_abort_error = static_cast<std::uint32_t>(ll::internal_flash::SR::fwwer),
+        overwrite_not_zero_error = static_cast<std::uint32_t>(ll::internal_flash::SR::notzeroerr),
+        option_bytes_load_error = static_cast<std::uint32_t>(ll::internal_flash::SR::optverr),
         locked = 0x80000000
     };
 
@@ -93,7 +94,7 @@ public:
         static bool enable(Milliseconds a_timeout);
 
     private:
-        static inline Cache_mode_flag cache_mode = various::get_enum_incorrect_value<Cache_mode_flag>();
+        static inline Cache_mode cache_mode = various::get_enum_incorrect_value<Cache_mode>();
     };
 
     class polling : private non_constructible
@@ -136,12 +137,12 @@ public:
     static void set_latency(Latency a_latency);
     static bool set_latency(Latency a_latency, Milliseconds a_timeout);
 
-    static void set_cache_mode(Cache_mode_flag a_cache_mode);
-    static bool set_cache_mode(Cache_mode_flag a_cache_mode, Milliseconds a_timeout);
+    static void set_cache_mode(Cache_mode a_cache_mode);
+    static bool set_cache_mode(Cache_mode a_cache_mode, Milliseconds a_timeout);
 
-    static Cache_mode_flag get_cache_mode()
+    static Cache_mode get_cache_mode()
     {
-        return static_cast<Cache_mode_flag>(bit::flag::get(FLASH->ACR, FLASH_ACR_PRFTEN));
+        return static_cast<Cache_mode>(bit::flag::get(FLASH->ACR, FLASH_ACR_PRFTEN));
     }
 
     static Latency get_latency()

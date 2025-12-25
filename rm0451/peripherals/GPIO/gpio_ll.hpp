@@ -308,9 +308,6 @@ struct gpio : public gpio_base
     };
     struct LCKR
     {
-        static constexpr std::uint32_t mask = 0x1u;
-        static constexpr std::uint32_t shift_multiplier = 1u;
-
         enum class Flag : std::uint32_t
         {
             unlocked = 0x0u,
@@ -320,7 +317,7 @@ struct gpio : public gpio_base
 
         enum class Mask : std::uint32_t
         {
-            mask = mask
+            mask = 0x1u
         };
 
         enum class Data : std::uint32_t;
