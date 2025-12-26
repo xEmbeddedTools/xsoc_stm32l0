@@ -264,14 +264,27 @@ struct usart : public usart_base
     };
     struct BRR
     {
+        enum class Data : std::uint32_t;
+
         BRR& operator=(std::uint32_t value_a)
+        {
+            this->v = static_cast<Data>(value_a);
+            return *this;
+        }
+
+        BRR& operator=(Data value_a)
         {
             this->v = value_a;
             return *this;
         }
 
+        operator Data() const
+        {
+            return this->v;
+        }
+
     private:
-        volatile std::uint32_t v;
+        volatile Data v;
     };
     struct GTPR
     {
@@ -639,8 +652,7 @@ template<> [[nodiscard]] inline xmcu::soc::st::arm::m0::l0::rm0451::peripherals:
 bit::flag::get(xmcu::soc::st::arm::m0::l0::rm0451::peripherals::ll::usart::CR1 register_a,
                xmcu::soc::st::arm::m0::l0::rm0451::peripherals::ll::usart::CR1::Flag mask_a)
 {
-    using ll_usart = xmcu::soc::st::arm::m0::l0::rm0451::peripherals::ll::usart;
-    return static_cast<ll_usart::CR1::Flag>(register_a & mask_a);
+    return static_cast<xmcu::soc::st::arm::m0::l0::rm0451::peripherals::ll::usart::CR1::Flag>(register_a & mask_a);
 }
 // CR2
 template<> [[nodiscard]] inline xmcu::soc::st::arm::m0::l0::rm0451::peripherals::ll::usart::CR2::Flag
@@ -661,15 +673,13 @@ template<> [[nodiscard]] inline xmcu::soc::st::arm::m0::l0::rm0451::peripherals:
 bit::flag::get(xmcu::soc::st::arm::m0::l0::rm0451::peripherals::ll::usart::ISR register_a,
                xmcu::soc::st::arm::m0::l0::rm0451::peripherals::ll::usart::ISR::Flag mask_a)
 {
-    using ll_usart = xmcu::soc::st::arm::m0::l0::rm0451::peripherals::ll::usart;
-    return static_cast<ll_usart::ISR::Flag>(register_a & mask_a);
+    return static_cast<xmcu::soc::st::arm::m0::l0::rm0451::peripherals::ll::usart::ISR::Flag>(register_a & mask_a);
 }
 // ICR
 template<> [[nodiscard]] inline xmcu::soc::st::arm::m0::l0::rm0451::peripherals::ll::usart::ICR::Flag
 bit::flag::get(xmcu::soc::st::arm::m0::l0::rm0451::peripherals::ll::usart::ICR register_a,
                xmcu::soc::st::arm::m0::l0::rm0451::peripherals::ll::usart::ICR::Flag mask_a)
 {
-    using ll_usart = xmcu::soc::st::arm::m0::l0::rm0451::peripherals::ll::usart;
-    return static_cast<ll_usart::ICR::Flag>(register_a & mask_a);
+    return static_cast<xmcu::soc::st::arm::m0::l0::rm0451::peripherals::ll::usart::ICR::Flag>(register_a & mask_a);
 }
 } // namespace xmcu
