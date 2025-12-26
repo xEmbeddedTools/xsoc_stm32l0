@@ -5,13 +5,14 @@
  *  Licensed under the Apache License, Version 2.0. See LICENSE file in the project root for details.
  */
 
-// std
-#include <cstdint>
-
 // xmcu
 #include <rm0451/peripherals/GPIO/base.hpp>
 #include <xmcu/Limited.hpp>
 #include <xmcu/Non_copyable.hpp>
+
+// std
+#include <cstdint>
+#include <type_traits>
 
 #define XSOC_GPIO_LL_SINGLE_ARG(...) __VA_ARGS__
 #define XSOC_GPIO_LL_GENERATE_SHIFT_OPERATORS(DataType, FlagType, MaskType, PinType, shift_value, mask_value)        \
@@ -323,6 +324,7 @@ struct gpio : public gpio_base
         enum class Data : std::uint32_t;
 
         using enum Flag;
+        using enum Mask;
 
         LCKR& operator=(Data value_a)
         {
@@ -762,7 +764,6 @@ template<> [[nodiscard]] constexpr bool bit::is<soc::st::arm::m0::l0::rm0451::pe
     soc::st::arm::m0::l0::rm0451::peripherals::ll::gpio::A a_index)
 {
     using ll_gpio = soc::st::arm::m0::l0::rm0451::peripherals::ll::gpio;
-
     const std::uint32_t flag = 0x1u << static_cast<std::uint32_t>(a_index);
     return static_cast<ll_gpio::IDR::Data>(flag) ==
            (static_cast<ll_gpio::IDR::Data>(a_register) & static_cast<ll_gpio::IDR::Data>(flag));
