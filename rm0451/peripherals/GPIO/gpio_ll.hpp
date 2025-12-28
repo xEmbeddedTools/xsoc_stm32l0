@@ -87,6 +87,8 @@ struct gpio : public gpio_base
 {
     struct MODER
     {
+        enum class Data : std::uint32_t;
+
         enum class Flag : std::uint32_t
         {
             input = 0x0u,
@@ -102,8 +104,6 @@ struct gpio : public gpio_base
 
         using enum Flag;
         using enum Mask;
-
-        enum class Data : std::uint32_t;
 
         MODER& operator=(Data value_a)
         {
@@ -121,6 +121,8 @@ struct gpio : public gpio_base
     };
     struct OTYPER
     {
+        enum class Data : std::uint32_t;
+
         enum class Flag : std::uint32_t
         {
             push_pull = 0x0u,
@@ -134,8 +136,6 @@ struct gpio : public gpio_base
 
         using enum Flag;
         using enum Mask;
-
-        enum class Data : std::uint32_t;
 
         OTYPER& operator=(Data value_a)
         {
@@ -153,6 +153,8 @@ struct gpio : public gpio_base
     };
     struct OSPEEDR
     {
+        enum class Data : std::uint32_t;
+
         enum class Flag : std::uint32_t
         {
             low = 0x0u,
@@ -168,8 +170,6 @@ struct gpio : public gpio_base
 
         using enum Flag;
         using enum Mask;
-
-        enum class Data : std::uint32_t;
 
         OSPEEDR& operator=(Data value_a)
         {
@@ -187,6 +187,8 @@ struct gpio : public gpio_base
     };
     struct PUPDR
     {
+        enum class Data : std::uint32_t;
+
         enum class Flag : std::uint32_t
         {
             none = 0x0u,
@@ -201,8 +203,6 @@ struct gpio : public gpio_base
 
         using enum Flag;
         using enum Mask;
-
-        enum class Data : std::uint32_t;
 
         PUPDR& operator=(Data value_a)
         {
@@ -220,6 +220,8 @@ struct gpio : public gpio_base
     };
     struct IDR
     {
+        enum class Data : std::uint32_t;
+
         enum class Flag : std::uint32_t
         {
             low,
@@ -233,8 +235,6 @@ struct gpio : public gpio_base
 
         using enum Flag;
         using enum Mask;
-
-        enum class Data : std::uint32_t;
 
         IDR()
             : v(static_cast<Data>(0x0u))
@@ -251,6 +251,8 @@ struct gpio : public gpio_base
     };
     struct ODR
     {
+        enum class Data : std::uint32_t;
+
         enum class Flag : std::uint32_t
         {
             low,
@@ -264,8 +266,6 @@ struct gpio : public gpio_base
 
         using enum Flag;
         using enum Mask;
-
-        enum class Data : std::uint32_t;
 
         ODR& operator=(Data value_a)
         {
@@ -283,6 +283,8 @@ struct gpio : public gpio_base
     };
     struct BSRR
     {
+        enum class Data : std::uint32_t;
+
         enum class Flag : std::uint32_t
         {
             high = 0x1u,
@@ -290,8 +292,6 @@ struct gpio : public gpio_base
         };
 
         using enum Flag;
-
-        enum class Data : std::uint32_t;
 
         BSRR& operator=(Data value_a)
         {
@@ -309,6 +309,8 @@ struct gpio : public gpio_base
     };
     struct LCKR
     {
+        enum class Data : std::uint32_t;
+
         enum class Flag : std::uint32_t
         {
             unlocked = 0x0u,
@@ -320,8 +322,6 @@ struct gpio : public gpio_base
         {
             mask = 0x1u
         };
-
-        enum class Data : std::uint32_t;
 
         using enum Flag;
         using enum Mask;
@@ -342,6 +342,8 @@ struct gpio : public gpio_base
     };
     struct AFR
     {
+        enum class Data : std::uint32_t;
+
         enum class Flag : std::uint32_t
         {
             af0,
@@ -369,8 +371,6 @@ struct gpio : public gpio_base
         using enum Flag;
         using enum Mask;
 
-        enum class Data : std::uint32_t;
-
         AFR& operator=(Data value_a)
         {
             this->v = value_a;
@@ -386,6 +386,8 @@ struct gpio : public gpio_base
     };
     struct BRR
     {
+        enum class Data : std::uint32_t;
+
         enum class Flag : std::uint32_t
         {
             low = 0x0u,
@@ -398,8 +400,6 @@ struct gpio : public gpio_base
 
         using enum Flag;
         using enum Mask;
-
-        enum class Data : std::uint32_t;
 
         BRR& operator=(Data value_a)
         {
