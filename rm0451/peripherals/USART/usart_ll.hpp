@@ -200,7 +200,7 @@ struct usart : public usart_base
     struct CR2
     {
     private:
-        struct STOPGroup
+        struct STOP
         {
             enum class Flag : std::uint32_t
             {
@@ -223,7 +223,7 @@ struct usart : public usart_base
                 return this->mask;
             }
         };
-        struct ABRMODGroup
+        struct ABRMOD
         {
             enum class Flag : std::uint32_t
             {
@@ -274,8 +274,8 @@ struct usart : public usart_base
             add = USART_CR2_ADD_Pos
         };
 
-        static STOPGroup stop;
-        static ABRMODGroup abrmod;
+        static STOP stop;
+        static ABRMOD abrmod;
 
         using enum Flag;
         using enum Shift_8;
@@ -291,12 +291,12 @@ struct usart : public usart_base
             return *this;
         }
 
-        CR2& operator=(STOPGroup::Flag value_a)
+        CR2& operator=(STOP::Flag value_a)
         {
             this->v = static_cast<Data>(value_a);
             return *this;
         }
-        CR2& operator=(ABRMODGroup::Flag value_a)
+        CR2& operator=(ABRMOD::Flag value_a)
         {
             this->v = static_cast<Data>(value_a);
             return *this;
@@ -308,32 +308,32 @@ struct usart : public usart_base
         }
 
         // STOP
-        XSOC_USART_LL_GENERATE_BITMASK_OPERATORS_FRIEND(Data, Flag, STOPGroup::Flag);
-        XSOC_USART_LL_GENERATE_BITMASK_OPERATORS_FRIEND(Data, STOPGroup::Flag, Flag);
-        XSOC_USART_LL_GENERATE_BITMASK_OPERATORS_FRIEND(Data, Data, STOPGroup::Flag);
-        XSOC_USART_LL_GENERATE_BITMASK_OPERATORS_FRIEND(Data, STOPGroup::Flag, Data);
-        XSOC_USART_LL_GENERATE_BITMASK_OPERATORS_FRIEND(Data, Data, STOPGroup::Mask);
-        XSOC_USART_LL_GENERATE_BITMASK_OPERATORS_FRIEND(Data, STOPGroup::Mask, Data);
+        XSOC_USART_LL_GENERATE_BITMASK_OPERATORS_FRIEND(Data, Flag, STOP::Flag);
+        XSOC_USART_LL_GENERATE_BITMASK_OPERATORS_FRIEND(Data, STOP::Flag, Flag);
+        XSOC_USART_LL_GENERATE_BITMASK_OPERATORS_FRIEND(Data, Data, STOP::Flag);
+        XSOC_USART_LL_GENERATE_BITMASK_OPERATORS_FRIEND(Data, STOP::Flag, Data);
+        XSOC_USART_LL_GENERATE_BITMASK_OPERATORS_FRIEND(Data, Data, STOP::Mask);
+        XSOC_USART_LL_GENERATE_BITMASK_OPERATORS_FRIEND(Data, STOP::Mask, Data);
 
-        XSOC_USART_LL_GENERATE_BITMASK_UNARY_OPERATORS_FRIEND(STOPGroup::Flag);
-        XSOC_USART_LL_GENERATE_BITMASK_UNARY_OPERATORS_FRIEND(STOPGroup::Mask);
+        XSOC_USART_LL_GENERATE_BITMASK_UNARY_OPERATORS_FRIEND(STOP::Flag);
+        XSOC_USART_LL_GENERATE_BITMASK_UNARY_OPERATORS_FRIEND(STOP::Mask);
 
-        XSOC_USART_LL_GENERATE_COMPARISON_OPERATORS_FRIEND(Data, STOPGroup::Mask);
-        XSOC_USART_LL_GENERATE_COMPARISON_OPERATORS_FRIEND(Data, STOPGroup::Flag);
+        XSOC_USART_LL_GENERATE_COMPARISON_OPERATORS_FRIEND(Data, STOP::Mask);
+        XSOC_USART_LL_GENERATE_COMPARISON_OPERATORS_FRIEND(Data, STOP::Flag);
 
         // ABRMOD
-        XSOC_USART_LL_GENERATE_BITMASK_OPERATORS_FRIEND(Data, Flag, ABRMODGroup::Flag);
-        XSOC_USART_LL_GENERATE_BITMASK_OPERATORS_FRIEND(Data, ABRMODGroup::Flag, Flag);
-        XSOC_USART_LL_GENERATE_BITMASK_OPERATORS_FRIEND(Data, Data, ABRMODGroup::Flag);
-        XSOC_USART_LL_GENERATE_BITMASK_OPERATORS_FRIEND(Data, ABRMODGroup::Flag, Data);
-        XSOC_USART_LL_GENERATE_BITMASK_OPERATORS_FRIEND(Data, Data, ABRMODGroup::Mask);
-        XSOC_USART_LL_GENERATE_BITMASK_OPERATORS_FRIEND(Data, ABRMODGroup::Mask, Data);
+        XSOC_USART_LL_GENERATE_BITMASK_OPERATORS_FRIEND(Data, Flag, ABRMOD::Flag);
+        XSOC_USART_LL_GENERATE_BITMASK_OPERATORS_FRIEND(Data, ABRMOD::Flag, Flag);
+        XSOC_USART_LL_GENERATE_BITMASK_OPERATORS_FRIEND(Data, Data, ABRMOD::Flag);
+        XSOC_USART_LL_GENERATE_BITMASK_OPERATORS_FRIEND(Data, ABRMOD::Flag, Data);
+        XSOC_USART_LL_GENERATE_BITMASK_OPERATORS_FRIEND(Data, Data, ABRMOD::Mask);
+        XSOC_USART_LL_GENERATE_BITMASK_OPERATORS_FRIEND(Data, ABRMOD::Mask, Data);
 
-        XSOC_USART_LL_GENERATE_BITMASK_UNARY_OPERATORS_FRIEND(ABRMODGroup::Flag);
-        XSOC_USART_LL_GENERATE_BITMASK_UNARY_OPERATORS_FRIEND(ABRMODGroup::Mask);
+        XSOC_USART_LL_GENERATE_BITMASK_UNARY_OPERATORS_FRIEND(ABRMOD::Flag);
+        XSOC_USART_LL_GENERATE_BITMASK_UNARY_OPERATORS_FRIEND(ABRMOD::Mask);
 
-        XSOC_USART_LL_GENERATE_COMPARISON_OPERATORS_FRIEND(Data, ABRMODGroup::Mask);
-        XSOC_USART_LL_GENERATE_COMPARISON_OPERATORS_FRIEND(Data, ABRMODGroup::Flag);
+        XSOC_USART_LL_GENERATE_COMPARISON_OPERATORS_FRIEND(Data, ABRMOD::Mask);
+        XSOC_USART_LL_GENERATE_COMPARISON_OPERATORS_FRIEND(Data, ABRMOD::Flag);
 
     private:
         volatile Data v;
@@ -341,7 +341,7 @@ struct usart : public usart_base
     struct CR3
     {
     private:
-        struct WUSGroup
+        struct WUS
         {
             enum class Flag : std::uint32_t
             {
@@ -398,7 +398,7 @@ struct usart : public usart_base
         using enum Flag;
         using enum Shift_3;
 
-        static WUSGroup wus;
+        static WUS wus;
 
         CR3& operator=(Flag value_a)
         {
@@ -411,7 +411,7 @@ struct usart : public usart_base
             return *this;
         }
 
-        CR3& operator=(WUSGroup::Flag value_a)
+        CR3& operator=(WUS::Flag value_a)
         {
             this->v = static_cast<Data>(value_a);
             return *this;
@@ -423,18 +423,18 @@ struct usart : public usart_base
         }
 
         // STOP
-        XSOC_USART_LL_GENERATE_BITMASK_OPERATORS_FRIEND(Data, Flag, WUSGroup::Flag);
-        XSOC_USART_LL_GENERATE_BITMASK_OPERATORS_FRIEND(Data, WUSGroup::Flag, Flag);
-        XSOC_USART_LL_GENERATE_BITMASK_OPERATORS_FRIEND(Data, Data, WUSGroup::Flag);
-        XSOC_USART_LL_GENERATE_BITMASK_OPERATORS_FRIEND(Data, WUSGroup::Flag, Data);
-        XSOC_USART_LL_GENERATE_BITMASK_OPERATORS_FRIEND(Data, Data, WUSGroup::Mask);
-        XSOC_USART_LL_GENERATE_BITMASK_OPERATORS_FRIEND(Data, WUSGroup::Mask, Data);
+        XSOC_USART_LL_GENERATE_BITMASK_OPERATORS_FRIEND(Data, Flag, WUS::Flag);
+        XSOC_USART_LL_GENERATE_BITMASK_OPERATORS_FRIEND(Data, WUS::Flag, Flag);
+        XSOC_USART_LL_GENERATE_BITMASK_OPERATORS_FRIEND(Data, Data, WUS::Flag);
+        XSOC_USART_LL_GENERATE_BITMASK_OPERATORS_FRIEND(Data, WUS::Flag, Data);
+        XSOC_USART_LL_GENERATE_BITMASK_OPERATORS_FRIEND(Data, Data, WUS::Mask);
+        XSOC_USART_LL_GENERATE_BITMASK_OPERATORS_FRIEND(Data, WUS::Mask, Data);
 
-        XSOC_USART_LL_GENERATE_BITMASK_UNARY_OPERATORS_FRIEND(WUSGroup::Flag);
-        XSOC_USART_LL_GENERATE_BITMASK_UNARY_OPERATORS_FRIEND(WUSGroup::Mask);
+        XSOC_USART_LL_GENERATE_BITMASK_UNARY_OPERATORS_FRIEND(WUS::Flag);
+        XSOC_USART_LL_GENERATE_BITMASK_UNARY_OPERATORS_FRIEND(WUS::Mask);
 
-        XSOC_USART_LL_GENERATE_COMPARISON_OPERATORS_FRIEND(Data, WUSGroup::Mask);
-        XSOC_USART_LL_GENERATE_COMPARISON_OPERATORS_FRIEND(Data, WUSGroup::Flag);
+        XSOC_USART_LL_GENERATE_COMPARISON_OPERATORS_FRIEND(Data, WUS::Mask);
+        XSOC_USART_LL_GENERATE_COMPARISON_OPERATORS_FRIEND(Data, WUS::Flag);
 
     private:
         volatile Data v;
@@ -465,6 +465,8 @@ struct usart : public usart_base
     };
     struct GTPR
     {
+        enum class Data : std::uint32_t;
+
         enum class Shift_8 : std::uint32_t
         {
             psc = USART_GTPR_PSC_Pos,
@@ -472,8 +474,6 @@ struct usart : public usart_base
         };
 
         using enum Shift_8;
-
-        enum class Data : std::uint32_t;
 
         GTPR& operator=(Data value_a)
         {
@@ -486,6 +486,8 @@ struct usart : public usart_base
     };
     struct RTOR
     {
+        enum class Data : std::uint32_t;
+
         enum class Shift_23 : std::uint32_t
         {
             rto = USART_RTOR_RTO_Pos
@@ -499,8 +501,6 @@ struct usart : public usart_base
         using enum Shift_23;
         using enum Shift_8;
 
-        enum class Data : std::uint32_t;
-
         RTOR& operator=(Data value_a)
         {
             this->v = value_a;
@@ -512,6 +512,8 @@ struct usart : public usart_base
     };
     struct RQR
     {
+        enum class Data : std::uint32_t;
+
         enum class Flag : std::uint32_t
         {
             abrrq = USART_RQR_ABRRQ,
@@ -522,8 +524,6 @@ struct usart : public usart_base
         };
 
         using enum Flag;
-
-        enum class Data : std::uint32_t;
 
         RQR& operator=(Data value_a)
         {
@@ -542,6 +542,8 @@ struct usart : public usart_base
     };
     struct ISR
     {
+        enum class Data : std::uint32_t;
+
         enum class Flag : std::uint32_t
         {
             none = 0x0u,
@@ -572,8 +574,6 @@ struct usart : public usart_base
 
         using enum Flag;
 
-        enum class Data : std::uint32_t;
-
         ISR()
             : v(static_cast<Data>(0x0u))
         {
@@ -589,6 +589,8 @@ struct usart : public usart_base
     };
     struct ICR
     {
+        enum class Data : std::uint32_t;
+
         enum class Flag : std::uint32_t
         {
             none = 0x0u,
@@ -608,8 +610,6 @@ struct usart : public usart_base
         };
 
         using enum Flag;
-
-        enum class Data : std::uint32_t;
 
         ICR& operator=(Data value_a)
         {

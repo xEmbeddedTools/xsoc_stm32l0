@@ -86,6 +86,56 @@
         return false == (left_a == right_a);                                                \
     }
 
+#define XSOC_USART_LL_GENERATE_BITMASK_OPERATORS_FRIEND(ReturnEnumType, LeftEnumType, RightEnumType)     \
+                                                                                                         \
+    friend constexpr ReturnEnumType operator|(LeftEnumType left_a, RightEnumType right_a) noexcept       \
+    {                                                                                                    \
+        return static_cast<ReturnEnumType>(static_cast<std::underlying_type_t<LeftEnumType>>(left_a) |   \
+                                           static_cast<std::underlying_type_t<RightEnumType>>(right_a)); \
+    }                                                                                                    \
+                                                                                                         \
+    friend constexpr ReturnEnumType operator&(LeftEnumType left_a, RightEnumType right_a) noexcept       \
+    {                                                                                                    \
+        return static_cast<ReturnEnumType>(static_cast<std::underlying_type_t<LeftEnumType>>(left_a) &   \
+                                           static_cast<std::underlying_type_t<RightEnumType>>(right_a)); \
+    }                                                                                                    \
+                                                                                                         \
+    friend constexpr ReturnEnumType operator^(LeftEnumType left_a, RightEnumType right_a) noexcept       \
+    {                                                                                                    \
+        return static_cast<ReturnEnumType>(static_cast<std::underlying_type_t<LeftEnumType>>(left_a) ^   \
+                                           static_cast<std::underlying_type_t<RightEnumType>>(right_a)); \
+    }
+
+#define XSOC_USART_LL_GENERATE_COMPARISON_OPERATORS_FRIEND(LeftEnumType, RightEnumType)     \
+    friend constexpr bool operator==(LeftEnumType left_a, RightEnumType right_a)            \
+    {                                                                                       \
+        return (static_cast<std::uint32_t>(left_a) == static_cast<std::uint32_t>(right_a)); \
+    }                                                                                       \
+    friend constexpr bool operator==(RightEnumType left_a, LeftEnumType right_a)            \
+    {                                                                                       \
+        return (static_cast<std::uint32_t>(left_a) == static_cast<std::uint32_t>(right_a)); \
+    }                                                                                       \
+    friend constexpr bool operator!=(LeftEnumType left_a, RightEnumType right_a)            \
+    {                                                                                       \
+        return false == (left_a == right_a);                                                \
+    }                                                                                       \
+    friend constexpr bool operator!=(RightEnumType left_a, LeftEnumType right_a)            \
+    {                                                                                       \
+        return false == (left_a == right_a);                                                \
+    }
+
+#define XSOC_USART_LL_GENERATE_BITMASK_UNARY_OPERATORS_FRIEND(EnumType) \
+    friend constexpr EnumType operator~(EnumType right_a) noexcept      \
+    {                                                                   \
+        using Type = std::underlying_type_t<EnumType>;                  \
+        return static_cast<EnumType>(~static_cast<Type>(right_a));      \
+    }                                                                   \
+    friend constexpr bool operator!(EnumType right_a) noexcept          \
+    {                                                                   \
+        using Type = std::underlying_type_t<EnumType>;                  \
+        return static_cast<Type>(right_a) == 0;                         \
+    }
+
 namespace xmcu::soc::st::arm::m0::l0::rm0451::peripherals::ll {
 struct internal_flash : private xmcu::non_constructible
 {
@@ -299,7 +349,8 @@ public:
     };
     struct OPTR
     {
-        struct BOR : private xmcu::Non_copyable
+    private:
+        struct BOR
         {
             enum class Flag : std::uint32_t
             {
@@ -317,7 +368,15 @@ public:
 
             using enum Flag;
             using enum Mask;
-        } static bor;
+
+            operator Mask() const
+            {
+                return this->mask;
+            }
+        };
+
+    public:
+        enum class Data : std::uint32_t;
 
         enum class Flag : std::uint32_t
         {
@@ -331,7 +390,7 @@ public:
         };
         using enum Flag;
 
-        enum class Data : std::uint32_t;
+        static BOR bor;
 
         OPTR()
             : v(static_cast<Data>(0x0u))
@@ -342,6 +401,20 @@ public:
         {
             return this->v;
         }
+
+        // BOR
+        XSOC_USART_LL_GENERATE_BITMASK_OPERATORS_FRIEND(Data, Flag, BOR::Flag);
+        XSOC_USART_LL_GENERATE_BITMASK_OPERATORS_FRIEND(Data, BOR::Flag, Flag);
+        XSOC_USART_LL_GENERATE_BITMASK_OPERATORS_FRIEND(Data, Data, BOR::Flag);
+        XSOC_USART_LL_GENERATE_BITMASK_OPERATORS_FRIEND(Data, BOR::Flag, Data);
+        XSOC_USART_LL_GENERATE_BITMASK_OPERATORS_FRIEND(Data, Data, BOR::Mask);
+        XSOC_USART_LL_GENERATE_BITMASK_OPERATORS_FRIEND(Data, BOR::Mask, Data);
+
+        XSOC_USART_LL_GENERATE_BITMASK_UNARY_OPERATORS_FRIEND(BOR::Flag);
+        XSOC_USART_LL_GENERATE_BITMASK_UNARY_OPERATORS_FRIEND(BOR::Mask);
+
+        XSOC_USART_LL_GENERATE_COMPARISON_OPERATORS_FRIEND(Data, BOR::Mask);
+        XSOC_USART_LL_GENERATE_COMPARISON_OPERATORS_FRIEND(Data, BOR::Flag);
 
     private:
         volatile const Data v;
@@ -450,24 +523,6 @@ XSOC_FLASH_LL_GENERATE_BITMASK_OPERATORS(internal_flash::OPTR::Data,
                                          internal_flash::OPTR::Data);
 
 XSOC_FLASH_LL_GENERATE_BITMASK_OPERATORS(internal_flash::OPTR::Data,
-                                         internal_flash::OPTR::BOR::Flag,
-                                         internal_flash::OPTR::BOR::Flag);
-XSOC_FLASH_LL_GENERATE_BITMASK_OPERATORS(internal_flash::OPTR::Data,
-                                         internal_flash::OPTR::Data,
-                                         internal_flash::OPTR::BOR::Flag);
-XSOC_FLASH_LL_GENERATE_BITMASK_OPERATORS(internal_flash::OPTR::Data,
-                                         internal_flash::OPTR::BOR::Flag,
-                                         internal_flash::OPTR::Data);
-XSOC_FLASH_LL_GENERATE_BITMASK_OPERATORS(internal_flash::OPTR::Data,
-                                         internal_flash::OPTR::Data,
-                                         internal_flash::OPTR::BOR::Mask);
-XSOC_FLASH_LL_GENERATE_BITMASK_OPERATORS(internal_flash::OPTR::Data,
-                                         internal_flash::OPTR::BOR::Mask,
-                                         internal_flash::OPTR::Data);
-
-XSOC_FLASH_LL_GENERATE_COMPARISON_OPERATORS(internal_flash::OPTR::Data, internal_flash::OPTR::BOR::Flag);
-
-XSOC_FLASH_LL_GENERATE_BITMASK_OPERATORS(internal_flash::OPTR::Data,
                                          internal_flash::OPTR::Flag,
                                          internal_flash::OPTR::Flag);
 XSOC_FLASH_LL_GENERATE_BITMASK_OPERATORS(internal_flash::OPTR::Data,
@@ -480,20 +535,5 @@ XSOC_FLASH_LL_GENERATE_BITMASK_OPERATORS(internal_flash::OPTR::Data,
 XSOC_FLASH_LL_GENERATE_BITMASK_UNARY_OPERATORS(internal_flash::OPTR::Flag);
 XSOC_FLASH_LL_GENERATE_BITMASK_UNARY_OPERATORS(internal_flash::OPTR::Data);
 
-XSOC_FLASH_LL_GENERATE_BITMASK_UNARY_OPERATORS(internal_flash::OPTR::BOR::Flag);
-XSOC_FLASH_LL_GENERATE_BITMASK_UNARY_OPERATORS(internal_flash::OPTR::BOR::Mask);
-
 XSOC_FLASH_LL_GENERATE_COMPARISON_OPERATORS(internal_flash::OPTR::Data, internal_flash::OPTR::Flag);
 } // namespace xmcu::soc::st::arm::m0::l0::rm0451::peripherals::ll
-
-namespace xmcu {
-// OPTR
-template<> [[nodiscard]] inline auto
-bit::flag::get(xmcu::soc::st::arm::m0::l0::rm0451::peripherals::ll::internal_flash::OPTR register_a,
-               xmcu::soc::st::arm::m0::l0::rm0451::peripherals::ll::internal_flash::OPTR::BOR::Mask mask_a)
-{
-    return static_cast<xmcu::soc::st::arm::m0::l0::rm0451::peripherals::ll::internal_flash::OPTR::BOR::Flag>(
-        (register_a & mask_a));
-}
-
-} // namespace xmcu
