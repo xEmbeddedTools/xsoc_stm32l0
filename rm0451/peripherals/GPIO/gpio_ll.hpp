@@ -96,7 +96,6 @@ struct gpio : public gpio_base
             af = 0x2u,
             analog = 0x3u
         };
-
         enum class Mask : std::uint32_t
         {
             mask = 0x3u
@@ -128,7 +127,6 @@ struct gpio : public gpio_base
             push_pull = 0x0u,
             open_drain = 0x1u,
         };
-
         enum class Mask : std::uint32_t
         {
             mask = 0x1u
@@ -227,7 +225,6 @@ struct gpio : public gpio_base
             low,
             high
         };
-
         enum class Mask : std::uint32_t
         {
             mask = 0x1u
@@ -258,7 +255,6 @@ struct gpio : public gpio_base
             low,
             high
         };
-
         enum class Mask : std::uint32_t
         {
             mask = 0x1u
@@ -317,7 +313,6 @@ struct gpio : public gpio_base
             lock = 0x01u,
             key = 0x10u
         };
-
         enum class Mask : std::uint32_t
         {
             mask = 0x1u
@@ -362,7 +357,6 @@ struct gpio : public gpio_base
             af13,
             af14
         };
-
         enum class Mask : std::uint32_t
         {
             mask = 0xFu
@@ -392,7 +386,6 @@ struct gpio : public gpio_base
         {
             low = 0x0u,
         };
-
         enum class Mask : std::uint32_t
         {
             mask = 0x1u

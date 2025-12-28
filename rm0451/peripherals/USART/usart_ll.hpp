@@ -209,7 +209,6 @@ struct usart : public usart_base
                 _0_5 = USART_CR2_STOP_0,
                 _1_0 = 0x0u
             };
-
             enum class Mask : std::uint32_t
             {
                 mask = 0x3u << USART_CR2_STOP_Pos
@@ -232,7 +231,6 @@ struct usart : public usart_base
                 frame_0x75_detection = USART_CR2_ABRMODE_1,
                 frame_0x55_detection = USART_CR2_ABRMODE_0 | USART_CR2_ABRMODE_1
             };
-
             enum class Mask : std::uint32_t
             {
                 mask = 0x3u << USART_CR2_ABRMODE_Pos
@@ -349,7 +347,6 @@ struct usart : public usart_base
                 start_bit_detection = USART_CR3_WUS_1,
                 rxne = USART_CR3_WUS_0 | USART_CR3_WUS_1
             };
-
             enum class Mask : std::uint32_t
             {
                 mask = 0x3u << USART_CR2_STOP_Pos
@@ -492,7 +489,6 @@ struct usart : public usart_base
         {
             rto = USART_RTOR_RTO_Pos
         };
-
         enum class Shift_8 : std::uint32_t
         {
             blen = USART_RTOR_BLEN_Pos
