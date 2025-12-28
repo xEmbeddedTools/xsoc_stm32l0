@@ -269,7 +269,7 @@ void enable(ll::usart::Registers* a_p_registers,
 
         bit::flag::clear(&(a_p_registers->cr1), ll::usart::CR1::ue);
         bit::flag::set(
-            &(a_p_registers->cr3), 0x3u << ll::usart::CR3::wus, static_cast<ll::usart::CR3::Flag>(a_low_power_wakeup));
+            &(a_p_registers->cr3), ll::usart::CR3::wus, static_cast<ll::usart::CR3::Data>(a_low_power_wakeup));
     }
 
     bit::flag::set(&(a_p_registers->cr2), static_cast<ll::usart::CR2::Flag>(a_transceiving_config.stop_bits));
@@ -353,7 +353,7 @@ void enable(ll::usart::Registers* a_p_registers,
 
         bit::flag::clear(&(a_p_registers->cr1), ll::usart::CR1::ue);
         bit::flag::set(
-            &(a_p_registers->cr3), 0x3u << ll::usart::CR3::wus, static_cast<ll::usart::CR3::Flag>(a_low_power_wakeup));
+            &(a_p_registers->cr3), ll::usart::CR3::wus, static_cast<ll::usart::CR3::Data>(a_low_power_wakeup));
     }
 
     bit::flag::set(&(a_p_registers->cr2), static_cast<ll::usart::CR2::Flag>(a_transceiving_config.stop_bits));
@@ -815,7 +815,7 @@ void USART::Interrupt::disable()
     NVIC_DisableIRQ(this->p_USART->irqn);
 
     bit::flag::clear(&(this->p_USART->p_registers->cr1), ll::usart::CR1::uesm);
-    bit::flag::clear(&(this->p_USART->p_registers->cr3), 0x3u << ll::usart::CR3::wus);
+    bit::flag::clear(&(this->p_USART->p_registers->cr3), ll::usart::CR3::wus);
 
     USART_irq_context[this->p_USART->idx] = nullptr;
 }

@@ -303,15 +303,20 @@ public:
         {
             enum class Flag : std::uint32_t
             {
-                off,
-                _1,
-                _2,
-                _3,
-                _4,
-                _5
+                _1 = 0x8u << FLASH_OPTR_BOR_LEV_Pos,
+                _2 = 0x9u << FLASH_OPTR_BOR_LEV_Pos,
+                _3 = 0xAu << FLASH_OPTR_BOR_LEV_Pos,
+                _4 = 0xBu << FLASH_OPTR_BOR_LEV_Pos,
+                _5 = 0xCu << FLASH_OPTR_BOR_LEV_Pos
+            };
+
+            enum class Mask : std::uint32_t
+            {
+                mask = 0xFu << FLASH_OPTR_BOR_LEV_Pos
             };
 
             using enum Flag;
+            using enum Mask;
         } static bor;
 
         enum class Flag : std::uint32_t
@@ -453,6 +458,13 @@ XSOC_FLASH_LL_GENERATE_BITMASK_OPERATORS(internal_flash::OPTR::Data,
 XSOC_FLASH_LL_GENERATE_BITMASK_OPERATORS(internal_flash::OPTR::Data,
                                          internal_flash::OPTR::BOR::Flag,
                                          internal_flash::OPTR::Data);
+XSOC_FLASH_LL_GENERATE_BITMASK_OPERATORS(internal_flash::OPTR::Data,
+                                         internal_flash::OPTR::Data,
+                                         internal_flash::OPTR::BOR::Mask);
+XSOC_FLASH_LL_GENERATE_BITMASK_OPERATORS(internal_flash::OPTR::Data,
+                                         internal_flash::OPTR::BOR::Mask,
+                                         internal_flash::OPTR::Data);
+
 XSOC_FLASH_LL_GENERATE_COMPARISON_OPERATORS(internal_flash::OPTR::Data, internal_flash::OPTR::BOR::Flag);
 
 XSOC_FLASH_LL_GENERATE_BITMASK_OPERATORS(internal_flash::OPTR::Data,
@@ -464,5 +476,24 @@ XSOC_FLASH_LL_GENERATE_BITMASK_OPERATORS(internal_flash::OPTR::Data,
 XSOC_FLASH_LL_GENERATE_BITMASK_OPERATORS(internal_flash::OPTR::Data,
                                          internal_flash::OPTR::Flag,
                                          internal_flash::OPTR::Data);
+
+XSOC_FLASH_LL_GENERATE_BITMASK_UNARY_OPERATORS(internal_flash::OPTR::Flag);
+XSOC_FLASH_LL_GENERATE_BITMASK_UNARY_OPERATORS(internal_flash::OPTR::Data);
+
+XSOC_FLASH_LL_GENERATE_BITMASK_UNARY_OPERATORS(internal_flash::OPTR::BOR::Flag);
+XSOC_FLASH_LL_GENERATE_BITMASK_UNARY_OPERATORS(internal_flash::OPTR::BOR::Mask);
+
 XSOC_FLASH_LL_GENERATE_COMPARISON_OPERATORS(internal_flash::OPTR::Data, internal_flash::OPTR::Flag);
 } // namespace xmcu::soc::st::arm::m0::l0::rm0451::peripherals::ll
+
+namespace xmcu {
+// OPTR
+template<> [[nodiscard]] inline auto
+bit::flag::get(xmcu::soc::st::arm::m0::l0::rm0451::peripherals::ll::internal_flash::OPTR register_a,
+               xmcu::soc::st::arm::m0::l0::rm0451::peripherals::ll::internal_flash::OPTR::BOR::Mask mask_a)
+{
+    return static_cast<xmcu::soc::st::arm::m0::l0::rm0451::peripherals::ll::internal_flash::OPTR::BOR::Flag>(
+        (register_a & mask_a));
+}
+
+} // namespace xmcu
