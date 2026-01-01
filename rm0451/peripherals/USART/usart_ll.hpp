@@ -20,130 +20,82 @@
 #include <cstdint>
 #include <type_traits>
 
-#define XSOC_USART_LL_GENERATE_BITMASK_OPERATORS(ReturnEnumType, LeftEnumType, RightEnumType)            \
-                                                                                                         \
-    constexpr ReturnEnumType operator|(LeftEnumType left_a, RightEnumType right_a) noexcept              \
-    {                                                                                                    \
-        return static_cast<ReturnEnumType>(static_cast<std::underlying_type_t<LeftEnumType>>(left_a) |   \
-                                           static_cast<std::underlying_type_t<RightEnumType>>(right_a)); \
-    }                                                                                                    \
-                                                                                                         \
-    constexpr ReturnEnumType operator&(LeftEnumType left_a, RightEnumType right_a) noexcept              \
-    {                                                                                                    \
-        return static_cast<ReturnEnumType>(static_cast<std::underlying_type_t<LeftEnumType>>(left_a) &   \
-                                           static_cast<std::underlying_type_t<RightEnumType>>(right_a)); \
-    }                                                                                                    \
-                                                                                                         \
-    constexpr ReturnEnumType operator^(LeftEnumType left_a, RightEnumType right_a) noexcept              \
-    {                                                                                                    \
-        return static_cast<ReturnEnumType>(static_cast<std::underlying_type_t<LeftEnumType>>(left_a) ^   \
-                                           static_cast<std::underlying_type_t<RightEnumType>>(right_a)); \
-    }
-
-#define XSOC_USART_LL_GENERATE_BITMASK_ASSIGMENT_OPERATORS(EnumType)            \
-    constexpr EnumType& operator|=(EnumType& left_a, EnumType right_a) noexcept \
-    {                                                                           \
-        left_a = static_cast<EnumType>(left_a | right_a);                       \
-        return left_a;                                                          \
-    }                                                                           \
-                                                                                \
-    constexpr EnumType& operator&=(EnumType& left_a, EnumType right_a) noexcept \
-    {                                                                           \
-        left_a = static_cast<EnumType>(left_a & right_a);                       \
-        return left_a;                                                          \
-    }                                                                           \
-                                                                                \
-    constexpr EnumType& operator^=(EnumType& left_a, EnumType right_a) noexcept \
-    {                                                                           \
-        left_a = static_cast<EnumType>(left_a ^ right_a);                       \
-        return left_a;                                                          \
-    }
-
-#define XSOC_USART_LL_GENERATE_BITMASK_UNARY_OPERATORS(EnumType)   \
-    constexpr EnumType operator~(EnumType right_a) noexcept        \
-    {                                                              \
-        using Type = std::underlying_type_t<EnumType>;             \
-        return static_cast<EnumType>(~static_cast<Type>(right_a)); \
-    }                                                              \
-    constexpr bool operator!(EnumType right_a) noexcept            \
-    {                                                              \
-        using Type = std::underlying_type_t<EnumType>;             \
-        return static_cast<Type>(right_a) == 0;                    \
-    }
-
-#define XSOC_USART_LL_GENERATE_COMPARISON_OPERATORS(LeftEnumType, RightEnumType)            \
-    constexpr bool operator==(LeftEnumType left_a, RightEnumType right_a)                   \
-    {                                                                                       \
-        return (static_cast<std::uint32_t>(left_a) == static_cast<std::uint32_t>(right_a)); \
-    }                                                                                       \
-    constexpr bool operator==(RightEnumType left_a, LeftEnumType right_a)                   \
-    {                                                                                       \
-        return (static_cast<std::uint32_t>(left_a) == static_cast<std::uint32_t>(right_a)); \
-    }                                                                                       \
-    constexpr bool operator!=(LeftEnumType left_a, RightEnumType right_a)                   \
-    {                                                                                       \
-        return false == (left_a == right_a);                                                \
-    }                                                                                       \
-    constexpr bool operator!=(RightEnumType left_a, LeftEnumType right_a)                   \
-    {                                                                                       \
-        return false == (left_a == right_a);                                                \
-    }
-
-#define XSOC_USART_LL_GENERATE_BITMASK_OPERATORS_FRIEND(ReturnEnumType, LeftEnumType, RightEnumType)     \
-                                                                                                         \
-    friend constexpr ReturnEnumType operator|(LeftEnumType left_a, RightEnumType right_a) noexcept       \
-    {                                                                                                    \
-        return static_cast<ReturnEnumType>(static_cast<std::underlying_type_t<LeftEnumType>>(left_a) |   \
-                                           static_cast<std::underlying_type_t<RightEnumType>>(right_a)); \
-    }                                                                                                    \
-                                                                                                         \
-    friend constexpr ReturnEnumType operator&(LeftEnumType left_a, RightEnumType right_a) noexcept       \
-    {                                                                                                    \
-        return static_cast<ReturnEnumType>(static_cast<std::underlying_type_t<LeftEnumType>>(left_a) &   \
-                                           static_cast<std::underlying_type_t<RightEnumType>>(right_a)); \
-    }                                                                                                    \
-                                                                                                         \
-    friend constexpr ReturnEnumType operator^(LeftEnumType left_a, RightEnumType right_a) noexcept       \
-    {                                                                                                    \
-        return static_cast<ReturnEnumType>(static_cast<std::underlying_type_t<LeftEnumType>>(left_a) ^   \
-                                           static_cast<std::underlying_type_t<RightEnumType>>(right_a)); \
-    }
-
-#define XSOC_USART_LL_GENERATE_COMPARISON_OPERATORS_FRIEND(LeftEnumType, RightEnumType)     \
-    friend constexpr bool operator==(LeftEnumType left_a, RightEnumType right_a)            \
-    {                                                                                       \
-        return (static_cast<std::uint32_t>(left_a) == static_cast<std::uint32_t>(right_a)); \
-    }                                                                                       \
-    friend constexpr bool operator==(RightEnumType left_a, LeftEnumType right_a)            \
-    {                                                                                       \
-        return (static_cast<std::uint32_t>(left_a) == static_cast<std::uint32_t>(right_a)); \
-    }                                                                                       \
-    friend constexpr bool operator!=(LeftEnumType left_a, RightEnumType right_a)            \
-    {                                                                                       \
-        return false == (left_a == right_a);                                                \
-    }                                                                                       \
-    friend constexpr bool operator!=(RightEnumType left_a, LeftEnumType right_a)            \
-    {                                                                                       \
-        return false == (left_a == right_a);                                                \
-    }
-
-#define XSOC_USART_LL_GENERATE_BITMASK_UNARY_OPERATORS_FRIEND(EnumType) \
-    friend constexpr EnumType operator~(EnumType right_a) noexcept      \
-    {                                                                   \
-        using Type = std::underlying_type_t<EnumType>;                  \
-        return static_cast<EnumType>(~static_cast<Type>(right_a));      \
-    }                                                                   \
-    friend constexpr bool operator!(EnumType right_a) noexcept          \
-    {                                                                   \
-        using Type = std::underlying_type_t<EnumType>;                  \
-        return static_cast<Type>(right_a) == 0;                         \
-    }
-
 namespace xmcu::soc::st::arm::m0::l0::rm0451::peripherals::ll {
+template<typename T> struct bitmask_traits
+{
+    using return_type = void;
+};
+template<typename T>
+concept is_bitmask = !std::is_same_v<typename bitmask_traits<T>::return_type, void>;
+
+template<typename L, typename R> constexpr auto operator|(L lhs_a, R rhs_a) noexcept
+    requires is_bitmask<L> && is_bitmask<R>
+{
+    return static_cast<typename bitmask_traits<L>::return_type>(lhs_a) |
+           static_cast<typename bitmask_traits<R>::return_type>(rhs_a);
+}
+template<typename L, typename R> constexpr auto operator&(L lhs_a, R rhs_a) noexcept
+    requires is_bitmask<L> && is_bitmask<R>
+{
+    return static_cast<typename bitmask_traits<L>::return_type>(lhs_a) &
+           static_cast<typename bitmask_traits<R>::return_type>(rhs_a);
+}
+template<typename L, typename R> constexpr auto operator^(L lhs_a, R rhs_a) noexcept
+    requires is_bitmask<L> && is_bitmask<R>
+{
+    return static_cast<typename bitmask_traits<L>::return_type>(lhs_a) ^
+           static_cast<typename bitmask_traits<R>::return_type>(rhs_a);
+}
+
+template<typename L, typename R> constexpr auto operator==(L lhs_a, R rhs_a) noexcept
+    requires is_bitmask<L> && is_bitmask<R>
+{
+    return static_cast<typename bitmask_traits<L>::return_type>(lhs_a) ==
+           static_cast<typename bitmask_traits<R>::return_type>(rhs_a);
+}
+template<typename L, typename R> constexpr auto operator!=(L lhs_a, R rhs_a) noexcept
+    requires is_bitmask<L> && is_bitmask<R>
+{
+    return static_cast<typename bitmask_traits<L>::return_type>(lhs_a) !=
+           static_cast<typename bitmask_traits<R>::return_type>(rhs_a);
+}
+
+template<typename L, typename R> constexpr L& operator|=(L& lhs_a, R rhs_a) noexcept
+    requires is_bitmask<L> && is_bitmask<R>
+{
+    lhs_a = static_cast<L>(lhs_a | rhs_a);
+    return lhs_a;
+}
+template<typename L, typename R> constexpr L& operator&=(L& lhs_a, R rhs_a) noexcept
+    requires is_bitmask<L> && is_bitmask<R>
+{
+    lhs_a = static_cast<L>(lhs_a & rhs_a);
+    return lhs_a;
+}
+template<typename L, typename R> constexpr L& operator^=(L& lhs_a, R rhs_a) noexcept
+    requires is_bitmask<L> && is_bitmask<R>
+{
+    lhs_a = static_cast<L>(lhs_a ^ rhs_a);
+    return lhs_a;
+}
+
+template<typename L> constexpr auto operator~(L lhs_a) noexcept
+    requires is_bitmask<L>
+{
+    return static_cast<L>(~static_cast<std::conditional_t<std::is_enum_v<L>, std::underlying_type_t<L>, L>>(lhs_a));
+}
+template<typename L> constexpr bool operator!(L lhs_a) noexcept
+    requires is_bitmask<L>
+{
+    return static_cast<typename bitmask_traits<L>::return_type>(lhs_a) == 0u;
+}
+
 struct usart : public usart_base
 {
     struct CR1
     {
+        enum class Data : std::uint32_t;
+
         enum class Flag : std::uint32_t
         {
             none = 0x0u,
@@ -176,7 +128,14 @@ struct usart : public usart_base
         using enum Flag;
         using enum Shift_5;
 
-        enum class Data : std::uint32_t;
+        CR1(Data v_a)
+            : v(v_a)
+        {
+        }
+        CR1(Flag v_a)
+            : v(static_cast<Data>(v_a))
+        {
+        }
 
         CR1& operator=(Flag value_a)
         {
@@ -199,6 +158,8 @@ struct usart : public usart_base
     };
     struct CR2
     {
+        enum class Data : std::uint32_t;
+
     private:
         struct STOP
         {
@@ -239,15 +200,18 @@ struct usart : public usart_base
             using enum Flag;
             using enum Mask;
 
-            operator Mask() const
+            operator Data() const
             {
-                return this->mask;
+                return static_cast<Data>(this->mask);
+            }
+
+            Data operator~() const
+            {
+                return static_cast<Data>(~static_cast<std::underlying_type_t<Mask>>(this->mask));
             }
         };
 
     public:
-        enum class Data : std::uint32_t;
-
         enum class Flag : std::uint32_t
         {
             none = 0x0u,
@@ -278,6 +242,15 @@ struct usart : public usart_base
         using enum Flag;
         using enum Shift_8;
 
+        CR2(Data v_a)
+            : v(v_a)
+        {
+        }
+        CR2(Flag v_a)
+            : v(static_cast<Data>(v_a))
+        {
+        }
+
         CR2& operator=(Flag value_a)
         {
             this->v = static_cast<Data>(value_a);
@@ -305,39 +278,14 @@ struct usart : public usart_base
             return this->v;
         }
 
-        // STOP
-        XSOC_USART_LL_GENERATE_BITMASK_OPERATORS_FRIEND(Data, Flag, STOP::Flag);
-        XSOC_USART_LL_GENERATE_BITMASK_OPERATORS_FRIEND(Data, STOP::Flag, Flag);
-        XSOC_USART_LL_GENERATE_BITMASK_OPERATORS_FRIEND(Data, Data, STOP::Flag);
-        XSOC_USART_LL_GENERATE_BITMASK_OPERATORS_FRIEND(Data, STOP::Flag, Data);
-        XSOC_USART_LL_GENERATE_BITMASK_OPERATORS_FRIEND(Data, Data, STOP::Mask);
-        XSOC_USART_LL_GENERATE_BITMASK_OPERATORS_FRIEND(Data, STOP::Mask, Data);
-
-        XSOC_USART_LL_GENERATE_BITMASK_UNARY_OPERATORS_FRIEND(STOP::Flag);
-        XSOC_USART_LL_GENERATE_BITMASK_UNARY_OPERATORS_FRIEND(STOP::Mask);
-
-        XSOC_USART_LL_GENERATE_COMPARISON_OPERATORS_FRIEND(Data, STOP::Mask);
-        XSOC_USART_LL_GENERATE_COMPARISON_OPERATORS_FRIEND(Data, STOP::Flag);
-
-        // ABRMOD
-        XSOC_USART_LL_GENERATE_BITMASK_OPERATORS_FRIEND(Data, Flag, ABRMOD::Flag);
-        XSOC_USART_LL_GENERATE_BITMASK_OPERATORS_FRIEND(Data, ABRMOD::Flag, Flag);
-        XSOC_USART_LL_GENERATE_BITMASK_OPERATORS_FRIEND(Data, Data, ABRMOD::Flag);
-        XSOC_USART_LL_GENERATE_BITMASK_OPERATORS_FRIEND(Data, ABRMOD::Flag, Data);
-        XSOC_USART_LL_GENERATE_BITMASK_OPERATORS_FRIEND(Data, Data, ABRMOD::Mask);
-        XSOC_USART_LL_GENERATE_BITMASK_OPERATORS_FRIEND(Data, ABRMOD::Mask, Data);
-
-        XSOC_USART_LL_GENERATE_BITMASK_UNARY_OPERATORS_FRIEND(ABRMOD::Flag);
-        XSOC_USART_LL_GENERATE_BITMASK_UNARY_OPERATORS_FRIEND(ABRMOD::Mask);
-
-        XSOC_USART_LL_GENERATE_COMPARISON_OPERATORS_FRIEND(Data, ABRMOD::Mask);
-        XSOC_USART_LL_GENERATE_COMPARISON_OPERATORS_FRIEND(Data, ABRMOD::Flag);
-
     private:
         volatile Data v;
     };
     struct CR3
     {
+    public:
+        enum class Data : std::uint32_t;
+
     private:
         struct WUS
         {
@@ -349,21 +297,24 @@ struct usart : public usart_base
             };
             enum class Mask : std::uint32_t
             {
-                mask = 0x3u << USART_CR2_STOP_Pos
+                mask = 0x3u << USART_CR3_WUS_Pos
             };
 
             using enum Flag;
             using enum Mask;
 
-            operator Mask() const
+            operator Data() const
             {
-                return this->mask;
+                return static_cast<Data>(this->mask);
+            }
+
+            Data operator~() const
+            {
+                return static_cast<Data>(~static_cast<std::underlying_type_t<Mask>>(this->mask));
             }
         };
 
     public:
-        enum class Data : std::uint32_t;
-
         enum class Flag : std::uint32_t
         {
             none = 0x0u,
@@ -397,6 +348,15 @@ struct usart : public usart_base
 
         static WUS wus;
 
+        CR3(Data v_a)
+            : v(v_a)
+        {
+        }
+        CR3(Flag v_a)
+            : v(static_cast<Data>(v_a))
+        {
+        }
+
         CR3& operator=(Flag value_a)
         {
             this->v = static_cast<Data>(value_a);
@@ -416,22 +376,8 @@ struct usart : public usart_base
 
         operator Data() const
         {
-            return this->v;
+            return static_cast<Data>(this->v);
         }
-
-        // WUS
-        XSOC_USART_LL_GENERATE_BITMASK_OPERATORS_FRIEND(Data, Flag, WUS::Flag);
-        XSOC_USART_LL_GENERATE_BITMASK_OPERATORS_FRIEND(Data, WUS::Flag, Flag);
-        XSOC_USART_LL_GENERATE_BITMASK_OPERATORS_FRIEND(Data, Data, WUS::Flag);
-        XSOC_USART_LL_GENERATE_BITMASK_OPERATORS_FRIEND(Data, WUS::Flag, Data);
-        XSOC_USART_LL_GENERATE_BITMASK_OPERATORS_FRIEND(Data, Data, WUS::Mask);
-        XSOC_USART_LL_GENERATE_BITMASK_OPERATORS_FRIEND(Data, WUS::Mask, Data);
-
-        XSOC_USART_LL_GENERATE_BITMASK_UNARY_OPERATORS_FRIEND(WUS::Flag);
-        XSOC_USART_LL_GENERATE_BITMASK_UNARY_OPERATORS_FRIEND(WUS::Mask);
-
-        XSOC_USART_LL_GENERATE_COMPARISON_OPERATORS_FRIEND(Data, WUS::Mask);
-        XSOC_USART_LL_GENERATE_COMPARISON_OPERATORS_FRIEND(Data, WUS::Flag);
 
     private:
         volatile Data v;
@@ -472,10 +418,20 @@ struct usart : public usart_base
 
         using enum Shift_8;
 
+        GTPR(Data v_a)
+            : v(v_a)
+        {
+        }
+
         GTPR& operator=(Data value_a)
         {
             this->v = value_a;
             return *this;
+        }
+
+        operator Data() const
+        {
+            return this->v;
         }
 
     private:
@@ -497,10 +453,20 @@ struct usart : public usart_base
         using enum Shift_23;
         using enum Shift_8;
 
+        RTOR(Data v_a)
+            : v(v_a)
+        {
+        }
+
         RTOR& operator=(Data value_a)
         {
             this->v = value_a;
             return *this;
+        }
+
+        operator Data() const
+        {
+            return this->v;
         }
 
     private:
@@ -521,6 +487,15 @@ struct usart : public usart_base
 
         using enum Flag;
 
+        RQR(Data v_a)
+            : v(v_a)
+        {
+        }
+        RQR(Flag v_a)
+            : v(static_cast<Data>(v_a))
+        {
+        }
+
         RQR& operator=(Data value_a)
         {
             this->v = value_a;
@@ -531,6 +506,11 @@ struct usart : public usart_base
         {
             this->v = static_cast<Data>(value_a);
             return *this;
+        }
+
+        operator Data() const
+        {
+            return this->v;
         }
 
     private:
@@ -606,6 +586,15 @@ struct usart : public usart_base
         };
 
         using enum Flag;
+
+        ICR(Data v_a)
+            : v(v_a)
+        {
+        }
+        ICR(Flag v_a)
+            : v(static_cast<Data>(v_a))
+        {
+        }
 
         ICR& operator=(Data value_a)
         {
@@ -694,120 +683,313 @@ template<> [[nodiscard]] constexpr usart::Registers* usart::registers<usart::_2>
 #endif
 
 // CR1
-XSOC_USART_LL_GENERATE_BITMASK_OPERATORS(usart::CR1::Data, usart::CR1::Flag, usart::CR1::Flag);
-XSOC_USART_LL_GENERATE_BITMASK_OPERATORS(usart::CR1::Data, usart::CR1::Data, usart::CR1::Data);
-XSOC_USART_LL_GENERATE_BITMASK_OPERATORS(usart::CR1::Data, usart::CR1::Data, usart::CR1::Flag);
-XSOC_USART_LL_GENERATE_BITMASK_OPERATORS(usart::CR1::Data, usart::CR1::Flag, usart::CR1::Data);
+template<> struct bitmask_traits<usart::CR1::Flag>
+{
+    using return_type = usart::CR1::Data;
+};
+template<> struct bitmask_traits<usart::CR1::Data>
+{
+    using return_type = usart::CR1::Data;
+};
+template<> struct bitmask_traits<usart::CR1>
+{
+    using return_type = usart::CR1::Data;
+};
 
-XSOC_USART_LL_GENERATE_BITMASK_ASSIGMENT_OPERATORS(usart::CR1::Flag);
-XSOC_USART_LL_GENERATE_BITMASK_ASSIGMENT_OPERATORS(usart::CR1::Data);
-
-XSOC_USART_LL_GENERATE_BITMASK_UNARY_OPERATORS(usart::CR1::Flag);
-XSOC_USART_LL_GENERATE_BITMASK_UNARY_OPERATORS(usart::CR1::Data);
-XSOC_USART_LL_GENERATE_COMPARISON_OPERATORS(usart::CR1::Flag, usart::CR1::Data);
+constexpr usart::CR1::Data operator|(usart::CR1::Data left_a, usart::CR1::Data right_a) noexcept
+{
+    return static_cast<usart::CR1::Data>(static_cast<std::underlying_type_t<usart::CR1::Data>>(left_a) |
+                                         static_cast<std::underlying_type_t<usart::CR1::Data>>(right_a));
+}
+constexpr usart::CR1::Data operator&(usart::CR1::Data left_a, usart::CR1::Data right_a) noexcept
+{
+    return static_cast<usart::CR1::Data>(static_cast<std::underlying_type_t<usart::CR1::Data>>(left_a) &
+                                         static_cast<std::underlying_type_t<usart::CR1::Data>>(right_a));
+}
 
 constexpr usart::CR1::Data operator<<(Limited<std::uint32_t, 0x0u, 0x1Fu> left_a, usart::CR1::Shift_5 right_a)
 {
     return static_cast<usart::CR1::Data>(left_a.get() << static_cast<std::uint32_t>(right_a));
 }
-
-// CR2
-XSOC_USART_LL_GENERATE_BITMASK_OPERATORS(usart::CR2::Data, usart::CR2::Flag, usart::CR2::Flag);
-XSOC_USART_LL_GENERATE_BITMASK_OPERATORS(usart::CR2::Data, usart::CR2::Data, usart::CR2::Data);
-XSOC_USART_LL_GENERATE_BITMASK_OPERATORS(usart::CR2::Data, usart::CR2::Data, usart::CR2::Flag);
-XSOC_USART_LL_GENERATE_BITMASK_OPERATORS(usart::CR2::Data, usart::CR2::Flag, usart::CR2::Data);
-
-XSOC_USART_LL_GENERATE_BITMASK_ASSIGMENT_OPERATORS(usart::CR2::Flag);
-XSOC_USART_LL_GENERATE_BITMASK_ASSIGMENT_OPERATORS(usart::CR2::Data);
-
-XSOC_USART_LL_GENERATE_BITMASK_UNARY_OPERATORS(usart::CR2::Flag);
-XSOC_USART_LL_GENERATE_BITMASK_UNARY_OPERATORS(usart::CR2::Data);
-
-XSOC_USART_LL_GENERATE_COMPARISON_OPERATORS(usart::CR2::Flag, usart::CR2::Data);
-
 constexpr usart::CR2::Data operator<<(Limited<std::uint32_t, 0x0u, 0xFu> left_a, usart::CR2::Shift_8 right_a)
 {
     return static_cast<usart::CR2::Data>(left_a.get() << static_cast<std::uint32_t>(right_a));
 }
 
-// CR3
-XSOC_USART_LL_GENERATE_BITMASK_OPERATORS(usart::CR3::Data, usart::CR3::Flag, usart::CR3::Flag);
-XSOC_USART_LL_GENERATE_BITMASK_OPERATORS(usart::CR3::Data, usart::CR3::Data, usart::CR3::Data);
-XSOC_USART_LL_GENERATE_BITMASK_OPERATORS(usart::CR3::Data, usart::CR3::Data, usart::CR3::Flag);
-XSOC_USART_LL_GENERATE_BITMASK_OPERATORS(usart::CR3::Data, usart::CR3::Flag, usart::CR3::Data);
+// CR2
+template<> struct bitmask_traits<usart::CR2::Flag>
+{
+    using return_type = usart::CR2::Data;
+};
+template<> struct bitmask_traits<usart::CR2::Data>
+{
+    using return_type = usart::CR2::Data;
+};
+template<> struct bitmask_traits<usart::CR2>
+{
+    using return_type = usart::CR2::Data;
+};
 
-XSOC_USART_LL_GENERATE_BITMASK_ASSIGMENT_OPERATORS(usart::CR3::Flag);
-XSOC_USART_LL_GENERATE_BITMASK_ASSIGMENT_OPERATORS(usart::CR3::Data);
+constexpr usart::CR2::Data operator|(usart::CR2::Data left_a, usart::CR2::Data right_a) noexcept
+{
+    return static_cast<usart::CR2::Data>(static_cast<std::underlying_type_t<usart::CR2::Data>>(left_a) |
+                                         static_cast<std::underlying_type_t<usart::CR2::Data>>(right_a));
+}
+constexpr usart::CR2::Data operator&(usart::CR2::Data left_a, usart::CR2::Data right_a) noexcept
+{
+    return static_cast<usart::CR2::Data>(static_cast<std::underlying_type_t<usart::CR2::Data>>(left_a) &
+                                         static_cast<std::underlying_type_t<usart::CR2::Data>>(right_a));
+}
 
-XSOC_USART_LL_GENERATE_BITMASK_UNARY_OPERATORS(usart::CR3::Flag);
-XSOC_USART_LL_GENERATE_BITMASK_UNARY_OPERATORS(usart::CR3::Data);
-XSOC_USART_LL_GENERATE_COMPARISON_OPERATORS(usart::CR3::Flag, usart::CR3::Data);
+// CR2::STOP
+template<> struct bitmask_traits<usart::CR2::STOP>
+{
+    using return_type = usart::CR2::Data;
+};
+template<> struct bitmask_traits<usart::CR2::STOP::Flag>
+{
+    using return_type = usart::CR2::Data;
+};
 
 constexpr usart::CR3::Data operator<<(Limited<std::uint32_t, 0x0u, 0xFu> left_a, usart::CR3::Shift_3 right_a)
 {
     return static_cast<usart::CR3::Data>(left_a.get() << static_cast<std::uint32_t>(right_a));
 }
 
-// GTPR
-XSOC_USART_LL_GENERATE_BITMASK_OPERATORS(usart::GTPR::Data, usart::GTPR::Data, usart::GTPR::Data);
-XSOC_USART_LL_GENERATE_BITMASK_ASSIGMENT_OPERATORS(usart::GTPR::Data);
-XSOC_USART_LL_GENERATE_BITMASK_UNARY_OPERATORS(usart::GTPR::Data);
+// CR2::ABRMOD
+template<> struct bitmask_traits<usart::CR2::ABRMOD>
+{
+    using return_type = usart::CR2::Data;
+};
+template<> struct bitmask_traits<usart::CR2::ABRMOD::Flag>
+{
+    using return_type = usart::CR2::Data;
+};
 
-constexpr usart::GTPR::Data operator<<(Limited<std::uint32_t, 0x0u, 0xFu> left_a, usart::GTPR::Shift_8 right_a)
+// CR3
+template<> struct bitmask_traits<usart::CR3::Flag>
+{
+    using return_type = usart::CR3::Data;
+};
+template<> struct bitmask_traits<usart::CR3::Data>
+{
+    using return_type = usart::CR3::Data;
+};
+template<> struct bitmask_traits<usart::CR3>
+{
+    using return_type = usart::CR3::Data;
+};
+
+// CR3::WUS
+template<> struct bitmask_traits<usart::CR3::WUS>
+{
+    using return_type = usart::CR3::Data;
+};
+template<> struct bitmask_traits<usart::CR3::WUS::Flag>
+{
+    using return_type = usart::CR3::Data;
+};
+
+constexpr usart::CR3::Data operator|(usart::CR3::Data left_a, usart::CR3::Data right_a) noexcept
+{
+    return static_cast<usart::CR3::Data>(static_cast<std::underlying_type_t<usart::CR3::Data>>(left_a) |
+                                         static_cast<std::underlying_type_t<usart::CR3::Data>>(right_a));
+}
+constexpr usart::CR3::Data operator&(usart::CR3::Data left_a, usart::CR3::Data right_a) noexcept
+{
+    return static_cast<usart::CR3::Data>(static_cast<std::underlying_type_t<usart::CR3::Data>>(left_a) &
+                                         static_cast<std::underlying_type_t<usart::CR3::Data>>(right_a));
+}
+
+// GTPR
+template<> struct bitmask_traits<usart::GTPR::Data>
+{
+    using return_type = usart::GTPR::Data;
+};
+template<> struct bitmask_traits<usart::GTPR>
+{
+    using return_type = usart::GTPR::Data;
+};
+
+constexpr usart::GTPR::Data operator<<(Limited<std::uint32_t, 0x0u, 0xFu> left_a, usart::GTPR::Shift_8 right_a) noexcept
 {
     return static_cast<usart::GTPR::Data>(left_a.get() << static_cast<std::uint32_t>(right_a));
 }
 
-// RTOR
-XSOC_USART_LL_GENERATE_BITMASK_OPERATORS(usart::RTOR::Data, usart::RTOR::Data, usart::RTOR::Data);
-XSOC_USART_LL_GENERATE_BITMASK_ASSIGMENT_OPERATORS(usart::RTOR::Data);
-XSOC_USART_LL_GENERATE_BITMASK_UNARY_OPERATORS(usart::RTOR::Data);
+constexpr usart::GTPR::Data operator|(usart::GTPR::Data left_a, usart::GTPR::Data right_a) noexcept
+{
+    return static_cast<usart::GTPR::Data>(static_cast<std::underlying_type_t<usart::GTPR::Data>>(left_a) |
+                                          static_cast<std::underlying_type_t<usart::GTPR::Data>>(right_a));
+}
+constexpr usart::GTPR::Data operator&(usart::GTPR::Data left_a, usart::GTPR::Data right_a) noexcept
+{
+    return static_cast<usart::GTPR::Data>(static_cast<std::underlying_type_t<usart::GTPR::Data>>(left_a) &
+                                          static_cast<std::underlying_type_t<usart::GTPR::Data>>(right_a));
+}
+constexpr usart::GTPR::Data operator&(usart::GTPR::Data left_a, usart::GTPR::Shift_8 right_a) noexcept
+{
+    return static_cast<usart::GTPR::Data>(static_cast<std::underlying_type_t<usart::GTPR::Data>>(left_a) &
+                                          (0xFu << static_cast<std::underlying_type_t<usart::GTPR::Data>>(right_a)));
+}
+constexpr usart::GTPR::Data operator&(usart::GTPR left_a, usart::GTPR::Shift_8 right_a) noexcept
+{
+    return static_cast<usart::GTPR::Data>(
+        static_cast<usart::GTPR::Data>(left_a) &
+        static_cast<usart::GTPR::Data>((0xFu << static_cast<std::underlying_type_t<usart::GTPR::Data>>(right_a))));
+}
 
-constexpr usart::RTOR::Data operator<<(Limited<std::uint32_t, 0x0u, 0xFFFFFFu> left_a, usart::RTOR::Shift_23 right_a)
+constexpr bool operator==(usart::GTPR::Data left_a, std::uint32_t right_a) noexcept
+{
+    return (static_cast<std::underlying_type_t<usart::GTPR::Data>>(left_a) == right_a);
+}
+constexpr bool operator==(std::uint32_t right_a, usart::GTPR::Data left_a) noexcept
+{
+    return (static_cast<std::underlying_type_t<usart::GTPR::Data>>(left_a) == right_a);
+}
+
+// RTOR
+template<> struct bitmask_traits<usart::RTOR::Data>
+{
+    using return_type = usart::RTOR::Data;
+};
+template<> struct bitmask_traits<usart::RTOR>
+{
+    using return_type = usart::RTOR::Data;
+};
+
+constexpr usart::RTOR::Data operator<<(Limited<std::uint32_t, 0x0u, 0xFFFFFFu> left_a,
+                                       usart::RTOR::Shift_23 right_a) noexcept
 {
     return static_cast<usart::RTOR::Data>(left_a.get() << static_cast<std::uint32_t>(right_a));
 }
-constexpr usart::RTOR::Data operator<<(Limited<std::uint32_t, 0x0u, 0xFu> left_a, usart::RTOR::Shift_8 right_a)
+constexpr usart::RTOR::Data operator<<(Limited<std::uint32_t, 0x0u, 0xFu> left_a, usart::RTOR::Shift_8 right_a) noexcept
 {
     return static_cast<usart::RTOR::Data>(left_a.get() << static_cast<std::uint32_t>(right_a));
+}
+
+constexpr usart::RTOR::Data operator|(usart::RTOR::Data left_a, usart::RTOR::Data right_a) noexcept
+{
+    return static_cast<usart::RTOR::Data>(static_cast<std::underlying_type_t<usart::RTOR::Data>>(left_a) |
+                                          static_cast<std::underlying_type_t<usart::RTOR::Data>>(right_a));
+}
+constexpr usart::RTOR::Data operator&(usart::RTOR::Data left_a, usart::RTOR::Data right_a) noexcept
+{
+    return static_cast<usart::RTOR::Data>(static_cast<std::underlying_type_t<usart::RTOR::Data>>(left_a) &
+                                          static_cast<std::underlying_type_t<usart::RTOR::Data>>(right_a));
+}
+constexpr usart::RTOR::Data operator&(usart::RTOR::Data left_a, usart::RTOR::Shift_23 right_a) noexcept
+{
+    return static_cast<usart::RTOR::Data>(
+        static_cast<std::underlying_type_t<usart::RTOR::Data>>(left_a) &
+        (0xFFFFFFu << static_cast<std::underlying_type_t<usart::RTOR::Data>>(right_a)));
+}
+constexpr usart::RTOR::Data operator&(usart::RTOR left_a, usart::RTOR::Shift_23 right_a) noexcept
+{
+    return static_cast<usart::RTOR::Data>(
+        static_cast<usart::RTOR::Data>(left_a) &
+        static_cast<usart::RTOR::Data>((0xFFFFFFu << static_cast<std::underlying_type_t<usart::RTOR::Data>>(right_a))));
+}
+constexpr usart::RTOR::Data operator&(usart::RTOR::Data left_a, usart::RTOR::Shift_8 right_a) noexcept
+{
+    return static_cast<usart::RTOR::Data>(static_cast<std::underlying_type_t<usart::RTOR::Data>>(left_a) &
+                                          (0xFu << static_cast<std::underlying_type_t<usart::RTOR::Data>>(right_a)));
+}
+constexpr usart::RTOR::Data operator&(usart::RTOR left_a, usart::RTOR::Shift_8 right_a) noexcept
+{
+    return static_cast<usart::RTOR::Data>(
+        static_cast<usart::RTOR::Data>(left_a) &
+        static_cast<usart::RTOR::Data>((0xFu << static_cast<std::underlying_type_t<usart::RTOR::Data>>(right_a))));
+}
+
+constexpr bool operator==(usart::RTOR::Data lhs_a, std::uint32_t rhs_a) noexcept
+{
+    return (static_cast<std::underlying_type_t<usart::RTOR::Data>>(lhs_a) == rhs_a);
+}
+constexpr bool operator==(std::uint32_t lhs_a, usart::RTOR::Data rhs_a) noexcept
+{
+    return (static_cast<std::underlying_type_t<usart::RTOR::Data>>(rhs_a) == lhs_a);
 }
 
 // RQR
-XSOC_USART_LL_GENERATE_BITMASK_OPERATORS(usart::RQR::Data, usart::RQR::Flag, usart::RQR::Flag);
-XSOC_USART_LL_GENERATE_BITMASK_OPERATORS(usart::RQR::Data, usart::RQR::Data, usart::RQR::Data);
-XSOC_USART_LL_GENERATE_BITMASK_OPERATORS(usart::RQR::Data, usart::RQR::Data, usart::RQR::Flag);
-XSOC_USART_LL_GENERATE_BITMASK_OPERATORS(usart::RQR::Data, usart::RQR::Flag, usart::RQR::Data);
+template<> struct bitmask_traits<usart::RQR::Flag>
+{
+    using return_type = usart::RQR::Data;
+};
+template<> struct bitmask_traits<usart::RQR::Data>
+{
+    using return_type = usart::RQR::Data;
+};
+template<> struct bitmask_traits<usart::RQR>
+{
+    using return_type = usart::RQR::Data;
+};
 
-XSOC_USART_LL_GENERATE_BITMASK_ASSIGMENT_OPERATORS(usart::RQR::Flag);
-XSOC_USART_LL_GENERATE_BITMASK_ASSIGMENT_OPERATORS(usart::RQR::Data);
-
-XSOC_USART_LL_GENERATE_BITMASK_UNARY_OPERATORS(usart::RQR::Flag);
-XSOC_USART_LL_GENERATE_BITMASK_UNARY_OPERATORS(usart::RQR::Data);
-XSOC_USART_LL_GENERATE_COMPARISON_OPERATORS(usart::RQR::Flag, usart::RQR::Data);
+constexpr usart::RQR::Data operator|(usart::RQR::Data left_a, usart::RQR::Data right_a) noexcept
+{
+    return static_cast<usart::RQR::Data>(static_cast<std::underlying_type_t<usart::RQR::Data>>(left_a) |
+                                         static_cast<std::underlying_type_t<usart::RQR::Data>>(right_a));
+}
+constexpr usart::RQR::Data operator&(usart::RQR::Data left_a, usart::RQR::Data right_a) noexcept
+{
+    return static_cast<usart::RQR::Data>(static_cast<std::underlying_type_t<usart::RQR::Data>>(left_a) &
+                                         static_cast<std::underlying_type_t<usart::RQR::Data>>(right_a));
+}
 
 // ISR
-XSOC_USART_LL_GENERATE_BITMASK_OPERATORS(usart::ISR::Data, usart::ISR::Flag, usart::ISR::Flag);
-XSOC_USART_LL_GENERATE_BITMASK_OPERATORS(usart::ISR::Data, usart::ISR::Data, usart::ISR::Data);
-XSOC_USART_LL_GENERATE_BITMASK_OPERATORS(usart::ISR::Data, usart::ISR::Data, usart::ISR::Flag);
-XSOC_USART_LL_GENERATE_BITMASK_OPERATORS(usart::ISR::Data, usart::ISR::Flag, usart::ISR::Data);
+template<> struct bitmask_traits<usart::ISR::Flag>
+{
+    using register_type = usart::ISR;
+    using return_type = usart::ISR::Data;
+};
+template<> struct bitmask_traits<usart::ISR::Data>
+{
+    using register_type = usart::ISR;
+    using return_type = usart::ISR::Data;
+};
+template<> struct bitmask_traits<usart::ISR>
+{
+    using register_type = usart::ISR;
+    using return_type = usart::ISR::Data;
+};
 
-XSOC_USART_LL_GENERATE_BITMASK_ASSIGMENT_OPERATORS(usart::ISR::Flag);
-XSOC_USART_LL_GENERATE_BITMASK_ASSIGMENT_OPERATORS(usart::ISR::Data);
-
-XSOC_USART_LL_GENERATE_BITMASK_UNARY_OPERATORS(usart::ISR::Flag);
-XSOC_USART_LL_GENERATE_BITMASK_UNARY_OPERATORS(usart::ISR::Data);
-XSOC_USART_LL_GENERATE_COMPARISON_OPERATORS(usart::ISR::Flag, usart::ISR::Data);
+constexpr usart::ISR::Data operator|(usart::ISR::Data left_a, usart::ISR::Data right_a) noexcept
+{
+    return static_cast<usart::ISR::Data>(static_cast<std::underlying_type_t<usart::ISR::Data>>(left_a) |
+                                         static_cast<std::underlying_type_t<usart::ISR::Data>>(right_a));
+}
+constexpr usart::ISR::Data operator&(usart::ISR::Data left_a, usart::ISR::Data right_a) noexcept
+{
+    return static_cast<usart::ISR::Data>(static_cast<std::underlying_type_t<usart::ISR::Data>>(left_a) &
+                                         static_cast<std::underlying_type_t<usart::ISR::Data>>(right_a));
+}
 
 // ICR
-XSOC_USART_LL_GENERATE_BITMASK_OPERATORS(usart::ICR::Data, usart::ICR::Flag, usart::ICR::Flag);
-XSOC_USART_LL_GENERATE_BITMASK_OPERATORS(usart::ICR::Data, usart::ICR::Data, usart::ICR::Data);
-XSOC_USART_LL_GENERATE_BITMASK_OPERATORS(usart::ICR::Data, usart::ICR::Data, usart::ICR::Flag);
-XSOC_USART_LL_GENERATE_BITMASK_OPERATORS(usart::ICR::Data, usart::ICR::Flag, usart::ICR::Data);
+template<> struct bitmask_traits<usart::ICR::Flag>
+{
+    using register_type = usart::ICR;
+    using return_type = usart::ICR::Data;
+};
+template<> struct bitmask_traits<usart::ICR::Data>
+{
+    using register_type = usart::ICR;
+    using return_type = usart::ICR::Data;
+};
 
-XSOC_USART_LL_GENERATE_BITMASK_ASSIGMENT_OPERATORS(usart::ICR::Flag);
-XSOC_USART_LL_GENERATE_BITMASK_ASSIGMENT_OPERATORS(usart::ICR::Data);
+template<> struct bitmask_traits<usart::ICR>
+{
+    using register_type = usart::ICR;
+    using return_type = usart::ICR::Data;
+};
 
-XSOC_USART_LL_GENERATE_BITMASK_UNARY_OPERATORS(usart::ICR::Flag);
-XSOC_USART_LL_GENERATE_BITMASK_UNARY_OPERATORS(usart::ICR::Data);
-XSOC_USART_LL_GENERATE_COMPARISON_OPERATORS(usart::ICR::Flag, usart::ICR::Data);
+constexpr usart::ICR::Data operator|(usart::ICR::Data left_a, usart::ICR::Data right_a) noexcept
+{
+    return static_cast<usart::ICR::Data>(static_cast<std::underlying_type_t<usart::ICR::Data>>(left_a) |
+                                         static_cast<std::underlying_type_t<usart::ICR::Data>>(right_a));
+}
+constexpr usart::ICR::Data operator&(usart::ICR::Data left_a, usart::ICR::Data right_a) noexcept
+{
+    return static_cast<usart::ICR::Data>(static_cast<std::underlying_type_t<usart::ICR::Data>>(left_a) &
+                                         static_cast<std::underlying_type_t<usart::ICR::Data>>(right_a));
+}
+
 } // namespace xmcu::soc::st::arm::m0::l0::rm0451::peripherals::ll
