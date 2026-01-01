@@ -711,10 +711,6 @@ constexpr usart::CR1::Data operator<<(Limited<std::uint32_t, 0x0u, 0x1Fu> left_a
 {
     return static_cast<usart::CR1::Data>(left_a.get() << static_cast<std::uint32_t>(right_a));
 }
-constexpr usart::CR2::Data operator<<(Limited<std::uint32_t, 0x0u, 0xFu> left_a, usart::CR2::Shift_8 right_a)
-{
-    return static_cast<usart::CR2::Data>(left_a.get() << static_cast<std::uint32_t>(right_a));
-}
 
 // CR2
 template<> struct bitmask_traits<usart::CR2::Flag>
@@ -751,9 +747,30 @@ template<> struct bitmask_traits<usart::CR2::STOP::Flag>
     using return_type = usart::CR2::Data;
 };
 
-constexpr usart::CR3::Data operator<<(Limited<std::uint32_t, 0x0u, 0xFu> left_a, usart::CR3::Shift_3 right_a)
+constexpr usart::CR2::Data operator<<(Limited<std::uint32_t, 0x0u, 0xFu> left_a, usart::CR2::Shift_8 right_a)
 {
-    return static_cast<usart::CR3::Data>(left_a.get() << static_cast<std::uint32_t>(right_a));
+    return static_cast<usart::CR2::Data>(left_a.get() << static_cast<std::uint32_t>(right_a));
+}
+
+constexpr usart::CR2::Data operator&(usart::CR2::Data left_a, usart::CR2::Shift_8 right_a) noexcept
+{
+    return static_cast<usart::CR2::Data>(static_cast<std::underlying_type_t<usart::CR2::Data>>(left_a) &
+                                         (0xFu << static_cast<std::underlying_type_t<usart::RTOR::Data>>(right_a)));
+}
+constexpr usart::CR2::Data operator&(usart::CR2 left_a, usart::RTOR::Shift_8 right_a) noexcept
+{
+    return static_cast<usart::CR2::Data>(
+        static_cast<usart::CR2::Data>(left_a) &
+        static_cast<usart::CR2::Data>((0xFu << static_cast<std::underlying_type_t<usart::CR2::Data>>(right_a))));
+}
+
+constexpr bool operator==(usart::CR2::Data lhs_a, std::uint32_t rhs_a) noexcept
+{
+    return (static_cast<std::underlying_type_t<usart::CR2::Data>>(lhs_a) == rhs_a);
+}
+constexpr bool operator==(std::uint32_t lhs_a, usart::CR2::Data rhs_a) noexcept
+{
+    return (static_cast<std::underlying_type_t<usart::CR2::Data>>(rhs_a) == lhs_a);
 }
 
 // CR2::ABRMOD
