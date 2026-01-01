@@ -737,16 +737,6 @@ constexpr usart::CR2::Data operator&(usart::CR2::Data left_a, usart::CR2::Data r
                                          static_cast<std::underlying_type_t<usart::CR2::Data>>(right_a));
 }
 
-// CR2::STOP
-template<> struct bitmask_traits<usart::CR2::STOP>
-{
-    using return_type = usart::CR2::Data;
-};
-template<> struct bitmask_traits<usart::CR2::STOP::Flag>
-{
-    using return_type = usart::CR2::Data;
-};
-
 constexpr usart::CR2::Data operator<<(Limited<std::uint32_t, 0x0u, 0xFu> left_a, usart::CR2::Shift_8 right_a)
 {
     return static_cast<usart::CR2::Data>(left_a.get() << static_cast<std::uint32_t>(right_a));
@@ -757,7 +747,7 @@ constexpr usart::CR2::Data operator&(usart::CR2::Data left_a, usart::CR2::Shift_
     return static_cast<usart::CR2::Data>(static_cast<std::underlying_type_t<usart::CR2::Data>>(left_a) &
                                          (0xFu << static_cast<std::underlying_type_t<usart::RTOR::Data>>(right_a)));
 }
-constexpr usart::CR2::Data operator&(usart::CR2 left_a, usart::RTOR::Shift_8 right_a) noexcept
+constexpr usart::CR2::Data operator&(usart::CR2 left_a, usart::CR2::Shift_8 right_a) noexcept
 {
     return static_cast<usart::CR2::Data>(
         static_cast<usart::CR2::Data>(left_a) &
@@ -772,6 +762,16 @@ constexpr bool operator==(std::uint32_t lhs_a, usart::CR2::Data rhs_a) noexcept
 {
     return (static_cast<std::underlying_type_t<usart::CR2::Data>>(rhs_a) == lhs_a);
 }
+
+// CR2::STOP
+template<> struct bitmask_traits<usart::CR2::STOP>
+{
+    using return_type = usart::CR2::Data;
+};
+template<> struct bitmask_traits<usart::CR2::STOP::Flag>
+{
+    using return_type = usart::CR2::Data;
+};
 
 // CR2::ABRMOD
 template<> struct bitmask_traits<usart::CR2::ABRMOD>
@@ -797,16 +797,6 @@ template<> struct bitmask_traits<usart::CR3>
     using return_type = usart::CR3::Data;
 };
 
-// CR3::WUS
-template<> struct bitmask_traits<usart::CR3::WUS>
-{
-    using return_type = usart::CR3::Data;
-};
-template<> struct bitmask_traits<usart::CR3::WUS::Flag>
-{
-    using return_type = usart::CR3::Data;
-};
-
 constexpr usart::CR3::Data operator|(usart::CR3::Data left_a, usart::CR3::Data right_a) noexcept
 {
     return static_cast<usart::CR3::Data>(static_cast<std::underlying_type_t<usart::CR3::Data>>(left_a) |
@@ -818,6 +808,42 @@ constexpr usart::CR3::Data operator&(usart::CR3::Data left_a, usart::CR3::Data r
                                          static_cast<std::underlying_type_t<usart::CR3::Data>>(right_a));
 }
 
+constexpr usart::CR3::Data operator<<(Limited<std::uint32_t, 0x0u, 0x7u> left_a, usart::CR3::Shift_3 right_a)
+{
+    return static_cast<usart::CR3::Data>(left_a.get() << static_cast<std::uint32_t>(right_a));
+}
+
+constexpr usart::CR3::Data operator&(usart::CR2::Data left_a, usart::CR3::Shift_3 right_a) noexcept
+{
+    return static_cast<usart::CR3::Data>(static_cast<std::underlying_type_t<usart::CR2::Data>>(left_a) &
+                                         (0x7u << static_cast<std::underlying_type_t<usart::RTOR::Data>>(right_a)));
+}
+constexpr usart::CR3::Data operator&(usart::CR3 left_a, usart::CR3::Shift_3 right_a) noexcept
+{
+    return static_cast<usart::CR3::Data>(
+        static_cast<usart::CR3::Data>(left_a) &
+        static_cast<usart::CR3::Data>((0xFu << static_cast<std::underlying_type_t<usart::CR3::Data>>(right_a))));
+}
+
+constexpr bool operator==(usart::CR3::Data lhs_a, std::uint32_t rhs_a) noexcept
+{
+    return (static_cast<std::underlying_type_t<usart::CR3::Data>>(lhs_a) == rhs_a);
+}
+constexpr bool operator==(std::uint32_t lhs_a, usart::CR3::Data rhs_a) noexcept
+{
+    return (static_cast<std::underlying_type_t<usart::CR3::Data>>(rhs_a) == lhs_a);
+}
+
+// CR3::WUS
+template<> struct bitmask_traits<usart::CR3::WUS>
+{
+    using return_type = usart::CR3::Data;
+};
+template<> struct bitmask_traits<usart::CR3::WUS::Flag>
+{
+    using return_type = usart::CR3::Data;
+};
+
 // GTPR
 template<> struct bitmask_traits<usart::GTPR::Data>
 {
@@ -827,11 +853,6 @@ template<> struct bitmask_traits<usart::GTPR>
 {
     using return_type = usart::GTPR::Data;
 };
-
-constexpr usart::GTPR::Data operator<<(Limited<std::uint32_t, 0x0u, 0xFu> left_a, usart::GTPR::Shift_8 right_a) noexcept
-{
-    return static_cast<usart::GTPR::Data>(left_a.get() << static_cast<std::uint32_t>(right_a));
-}
 
 constexpr usart::GTPR::Data operator|(usart::GTPR::Data left_a, usart::GTPR::Data right_a) noexcept
 {
@@ -843,6 +864,12 @@ constexpr usart::GTPR::Data operator&(usart::GTPR::Data left_a, usart::GTPR::Dat
     return static_cast<usart::GTPR::Data>(static_cast<std::underlying_type_t<usart::GTPR::Data>>(left_a) &
                                           static_cast<std::underlying_type_t<usart::GTPR::Data>>(right_a));
 }
+
+constexpr usart::GTPR::Data operator<<(Limited<std::uint32_t, 0x0u, 0xFu> left_a, usart::GTPR::Shift_8 right_a) noexcept
+{
+    return static_cast<usart::GTPR::Data>(left_a.get() << static_cast<std::uint32_t>(right_a));
+}
+
 constexpr usart::GTPR::Data operator&(usart::GTPR::Data left_a, usart::GTPR::Shift_8 right_a) noexcept
 {
     return static_cast<usart::GTPR::Data>(static_cast<std::underlying_type_t<usart::GTPR::Data>>(left_a) &
@@ -874,16 +901,6 @@ template<> struct bitmask_traits<usart::RTOR>
     using return_type = usart::RTOR::Data;
 };
 
-constexpr usart::RTOR::Data operator<<(Limited<std::uint32_t, 0x0u, 0xFFFFFFu> left_a,
-                                       usart::RTOR::Shift_23 right_a) noexcept
-{
-    return static_cast<usart::RTOR::Data>(left_a.get() << static_cast<std::uint32_t>(right_a));
-}
-constexpr usart::RTOR::Data operator<<(Limited<std::uint32_t, 0x0u, 0xFu> left_a, usart::RTOR::Shift_8 right_a) noexcept
-{
-    return static_cast<usart::RTOR::Data>(left_a.get() << static_cast<std::uint32_t>(right_a));
-}
-
 constexpr usart::RTOR::Data operator|(usart::RTOR::Data left_a, usart::RTOR::Data right_a) noexcept
 {
     return static_cast<usart::RTOR::Data>(static_cast<std::underlying_type_t<usart::RTOR::Data>>(left_a) |
@@ -894,6 +911,17 @@ constexpr usart::RTOR::Data operator&(usart::RTOR::Data left_a, usart::RTOR::Dat
     return static_cast<usart::RTOR::Data>(static_cast<std::underlying_type_t<usart::RTOR::Data>>(left_a) &
                                           static_cast<std::underlying_type_t<usart::RTOR::Data>>(right_a));
 }
+
+constexpr usart::RTOR::Data operator<<(Limited<std::uint32_t, 0x0u, 0xFFFFFFu> left_a,
+                                       usart::RTOR::Shift_23 right_a) noexcept
+{
+    return static_cast<usart::RTOR::Data>(left_a.get() << static_cast<std::uint32_t>(right_a));
+}
+constexpr usart::RTOR::Data operator<<(Limited<std::uint32_t, 0x0u, 0xFu> left_a, usart::RTOR::Shift_8 right_a) noexcept
+{
+    return static_cast<usart::RTOR::Data>(left_a.get() << static_cast<std::uint32_t>(right_a));
+}
+
 constexpr usart::RTOR::Data operator&(usart::RTOR::Data left_a, usart::RTOR::Shift_23 right_a) noexcept
 {
     return static_cast<usart::RTOR::Data>(
