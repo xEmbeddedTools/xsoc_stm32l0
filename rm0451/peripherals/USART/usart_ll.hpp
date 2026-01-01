@@ -28,64 +28,54 @@ template<typename T> struct bitmask_traits
 template<typename T>
 concept is_bitmask = !std::is_same_v<typename bitmask_traits<T>::return_type, void>;
 
-template<typename L, typename R> constexpr auto operator|(L lhs_a, R rhs_a) noexcept
-    requires is_bitmask<L> && is_bitmask<R>
+template<is_bitmask L, is_bitmask R> constexpr auto operator|(L lhs_a, R rhs_a) noexcept
 {
     return static_cast<typename bitmask_traits<L>::return_type>(lhs_a) |
            static_cast<typename bitmask_traits<R>::return_type>(rhs_a);
 }
-template<typename L, typename R> constexpr auto operator&(L lhs_a, R rhs_a) noexcept
-    requires is_bitmask<L> && is_bitmask<R>
+template<is_bitmask L, is_bitmask R> constexpr auto operator&(L lhs_a, R rhs_a) noexcept
 {
     return static_cast<typename bitmask_traits<L>::return_type>(lhs_a) &
            static_cast<typename bitmask_traits<R>::return_type>(rhs_a);
 }
-template<typename L, typename R> constexpr auto operator^(L lhs_a, R rhs_a) noexcept
-    requires is_bitmask<L> && is_bitmask<R>
+template<is_bitmask L, is_bitmask R> constexpr auto operator^(L lhs_a, R rhs_a) noexcept
 {
     return static_cast<typename bitmask_traits<L>::return_type>(lhs_a) ^
            static_cast<typename bitmask_traits<R>::return_type>(rhs_a);
 }
 
-template<typename L, typename R> constexpr auto operator==(L lhs_a, R rhs_a) noexcept
-    requires is_bitmask<L> && is_bitmask<R>
+template<is_bitmask L, is_bitmask R> constexpr auto operator==(L lhs_a, R rhs_a) noexcept
 {
     return static_cast<typename bitmask_traits<L>::return_type>(lhs_a) ==
            static_cast<typename bitmask_traits<R>::return_type>(rhs_a);
 }
-template<typename L, typename R> constexpr auto operator!=(L lhs_a, R rhs_a) noexcept
-    requires is_bitmask<L> && is_bitmask<R>
+template<is_bitmask L, is_bitmask R> constexpr auto operator!=(L lhs_a, R rhs_a) noexcept
 {
     return static_cast<typename bitmask_traits<L>::return_type>(lhs_a) !=
            static_cast<typename bitmask_traits<R>::return_type>(rhs_a);
 }
 
-template<typename L, typename R> constexpr L& operator|=(L& lhs_a, R rhs_a) noexcept
-    requires is_bitmask<L> && is_bitmask<R>
+template<is_bitmask L, is_bitmask R> constexpr L& operator|=(L& lhs_a, R rhs_a) noexcept
 {
     lhs_a = static_cast<L>(lhs_a | rhs_a);
     return lhs_a;
 }
-template<typename L, typename R> constexpr L& operator&=(L& lhs_a, R rhs_a) noexcept
-    requires is_bitmask<L> && is_bitmask<R>
+template<is_bitmask L, is_bitmask R> constexpr L& operator&=(L& lhs_a, R rhs_a) noexcept
 {
     lhs_a = static_cast<L>(lhs_a & rhs_a);
     return lhs_a;
 }
-template<typename L, typename R> constexpr L& operator^=(L& lhs_a, R rhs_a) noexcept
-    requires is_bitmask<L> && is_bitmask<R>
+template<is_bitmask L, is_bitmask R> constexpr L& operator^=(L& lhs_a, R rhs_a) noexcept
 {
     lhs_a = static_cast<L>(lhs_a ^ rhs_a);
     return lhs_a;
 }
 
-template<typename L> constexpr auto operator~(L lhs_a) noexcept
-    requires is_bitmask<L>
+template<is_bitmask L> constexpr auto operator~(L lhs_a) noexcept
 {
     return static_cast<L>(~static_cast<std::conditional_t<std::is_enum_v<L>, std::underlying_type_t<L>, L>>(lhs_a));
 }
-template<typename L> constexpr bool operator!(L lhs_a) noexcept
-    requires is_bitmask<L>
+template<is_bitmask L> constexpr bool operator!(L lhs_a) noexcept
 {
     return static_cast<typename bitmask_traits<L>::return_type>(lhs_a) == 0u;
 }
@@ -712,6 +702,27 @@ constexpr usart::CR1::Data operator<<(Limited<std::uint32_t, 0x0u, 0x1Fu> left_a
     return static_cast<usart::CR1::Data>(left_a.get() << static_cast<std::uint32_t>(right_a));
 }
 
+constexpr usart::CR1::Data operator&(usart::CR1::Data left_a, usart::CR1::Shift_5 right_a) noexcept
+{
+    return static_cast<usart::CR1::Data>(static_cast<std::underlying_type_t<usart::CR1::Data>>(left_a) &
+                                         (0x1Fu << static_cast<std::underlying_type_t<usart::CR1::Data>>(right_a)));
+}
+constexpr usart::CR1::Data operator&(usart::CR1 left_a, usart::CR1::Shift_5 right_a) noexcept
+{
+    return static_cast<usart::CR1::Data>(
+        static_cast<usart::CR1::Data>(left_a) &
+        static_cast<usart::CR1::Data>((0x1Fu << static_cast<std::underlying_type_t<usart::CR1::Data>>(right_a))));
+}
+
+constexpr bool operator==(usart::CR1::Data lhs_a, std::uint32_t rhs_a) noexcept
+{
+    return (static_cast<std::underlying_type_t<usart::CR1::Data>>(lhs_a) == rhs_a);
+}
+constexpr bool operator==(std::uint32_t lhs_a, usart::CR1::Data rhs_a) noexcept
+{
+    return (static_cast<std::underlying_type_t<usart::CR1::Data>>(rhs_a) == lhs_a);
+}
+
 // CR2
 template<> struct bitmask_traits<usart::CR2::Flag>
 {
@@ -745,7 +756,7 @@ constexpr usart::CR2::Data operator<<(Limited<std::uint32_t, 0x0u, 0xFu> left_a,
 constexpr usart::CR2::Data operator&(usart::CR2::Data left_a, usart::CR2::Shift_8 right_a) noexcept
 {
     return static_cast<usart::CR2::Data>(static_cast<std::underlying_type_t<usart::CR2::Data>>(left_a) &
-                                         (0xFu << static_cast<std::underlying_type_t<usart::RTOR::Data>>(right_a)));
+                                         (0xFu << static_cast<std::underlying_type_t<usart::CR2::Data>>(right_a)));
 }
 constexpr usart::CR2::Data operator&(usart::CR2 left_a, usart::CR2::Shift_8 right_a) noexcept
 {
