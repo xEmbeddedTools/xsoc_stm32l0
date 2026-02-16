@@ -629,8 +629,8 @@ template<> void GPIO::mco::enable<msi>(Divider a_divider)
 
 void GPIO::mco::disable()
 {
-    bit::flag::clear(&(RCC->CFGR), RCC_CFGR_MCOPRE);
     bit::flag::clear(&(RCC->CFGR), RCC_CFGR_MCOSEL);
+    bit::flag::clear(&(RCC->CFGR), RCC_CFGR_MCOPRE);
 }
 
 } // namespace xmcu::soc::st::arm::m0::l0::rm0451::peripherals
