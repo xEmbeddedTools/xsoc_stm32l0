@@ -6,7 +6,9 @@
  */
 
 // std
+#include <array>
 #include <cstdint>
+#include <type_traits>
 
 // externals
 #include <stm32l0xx.h>
@@ -142,6 +144,107 @@ public:
             std::uint8_t id_start, id_end;
 
             friend Out;
+        };
+
+        // TODO could be declared one level up inside GPIO
+        struct Pin_serialized // is it smart enough?
+        {
+            uint8_t port_idx;
+            uint8_t id;
+            consteval Pin_serialized(uint8_t a_port_idx, uint8_t a_id)
+                : port_idx(a_port_idx)
+                , id(a_id)
+            {
+            }
+            
+            consteval Pin_serialized()
+                : port_idx(0)
+                , id(0)
+            {
+            }
+
+        };
+
+        // template<size_t N, size_t N_out = N*N>
+        class LookUpTableBasedBus : private Non_copyable // TODO: Someone bring me a better name?
+        {
+        public:
+
+            struct LUT_entry // aka MUXmasks
+            {   // TODO: make as generic array for other cases
+                uint32_t data[2];
+            };
+            static_assert(sizeof(Pin_serialized) == 2, "" );
+
+            // template<size_t N> // class.
+            // constexpr
+            // LUT_entry generate_row(uint8_t a_value, const std::array<Pin_serialized, N> & a_map)
+            // {
+            //     // TODO define, make private...
+            //     LUT_entry result;
+            //     for(size_t i=0;i<a_map.size();++i)
+            //     {
+
+            //     }
+
+            //     return result;
+            // }
+            
+            // funny cstror
+            template<size_t N> 
+            consteval
+            LookUpTableBasedBus(std::array<Pin_serialized, N>&& a_map)
+                : lut([](const  std::array<Pin_serialized, N>& a_map) {
+                    // auto N = a_map.size() * a_map.size();
+                    LUT_entry common_mask {};
+                    size_t common_mask_shift = 16; // TODO export as parameter?
+                    size_t common_mask_shift_base = 1u<<common_mask_shift;
+
+                    for (auto& input : a_map)
+                    {
+                        common_mask.data[input.port_idx] |= common_mask_shift_base << input.id;
+
+                        // static_assert(2 == std::extent_v < decltype(LUT_entry::data)>, "");
+                        // for (size_t i = 0; i < std::extent_v<decltype(LUT_entry::data)>; ++i)
+                        // {
+                        //     common_mask.data[input.port_idx] |= common_mask_shift_base << input[i].id;
+                        // }
+                    }
+                    std::array<LUT_entry, N*N>temporary_data_array;
+                    temporary_data_array.fill(LUT_entry{});
+                    temporary_data_array.fill(common_mask);
+                    for (size_t channel = 0; channel < temporary_data_array.size(); ++channel)
+                    {
+                        auto& channel_variable = temporary_data_array.at(channel);
+                        // channel_variable = common_mask;
+                        // size_t bit = 1u << channel;
+
+                        for (size_t i = 0; i < a_map.size(); ++i)
+                        {
+                            auto input = a_map[i];
+                        size_t bit = 1u << i;
+                            auto mapped_bit = 1u << input.id;
+
+                            if (0 == ((bit) & channel))
+                            {
+                                continue;
+                            }
+                            // auto & data_row = data[value];
+                            // data_row[input.port_idx] |= mapped_bit
+                            channel_variable.data[input.port_idx] |= mapped_bit;
+                        }
+                    }
+
+                    // for(size_t i=0;i<data.size();++i)
+                    // {
+                    // }
+                    return temporary_data_array;
+                }(a_map))
+            {
+            }
+
+        // private: 
+            const std::array<LUT_entry, 16> lut; // TODO check allocation of this. Expected to place in flash.
         };
 
         void enable(Limited<std::uint32_t, 0, 15> a_id, const Enable_config& a_enable_config, Pin* a_p_pin = nullptr);

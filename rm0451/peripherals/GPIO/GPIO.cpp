@@ -215,6 +215,8 @@ void GPIO::Out::Bus::set_speed(Speed a_speed)
     this->p_port->p_registers->ospeedr = temp;
 }
 
+// LookUpTableBus
+
 void GPIO::Analog::Pin::set_pull(Pull a_pull)
 {
     hkm_assert(nullptr != this->p_port && 0xFFu != this->id);
