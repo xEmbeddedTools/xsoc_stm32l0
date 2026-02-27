@@ -9,6 +9,7 @@
 #include <array>
 #include <cstdint>
 #include <type_traits>
+// #include <ranges>
 
 // externals
 #include <stm32l0xx.h>
@@ -32,6 +33,123 @@
 #include <xmcu/assertion.hpp>
 
 namespace xmcu::soc::st::arm::m0::l0::rm0451::peripherals {
+
+    namespace multi_output_look_up_table
+    {        
+        // TODO could be declared one level up inside GPIO
+        // look to be done.
+        // TODO could be declared a few levels up (common?)
+        struct Description_entry // is it smart enough?
+        {
+            uint8_t word_idx;
+            uint8_t bit_idx;
+            consteval Description_entry(uint8_t a_word_idx, uint8_t a_bit_idx)
+                : word_idx(a_word_idx)
+                , bit_idx(a_bit_idx)
+            {
+            }
+            
+            consteval Description_entry()
+                : word_idx(0)
+                , bit_idx(0)
+            {
+            }
+        };
+        template<size_t N> struct Log2_Very_Smart
+        {
+        };
+
+        template<> struct Log2_Very_Smart<16>
+        {
+            static constexpr size_t value = 4;
+        };
+        template<> struct Log2_Very_Smart<2>
+        {
+            static constexpr size_t value = 1;
+        };
+
+        using LUT_entry = std::array<unsigned, 2>; // could be LUT_row?
+
+        template<size_t N> consteval auto compose_table(const std::array<Description_entry, N>& a_description) 
+        {
+            LUT_entry common_mask {};
+
+            // move to dedicated function creating mask
+            size_t common_mask_shift = 16; // TODO export (import) as parameter?
+            size_t common_mask_shift_base = 1u<<common_mask_shift;
+
+            for (auto& input : a_description)
+            {
+                common_mask[input.word_idx] |= common_mask_shift_base << input.bit_idx;
+            }
+            // [end] move to dedicated function creating mask
+
+            std::array<LUT_entry, 1 << N> result_array;
+            result_array.fill(LUT_entry {});
+            result_array.fill(common_mask);
+            for (size_t channel = 0; channel < result_array.size(); ++channel)
+            {
+                for (size_t i = 0; i < a_description.size(); ++i)
+                {
+                    size_t bit = 1u << i;
+
+                    if (0 == ((bit) & channel))
+                    {
+                        continue;
+                    }
+                    auto input = a_description[i];
+                    auto& channel_variable = result_array.at(channel);
+                    channel_variable[input.word_idx] |= 1u << input.bit_idx;
+                }
+            }
+            return result_array;
+        }
+
+        template<size_t N, size_t X>
+        // N parameter is same as result array size. It is differnet than `compose_table` template parameter
+        consteval auto combine_tables(const std::array<std::array<LUT_entry, N>, X>& a_tables)
+        {
+            std::array<LUT_entry, N> result_array;
+            result_array.fill(LUT_entry{}); // zeroing results or copy and drop a_tables[0]
+            // std::array<LUT_entry, N> result_array = a_tables[0];
+            // std::array ranges_drop_workaround { a_tables.begin() + 1, a_tables.end() };
+            // TODO test #include <ranges> : std::ranges::views::drop(1)
+            for (auto& table : a_tables) 
+            {
+                for (size_t i = 0; i < result_array.size(); ++i)
+                {
+                    // result_array[i] |= table[i];
+                    result_array[i][0] |= table[i][0];
+                    result_array[i][1] |= table[i][1]; // ninja xD
+                }
+            }
+            return result_array;
+        }
+        template<size_t N, size_t X>
+            requires((X == 2))
+        // N parameter is same as result array size. It is differnet than `compose_table` template parameter
+        consteval auto combine_tables_combined_args(const std::array<std::array<LUT_entry, N>, X>& a_tables)
+        {
+            std::array<LUT_entry, N*N> result_array; // TODO: is silent hardcoded to X=2
+            result_array.fill(LUT_entry{});
+
+            for (size_t i = 0; i < result_array.size(); ++i)
+            {
+                // TODO: is silent hardoced...
+                LUT_entry& row = result_array[i];
+                // TODO N=16;
+                auto shift = Log2_Very_Smart<N>::value;
+                auto mask = N - 1;
+                // auto& r0 = a_tables[0][i & 0x01];
+                // auto& r1 = a_tables[1][i >> 1 & 0x01];
+                auto& r0 = a_tables[0][i & mask];
+                auto& r1 = a_tables[1][i >> shift & mask];
+                row[0] = r0[0] | r1[0];
+                row[1] = r0[1] | r1[1];
+            }
+            return result_array;
+        }
+    }
 class GPIO : private Non_copyable
 {
 public:
@@ -146,105 +264,97 @@ public:
             friend Out;
         };
 
-        // TODO could be declared one level up inside GPIO
-        struct Pin_serialized // is it smart enough?
-        {
-            uint8_t port_idx;
-            uint8_t id;
-            consteval Pin_serialized(uint8_t a_port_idx, uint8_t a_id)
-                : port_idx(a_port_idx)
-                , id(a_id)
-            {
-            }
-            
-            consteval Pin_serialized()
-                : port_idx(0)
-                , id(0)
-            {
-            }
+        using Description_entry  = multi_output_look_up_table::Description_entry;
+        using LUT_entry = multi_output_look_up_table::LUT_entry;
 
-        };
-
-        // template<size_t N, size_t N_out = N*N>
+        template<typename T,size_t N>
         class LookUpTableBasedBus : private Non_copyable // TODO: Someone bring me a better name?
         {
+            // Strongly concept code xD
+            #define CACHING_BSRR
         public:
+            static consteval int test_map(const std::array<T, N>& a_map)
+            {
+                // assume number of bits^2 == N
 
-            struct LUT_entry // aka MUXmasks
-            {   // TODO: make as generic array for other cases
-                uint32_t data[2];
-            };
-            static_assert(sizeof(Pin_serialized) == 2, "" );
+                // GPIO_BSRR_BS and GPIO_BSRR_BR should be same in last row
+                auto last_row = a_map[N - 1];
 
-            // template<size_t N> // class.
-            // constexpr
-            // LUT_entry generate_row(uint8_t a_value, const std::array<Pin_serialized, N> & a_map)
-            // {
-            //     // TODO define, make private...
-            //     LUT_entry result;
-            //     for(size_t i=0;i<a_map.size();++i)
-            //     {
-
-            //     }
-
-            //     return result;
-            // }
-            
-            // funny cstror
-            template<size_t N> 
-            consteval
-            LookUpTableBasedBus(std::array<Pin_serialized, N>&& a_map)
-                : lut([](const  std::array<Pin_serialized, N>& a_map) {
-                    // auto N = a_map.size() * a_map.size();
-                    LUT_entry common_mask {};
-                    size_t common_mask_shift = 16; // TODO export as parameter?
-                    size_t common_mask_shift_base = 1u<<common_mask_shift;
-
-                    for (auto& input : a_map)
+                constexpr size_t BSRR_BS_MASK = GPIO_BSRR_BS_15 | (GPIO_BSRR_BS_15 - 1);
+                constexpr size_t BSRR_BR_MASK = GPIO_BSRR_BR_15 | (GPIO_BSRR_BR_15 - 1);
+                size_t bitcounter = 0;
+                for (size_t word_in_row : last_row)
+                {
+                    const size_t tested_bs = word_in_row & BSRR_BS_MASK;
+                    const size_t tested_br = word_in_row & BSRR_BR_MASK;
+                    if (tested_bs != tested_br >> 16)
                     {
-                        common_mask.data[input.port_idx] |= common_mask_shift_base << input.id;
-
-                        // static_assert(2 == std::extent_v < decltype(LUT_entry::data)>, "");
-                        // for (size_t i = 0; i < std::extent_v<decltype(LUT_entry::data)>; ++i)
-                        // {
-                        //     common_mask.data[input.port_idx] |= common_mask_shift_base << input[i].id;
-                        // }
+                        return -1;
                     }
-                    std::array<LUT_entry, N*N>temporary_data_array;
-                    temporary_data_array.fill(LUT_entry{});
-                    temporary_data_array.fill(common_mask);
-                    for (size_t channel = 0; channel < temporary_data_array.size(); ++channel)
+
+                    for (size_t i = 0; i <= BSRR_BS_MASK; i <<= 1)
                     {
-                        auto& channel_variable = temporary_data_array.at(channel);
-                        // channel_variable = common_mask;
-                        // size_t bit = 1u << channel;
-
-                        for (size_t i = 0; i < a_map.size(); ++i)
+                        if (tested_bs & i)
                         {
-                            auto input = a_map[i];
-                        size_t bit = 1u << i;
-                            auto mapped_bit = 1u << input.id;
-
-                            if (0 == ((bit) & channel))
-                            {
-                                continue;
-                            }
-                            // auto & data_row = data[value];
-                            // data_row[input.port_idx] |= mapped_bit
-                            channel_variable.data[input.port_idx] |= mapped_bit;
+                            ++bitcounter;
                         }
                     }
-
-                    // for(size_t i=0;i<data.size();++i)
-                    // {
-                    // }
-                    return temporary_data_array;
-                }(a_map))
+                }
+                return bitcounter;
+            }
+            // We might need to initialize ports. Initialize separately is a bit ugly.
+            LookUpTableBasedBus(const std::array<T, N>& a_map, const std::array<GPIO*, 2>& a_ports)
+                : lut(a_map)
+                , p_ports(a_ports)
+#ifdef CACHING_BSRR
+                , p_bsr_registers { reinterpret_cast<volatile uint32_t*>(&a_ports[0]->p_registers->bsrr),
+                                    reinterpret_cast<volatile uint32_t*>(&a_ports[1]->p_registers->bsrr) }
+                //(std::array{})
+#endif
             {
+                // GPIO* g = a_map.at(0);
+                // ll::gpio::BSRR& bssr = g->p_registers->bsrr;
+                // decltype(a_map.at(0))
             }
 
-        // private: 
-            const std::array<LUT_entry, 16> lut; // TODO check allocation of this. Expected to place in flash.
+            // void set_value(std::uint32_t a_value);
+            void set_value(std::uint32_t a_value)
+            {
+                // props to change array to some iterator. This can be non-template
+                hkm_assert(a_value < lut.size());
+                
+                [[maybe_unused]]
+                // auto row = lut.at(a_value); // require throw 0ut of range frmt
+                auto row = lut[a_value];
+                for(size_t i = 0; i<row.size();++i)
+                {
+                    // write where to do nothing is faster, deterministic and might be cheaper than test (a few
+                    // instructions analyze) zero value.
+#ifdef CACHING_BSRR
+                    // TODO test performance of both cases
+                    // one shot test:
+                    // 4585 SPS
+                    *this->p_bsr_registers[i] = row[i]; // static_cast<ll::gpio::BSRR::Data>(row[i]);
+#else
+                    // 4577 SPS
+                    this->p_ports[i]->p_registers->bsrr = static_cast<ll::gpio::BSRR::Data>(row[i]);
+#endif
+                }
+            }
+            
+
+        private:
+            const std::array<T,N>& lut; // TODO check allocation of this. Expected to place in flash.
+            // std::vector might be a bit more flexible, avoid templatization this class.
+            
+            const std::array<GPIO*  , 2> p_ports;
+            // crutial "cache" to maximalize performance
+            // TODO provide data types...
+#ifdef CACHING_BSRR
+            const
+             std::array<volatile uint32_t*, 2> p_bsr_registers;
+            //  std::array<ll::gpio::BSRR, 2> p_bsr_registers;
+#endif
         };
 
         void enable(Limited<std::uint32_t, 0, 15> a_id, const Enable_config& a_enable_config, Pin* a_p_pin = nullptr);
