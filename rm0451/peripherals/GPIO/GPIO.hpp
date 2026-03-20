@@ -6,7 +6,9 @@
  */
 
 // std
+#include <array>
 #include <cstdint>
+#include <type_traits>
 
 // externals
 #include <stm32l0xx.h>
@@ -23,6 +25,7 @@
 #include <xmcu/Limited.hpp>
 #include <xmcu/Non_copyable.hpp>
 #include <xmcu/bit.hpp>
+#include <xmcu/look_up_tables.hpp>
 #include <xmcu/non_constructible.hpp>
 #include <xmcu/various.hpp>
 
@@ -30,6 +33,16 @@
 #include <xmcu/assertion.hpp>
 
 namespace xmcu::soc::st::arm::m0::l0::rm0451::peripherals {
+
+#if concept_allowed
+template<typename T>
+concept is_desc = ::xmcu::look_up_tables::is_desc<T>;
+template<typename T>
+concept is_row = ::xmcu::look_up_tables::is_row<T>;
+template<typename T>
+concept is_Input_table = ::xmcu::look_up_tables::is_Input_table<T>;
+
+#endif
 class GPIO : private Non_copyable
 {
 public:
@@ -116,6 +129,100 @@ public:
 
             friend Out;
         };
+
+// Strongly concept code inside ifdefs conditions driven by following macro:
+#define CACHEING_BSRR
+
+        template<is_desc T, std::size_t N> class Out_BSRR_lookup_driven : private Non_copyable
+        {
+        public:
+            using Table_type = xmcu::look_up_tables::Table<T, N>;
+            using Out_type = typename Table_type::value_type;
+
+            static constexpr std::size_t Out_size = std::tuple_size_v<typename T::containter_type>;
+
+            // cannot be consteval due to use a non-const desstination port, but use compile time generated LUTs
+            template<typename TableT, size_t Out_size>
+            Out_BSRR_lookup_driven(const TableT& a_table, const std::array<GPIO*, Out_size>& a_p_ports)
+                : lut(a_table)
+                , p_ports(a_p_ports)
+#ifdef CACHEING_BSRR
+                , p_bsr_registers { extract_bsrr_registers(a_p_ports) }
+#endif
+            {
+                static_assert(std::tuple_size_v<typename Out_type::containter_type> == Out_size,
+                              "dimensions of `a_table` and `a_p_ports` should be same");
+            }
+
+            constexpr auto out(size_t a_idx)
+            {
+                return lut[a_idx];
+            }
+
+            void set_value(size_t a_idx) const
+            {
+                hkm_assert(a_idx < lut.size());
+
+                const Out_type& row = lut[a_idx];
+                for (size_t i = 0; i < Out_size; ++i) // TODO: Consider implementing an assignment operator.
+                {
+                    // TODO test performance of both cases
+#ifdef CACHEING_BSRR
+                    //  SPS
+                    *this->p_bsr_registers[i] = row[i]; // static_cast<ll::gpio::BSRR::Data>(row[i]);
+#else
+                    //  SPS
+                    this->p_ports[i]->p_registers->bsrr = static_cast<ll::gpio::BSRR::Data>(row[i]);
+#endif
+                }
+            }
+
+        private:
+            const Table_type& lut;
+            const std::array<GPIO*, Out_size> p_ports;
+#ifdef CACHEING_BSRR
+            const std::array<volatile uint32_t*, Out_size> p_bsr_registers;
+            constexpr auto extract_bsrr_registers(const std::array<GPIO*, Out_size>& a_p_ports)
+            {
+                std::array<volatile uint32_t*, Out_size> p_bsr_registers;
+                for (size_t i = 0; i < Out_size; ++i)
+                {
+                    auto* reg = &a_p_ports[i]->p_registers->bsrr;
+                    p_bsr_registers[i] = reinterpret_cast<volatile uint32_t*>(reg);
+                }
+                return p_bsr_registers;
+            }
+#endif
+        };
+
+        // deduction guide
+        template<typename TableT, size_t Out_size>
+        Out_BSRR_lookup_driven(const TableT& a_table, const std::array<GPIO*, Out_size>& a_p_ports)
+            -> Out_BSRR_lookup_driven<typename TableT::desc_type, TableT::output_words_count>;
+
+        // Exposed on top only for readability of diff
+        // TODO: move below Bus class
+        class Bus_Lut : private Non_copyable
+        {
+        public:
+            template<size_t N> struct Binary_form_creator
+            {
+                size_t word_idx;
+                consteval Binary_form_creator(size_t a_word_idx)
+                    : word_idx(a_word_idx)
+                {
+                }
+
+                consteval xmcu::look_up_tables::Input_row<std::uint32_t, N> operator()(std::uint32_t a_bit_idx) const
+                {
+                    look_up_tables::Input_row<uint32_t, N> result {};
+                    result[this->word_idx] = 1u << a_bit_idx;
+                    return result;
+                }
+            };
+        };
+        // is very dificult to put everyting in one class that is generic
+
         class Bus : private Non_copyable
         {
         public:
@@ -143,6 +250,33 @@ public:
 
             friend Out;
         };
+
+        template<is_Input_table Table_type, typename T = typename Table_type::value_type>
+        static consteval auto create_bsrr_lut_form_pins(const Table_type& a_input)
+        {
+            static constexpr std::size_t bit_set_shift = 16;
+            // create mask of all bits to put in reset part of BSRR of all LUT rows
+            T mask {};
+            for (auto& el : a_input)
+            {
+                mask |= el;
+            }
+            for (auto& word : mask)
+            {
+                word <<= bit_set_shift;
+            }
+
+            xmcu::look_up_tables::Table<T, a_input.size()> pre_filled {};
+            pre_filled.fill(mask);
+
+            return compose_table_from_bitlist(a_input, pre_filled);
+        }
+        // template<is_desc T, size_t N>
+        // static consteval auto create_bsrr_lut_form_pins(const std::array<T, N>& a_input)
+        // {
+        //     auto input_table = xmcu::look_up_tables::Input_table { a_input };
+        //     return create_bsrr_lut_form_pins(input_table);
+        // }
 
         void enable(Limited<std::uint32_t, 0, 15> a_id, const Enable_config& a_enable_config, Pin* a_p_pin = nullptr);
         void enable(Limited<std::uint32_t, 0, 15> a_id, const Enable_config& a_enable_config, Bus* a_p_bus);
