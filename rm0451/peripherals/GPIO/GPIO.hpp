@@ -254,6 +254,7 @@ public:
         template<is_Input_table Table_type, typename T = typename Table_type::value_type>
         static consteval auto create_bsrr_lut_form_pins(const Table_type& a_input)
         {
+            static constexpr std::size_t SIZE = std::tuple_size_v<typename Table_type::containter_type>;
             static constexpr std::size_t bit_set_shift = 16;
             // create mask of all bits to put in reset part of BSRR of all LUT rows
             T mask {};
@@ -266,7 +267,7 @@ public:
                 word <<= bit_set_shift;
             }
 
-            xmcu::look_up_tables::Table<T, a_input.size()> pre_filled {};
+            xmcu::look_up_tables::Table<T, SIZE> pre_filled {};
             pre_filled.fill(mask);
 
             return compose_table_from_bitlist(a_input, pre_filled);
