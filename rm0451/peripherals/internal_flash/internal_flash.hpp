@@ -59,7 +59,7 @@ public:
     enum class Cache_mode_flag : std::uint32_t
     {
         disabled = 0x0u,
-        prefetech = FLASH_ACR_PRFTEN
+        prefetch = FLASH_ACR_PRFTEN
     };
 
     enum class Status_flag : std::uint32_t
