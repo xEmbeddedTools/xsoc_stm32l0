@@ -7,7 +7,6 @@
 #include <rm0451/peripherals/GPIO/GPIO.hpp>
 
 // xmcu
-#include <soc/Scoped_guard.hpp>
 #include <soc/st/arm/IRQ_config.hpp>
 #include <soc/st/arm/m0/nvic.hpp>
 #include <xmcu/bit.hpp>
